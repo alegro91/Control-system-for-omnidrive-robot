@@ -1,0 +1,8 @@
+Møte referat 10.01.2023
+
+Vi hadde samling kl 16.15 Tisdag 10 januar. Anders var fraværende.
+På møtet blei det bestemt at Alejandro skulle være dokument-ansvarlig.
+Thomas satte opp arbeidskontrakt ut ifra mal som lærer har gitt ut.
+Midlertidig dato og tidspunkt for møte med oppdragsgiver er satt til mandag 16 Jan kl 10.
+For å utnytte tida vi har til råde godt så blei det annbefalt at alle skulle begynne å sette seg inn i React.js og node.js rammeverker denne uken.
+I og med at oppdragsgiveren har valgt å endre oppgavebeskrivelsen til bachelor oppgaven, velger vi å vente med videre planlegging av arbeidsfordeling og research til etter vi har hatt møte med Solwr.
