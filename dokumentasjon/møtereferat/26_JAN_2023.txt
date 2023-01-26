@@ -1,0 +1,7 @@
+Møte referat 26.01.2023
+
+Vi hadde samling kl 10.00 Tosdag 10 januar. Anders var fraværende etter avtale med gruppen.
+På møtet blei det redegjort hvilke krav som blir stilt til appen.
+Vi hadde eit par spørsmål om API til tredjeparts-leverandør for navigasjons-styring, navitec, også om teknologi til tilkobling til robot.
+Midlertidig dato og tidspunkt for møte med oppdragsgiver er satt til neste uke samme tid 2 Feb kl 10.
+Til da har vi fått som oppgave å utforske forskjellige tilkoblingsmuligheter, mens vi venter på nødvendig systemdokumentasjon.
