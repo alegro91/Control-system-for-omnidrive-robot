@@ -32,6 +32,7 @@ npm install
 4. Start the app on an emulator or physical device:
 
 ```
-react-native run-android #for Android
-react-native run-ios #for iOS
+npm run android #for Android
+npm run ios #for iOS
+npm run web #for Web
 ```
