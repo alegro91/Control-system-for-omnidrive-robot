@@ -32,7 +32,9 @@ npm install
 4. Start the app on an emulator or physical device:
 
 ```
-npm run android #for Android
-npm run ios #for iOS
-npm run web #for Web
+npm start #scan code & open app in Expo Go (on mobile device)
+
+expo start --android #for Android
+expo start --ios #for iOS
+expo start --web #for Web
 ```
