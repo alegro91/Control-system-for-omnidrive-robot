@@ -8,27 +8,22 @@ const StartScreen = ({ navigation }) => {
   const [showQRScanner, setShowQRScanner] = useState(false);
   return (
     <View style={styles.container}>
-      {showQRScanner ? (
-        <QRScanner />
-      ) : (
-        <View style={styles.container}>
-          <Button
-            onPress={() => console.log("Scan network for robots")}
-            title="Scan network for robots"
-            style={buttonStyle.button}
-            textStyle={buttonStyle.buttonText}
-          />
-          <Button
-            onPress={() => {
-              setShowQRScanner(true);
-              console.log("QR scanner enabled");
-            }}
-            title="Scan robot with QR code"
-            style={buttonStyle.button}
-            textStyle={buttonStyle.buttonText}
-          />
-        </View>
-      )}
+      <Button
+        onPress={() => console.log("Scan network for robots")}
+        title="Scan network for robots"
+        style={buttonStyle.button}
+        textStyle={buttonStyle.buttonText}
+      />
+      <Button
+        onPress={() => {
+          setShowQRScanner(true);
+          console.log("QR scanner enabled");
+          navigation.navigate("QRScanner");
+        }}
+        title="Scan robot with QR code"
+        style={buttonStyle.button}
+        textStyle={buttonStyle.buttonText}
+      />
     </View>
   );
 };
