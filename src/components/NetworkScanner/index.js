@@ -35,6 +35,15 @@ const NetworkScanner = ({ navigation }) => {
   };
 
   /**
+   *
+   * @param {device} device - device object that will be passed to the device page.
+   * This function will be called when a device is pressed.
+   */
+  const handleDevicePress = (device) => {
+    navigation.navigate("Device", { device });
+  };
+
+  /**
    * This is the view that will be rendered.
    * It will show a button to scan the network.
    * Once the network has been scanned, it will show a list of devices.
