@@ -4,6 +4,10 @@ import Button from "../../components/Button";
 import QRScanner from "../../components/QRScanner";
 import styles from "./styles";
 
+/**
+ * @param {navigation}
+ * @returns StartScreen component with two buttons to navigate to QRScanner and NetworkScanner
+ */
 const StartScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
