@@ -5,8 +5,8 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import StartScreen from "./src/screens/StartScreen";
 import Button from "./src/components/Button";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import QRScanner from "./src/components/QRScanner/QRScanner";
-import NetworkScanner from "./src/components/NetworkScanner/NetworkScanner";
+import QRScanner from "./src/components/QRScanner";
+import NetworkScanner from "./src/components/NetworkScanner";
 import { NavigationContainer } from "@react-navigation/native";
 
 const Stack = createNativeStackNavigator();

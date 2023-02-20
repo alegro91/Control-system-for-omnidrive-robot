@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { View, Text, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Button from "../../components/Button";
-import QRScanner from "../../components/QRScanner/QRScanner";
+import QRScanner from "../../components/QRScanner";
 import styles from "./styles";
 
 const StartScreen = ({ navigation }) => {

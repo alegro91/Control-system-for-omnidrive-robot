@@ -8,6 +8,7 @@ to manually control them.
 - Node.js
 - npm (Node Package Manager)
 - React Native CLI (`npm install -g react-native-cli`)
+- Expo CLI (`npm install expo-cli --global`)
 
 
 ## Getting Started
