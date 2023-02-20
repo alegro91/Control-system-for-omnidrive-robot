@@ -9,6 +9,7 @@ to manually control them.
 - npm (Node Package Manager)
 - React Native CLI (`npm install -g react-native-cli`)
 
+
 ## Getting Started
 
 1. Clone this repository to your local machine:

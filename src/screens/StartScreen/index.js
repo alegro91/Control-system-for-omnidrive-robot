@@ -5,18 +5,19 @@ import QRScanner from "../../components/QRScanner/QRScanner";
 import styles from "./styles";
 
 const StartScreen = ({ navigation }) => {
-  const [showQRScanner, setShowQRScanner] = useState(false);
   return (
     <View style={styles.container}>
       <Button
-        onPress={() => console.log("Scan network for robots")}
+        onPress={() => {
+          console.log("Scan network for robots");
+          navigation.navigate("NetworkScanner");
+        }}
         title="Scan network for robots"
         style={buttonStyle.button}
         textStyle={buttonStyle.buttonText}
       />
       <Button
         onPress={() => {
-          setShowQRScanner(true);
           console.log("QR scanner enabled");
           navigation.navigate("QRScanner");
         }}
