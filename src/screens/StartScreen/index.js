@@ -9,7 +9,9 @@ const StartScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Button
-        onPress={() => console.log("Scan network for robots")}
+        onPress={() => {
+          navigation.navigate("NetworkScanner");
+        }}
         title="Scan network for robots"
         style={buttonStyle.button}
         textStyle={buttonStyle.buttonText}
