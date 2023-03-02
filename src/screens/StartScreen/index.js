@@ -4,8 +4,11 @@ import Button from "../../components/Button";
 import QRScanner from "../../components/QRScanner";
 import styles from "./styles";
 
+/**
+ * @param {navigation}
+ * @returns StartScreen component with two buttons to navigate to QRScanner and NetworkScanner
+ */
 const StartScreen = ({ navigation }) => {
-  const [showQRScanner, setShowQRScanner] = useState(false);
   return (
     <View style={styles.container}>
       <Button
@@ -18,7 +21,6 @@ const StartScreen = ({ navigation }) => {
       />
       <Button
         onPress={() => {
-          setShowQRScanner(true);
           console.log("QR scanner enabled");
           navigation.navigate("QRScanner");
         }}
