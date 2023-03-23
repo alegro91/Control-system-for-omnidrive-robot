@@ -224,8 +224,8 @@ function NetworkScanner() {
             renderItem={renderItem}
             keyExtractor={(item) => item.agv_id}
             style={{
-              marginTop: 100,
               padding: 30,
+              paddingTop: 150,
             }}
           />
         ) : (
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   },
   notificationContainer: {
     position: "absolute",
-    top: 0,
+    top: 20,
     left: 0,
     right: 0,
     zIndex: 2,
