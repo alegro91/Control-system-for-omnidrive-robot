@@ -91,11 +91,10 @@ function NetworkScanner() {
         style={{
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "center",
           borderRadius: 12,
           padding: 20,
-          marginBottom: 10,
-          marginTop: 10,
+          marginTop: 30,
           width: "100%",
           borderWidth: hasErrors ? 2 : 0,
           backgroundColor: "#DBDBDB",
@@ -161,6 +160,8 @@ function NetworkScanner() {
       <View
         style={{
           display: "flex",
+          //position: "absolute",
+          zIndex: 1,
           justifyContent: "center",
           alignItems: "center",
           padding: 30,
@@ -226,6 +227,7 @@ function NetworkScanner() {
             data={robotData}
             renderItem={renderItem}
             keyExtractor={(item) => item.agv_id}
+            style={{}}
           />
         ) : (
           <View>
