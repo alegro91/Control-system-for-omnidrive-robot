@@ -2,7 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import NetworkScanner from "../../components/NetworkScanner";
+import NetworkScanner from "../../components/NetworkScanner/index.js";
 import QRScanner from "../../components/QRScanner";
 import styles from "./styles";
 import { Ionicons } from "@expo/vector-icons";
