@@ -1,4 +1,4 @@
-import "react-native-gesture-handler";
+/*import "react-native-gesture-handler";
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
@@ -44,3 +44,16 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+*/
+
+import React from 'react';
+import MainContainer from './src/navigation/MainContainer';
+
+
+const App = () => {
+  return (
+    <MainContainer></MainContainer>
+  );
+};
+
+export default App;
