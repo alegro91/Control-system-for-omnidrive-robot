@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
+  Animated,
+  Easing,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -75,6 +77,60 @@ function NetworkScanner() {
     fetchData();
   }, []);
 
+  const [hasGlobalErrors, setHasGlobalErrors] = useState(false);
+  const notificationAnim = useRef(new Animated.Value(-100)).current;
+
+  useEffect(() => {
+    const hasErrors = robotData.some((robot) => robot.errors.length > 0);
+    setHasGlobalErrors(hasErrors);
+    if (hasErrors) {
+      Animated.timing(notificationAnim, {
+        toValue: 0,
+        duration: 500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(notificationAnim, {
+        toValue: -150,
+        duration: 500,
+        easing: Easing.out(Easing.ease),
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [robotData]);
+
+  const renderNotification = () => (
+    <Animated.View
+      style={[
+        styles.notificationContainer,
+        {
+          transform: [
+            {
+              translateY: notificationAnim,
+            },
+          ],
+        },
+      ]}
+    >
+      <View
+        style={{
+          width: "100%",
+          backgroundColor: "#F05555",
+          borderRadius: 12,
+        }}
+      >
+        <View style={styles.notificationContent}>
+          <Ionicons name="notifications" size={20} color="white" />
+          <Text style={styles.notificationTitle}>Issues detected</Text>
+        </View>
+        <Text style={styles.notificationSubtitle}>
+          Some robots have have an error
+        </Text>
+      </View>
+    </Animated.View>
+  );
+
   const renderItem = ({ item }) => {
     const batteryLevel = (battery_capacity) => {
       if (battery_capacity > 80) return "battery-full";
@@ -94,7 +150,7 @@ function NetworkScanner() {
           justifyContent: "center",
           borderRadius: 12,
           padding: 20,
-          marginTop: 30,
+          marginTop: 40,
           width: "100%",
           borderWidth: hasErrors ? 2 : 0,
           backgroundColor: "#DBDBDB",
@@ -157,67 +213,7 @@ function NetworkScanner() {
 
   return (
     <>
-      <View
-        style={{
-          display: "flex",
-          //position: "absolute",
-          zIndex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          padding: 30,
-          width: "100%",
-        }}
-      >
-        <View
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: 20,
-            width: "100%",
-            backgroundColor: "#DBDBDB",
-            borderRadius: 12,
-          }}
-        >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Ionicons name="notifications" size={20} color="black" />
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: "bold",
-                paddingLeft: 10,
-              }}
-            >
-              No issues detected
-            </Text>
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "center",
-              paddingTop: 10,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 12,
-                fontWeight: "400",
-                paddingLeft: 10,
-              }}
-            >
-              All robots are operational
-            </Text>
-          </View>
-        </View>
-      </View>
+      {renderNotification()}
 
       <View style={styles.container}>
         {isLoading ? (
@@ -227,7 +223,10 @@ function NetworkScanner() {
             data={robotData}
             renderItem={renderItem}
             keyExtractor={(item) => item.agv_id}
-            style={{}}
+            style={{
+              marginTop: 100,
+              padding: 30,
+            }}
           />
         ) : (
           <View>
@@ -272,6 +271,36 @@ const styles = StyleSheet.create({
   connectButtonText: {
     color: "#FFF",
     fontWeight: "500",
+    textAlign: "center",
+  },
+  notificationContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 2,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 30,
+    width: "100%",
+  },
+  notificationContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: 20,
+  },
+  notificationTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    paddingLeft: 10,
+    color: "#FFFFFF",
+  },
+  notificationSubtitle: {
+    fontSize: 12,
+    fontWeight: "300",
+    color: "#FFFFFF",
+    paddingBottom: 20,
     textAlign: "center",
   },
 });
