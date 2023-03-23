@@ -163,46 +163,58 @@ function NetworkScanner() {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          padding: 20,
+          padding: 30,
           width: "100%",
         }}
       >
         <View
           style={{
-            flexDirection: "row",
-            alignItems: "center",
+            display: "flex",
             justifyContent: "center",
+            alignItems: "center",
+            padding: 20,
+            width: "100%",
+            backgroundColor: "#DBDBDB",
+            borderRadius: 12,
           }}
         >
-          <Ionicons name="notifications" size={20} color="black" />
-          <Text
+          <View
             style={{
-              fontSize: 16,
-              fontWeight: "bold",
-              paddingLeft: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
             }}
           >
-            No issues detected
-          </Text>
-        </View>
+            <Ionicons name="notifications" size={20} color="black" />
+            <Text
+              style={{
+                fontSize: 16,
+                fontWeight: "bold",
+                paddingLeft: 10,
+              }}
+            >
+              No issues detected
+            </Text>
+          </View>
 
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingTop: 10,
-          }}
-        >
-          <Text
+          <View
             style={{
-              fontSize: 12,
-              fontWeight: "400",
-              paddingLeft: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              paddingTop: 10,
             }}
           >
-            All robots are operational
-          </Text>
+            <Text
+              style={{
+                fontSize: 12,
+                fontWeight: "400",
+                paddingLeft: 10,
+              }}
+            >
+              All robots are operational
+            </Text>
+          </View>
         </View>
       </View>
 

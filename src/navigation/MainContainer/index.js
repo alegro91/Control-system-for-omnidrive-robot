@@ -48,11 +48,23 @@ function MainContainer() {
         <Tab.Screen
           name="NetworkScanner"
           component={NetworkScanner}
-          options={{ title: "Scan network for robots", headerShown: false }}
+          options={{ title: "Robot list", headerShown: false }}
         />
-        <Tab.Screen name="Alerts" component={AlertsScreen} />
-        <Tab.Screen name="Map" component={MapScreen} />
-        <Tab.Screen name="QRScanner" component={QRScanner} />
+        <Tab.Screen
+          name="Alerts"
+          component={AlertsScreen}
+          options={{ title: "Alerts", headerShown: false }}
+        />
+        <Tab.Screen
+          name="Map"
+          component={MapScreen}
+          options={{ title: "Map", headerShown: false }}
+        />
+        <Tab.Screen
+          name="QRScanner"
+          component={QRScanner}
+          options={{ title: "QR Scanner", headerShown: false }}
+        />
       </Tab.Navigator>
     </NavigationContainer>
   );
