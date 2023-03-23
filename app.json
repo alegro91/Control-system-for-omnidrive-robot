@@ -5,7 +5,7 @@
       "vapidPublicKey": "BHP0Z1X"
     },
     "name": "OmniDriveControl",
-    "slug": "OmniDriveControl",
+    "slug": "control-system-omnidrive-robot",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -18,7 +18,9 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -30,6 +32,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "fd3a68ef-3868-400b-8eb6-0157339cc9c6"
+      }
+    },
+    "owner": "streafe"
   }
 }
