@@ -8,11 +8,13 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import QRScanner from "./src/components/QRScanner";
 import NetworkScanner from "./src/components/NetworkScanner";
 import { NavigationContainer } from "@react-navigation/native";
+import MainContainer from "./src/navigation/MainContainer";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
+    /*
     <NavigationContainer>
       <Stack.Navigator initialRouteName="Main">
         <Stack.Screen
@@ -24,6 +26,8 @@ export default function App() {
         <Stack.Screen name="NetworkScanner" component={NetworkScanner} />
       </Stack.Navigator>
     </NavigationContainer>
+    */
+    <MainContainer></MainContainer>
   );
 }
 
