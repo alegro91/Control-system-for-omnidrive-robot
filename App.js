@@ -1,4 +1,4 @@
-/*import "react-native-gesture-handler";
+import "react-native-gesture-handler";
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
@@ -27,6 +27,18 @@ export default function App() {
   );
 }
 
+/*
+import React from 'react';
+import MainContainer from './src/navigation/MainContainer';
+
+
+const App = () => {
+  return (
+    <MainContainer></MainContainer>
+  );
+};
+*/
+
 const styles = StyleSheet.create({
   container: {
     display: "flex",
@@ -44,16 +56,3 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-*/
-
-import React from 'react';
-import MainContainer from './src/navigation/MainContainer';
-
-
-const App = () => {
-  return (
-    <MainContainer></MainContainer>
-  );
-};
-
-export default App;
