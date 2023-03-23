@@ -15,6 +15,16 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import * as Device from "expo-device";
+import * as Notifications from "expo-notifications";
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
 
 function NetworkScanner() {
   const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
@@ -79,6 +89,78 @@ function NetworkScanner() {
 
   const [hasGlobalErrors, setHasGlobalErrors] = useState(false);
   const notificationAnim = useRef(new Animated.Value(-100)).current;
+
+  const [expoPushToken, setExpoPushToken] = useState("");
+  const [notification, setNotification] = useState(false);
+  const notificationListener = useRef();
+  const responseListener = useRef();
+
+  async function registerForPushNotificationsAsync() {
+    let token;
+    if (Device.isDevice) {
+      const { status: existingStatus } =
+        await Notifications.getPermissionsAsync();
+      let finalStatus = existingStatus;
+      if (existingStatus !== "granted") {
+        const { status } = await Notifications.requestPermissionsAsync();
+        finalStatus = status;
+      }
+      if (finalStatus !== "granted") {
+        alert("Failed to get push token for push notification!");
+        return;
+      }
+      token = (await Notifications.getExpoPushTokenAsync()).data;
+      console.log(token);
+    } else {
+      alert("Must use physical device for Push Notifications");
+    }
+
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+
+    return token;
+  }
+
+  useEffect(() => {
+    registerForPushNotificationsAsync().then((token) =>
+      setExpoPushToken(token)
+    );
+
+    notificationListener.current =
+      Notifications.addNotificationReceivedListener((notification) => {
+        setNotification(notification);
+      });
+
+    responseListener.current =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        console.log(response);
+      });
+
+    return () => {
+      Notifications.removeNotificationSubscription(
+        notificationListener.current
+      );
+      Notifications.removeNotificationSubscription(responseListener.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (hasGlobalErrors) {
+      Notifications.setNotificationHandler({
+        handleNotification: async () => ({
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: true,
+        }),
+      });
+    }
+  }, [hasGlobalErrors]);
 
   useEffect(() => {
     const hasErrors = robotData.some((robot) => robot.errors.length > 0);
@@ -162,9 +244,21 @@ function NetworkScanner() {
           elevation: 5,
         }}
       >
-        <FontAwesome5 name="robot" size={20} />
+        <FontAwesome5
+          name="robot"
+          size={20}
+          color={hasErrors ? "#F05555" : "#000"}
+        />
         <View style={styles.robotContainer}>
-          <Text style={styles.robotName}>{item.agv_id}</Text>
+          <Text
+            style={{
+              flex: 2,
+              fontWeight: "700",
+              color: hasErrors ? "#F05555" : "#000",
+            }}
+          >
+            {item.agv_id}
+          </Text>
           <Text style={styles.robotState}>{item.state}</Text>
         </View>
 
@@ -174,7 +268,11 @@ function NetworkScanner() {
           }}
         >
           {hasErrors ? (
-            <MaterialIcons name="warning" size={24} color="red" />
+            <MaterialIcons
+              name="warning"
+              size={24}
+              color={hasErrors ? "#F05555" : "#000"}
+            />
           ) : (
             <FontAwesome
               name={batteryLevel(item.battery_capacity)}
@@ -184,7 +282,17 @@ function NetworkScanner() {
           )}
         </View>
         <View style={{}}>
-          <TouchableOpacity style={styles.connectButton} onPress={() => {}}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#1E90FF",
+              paddingHorizontal: 5,
+              paddingVertical: 3,
+              borderRadius: 6,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+            onPress={() => {}}
+          >
             <Text style={styles.connectButtonText}>Connect</Text>
           </TouchableOpacity>
         </View>
@@ -259,14 +367,6 @@ const styles = StyleSheet.create({
     flex: 1,
     fontWeight: "300",
     fontSize: 12,
-  },
-  connectButton: {
-    backgroundColor: "#1E90FF",
-    paddingHorizontal: 5,
-    paddingVertical: 3,
-    borderRadius: 6,
-    justifyContent: "center",
-    alignItems: "center",
   },
   connectButtonText: {
     color: "#FFF",

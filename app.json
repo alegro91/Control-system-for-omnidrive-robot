@@ -1,5 +1,9 @@
 {
   "expo": {
+    "notification": {
+      "icon": "./assets/icon.png",
+      "vapidPublicKey": "BHP0Z1X"
+    },
     "name": "OmniDriveControl",
     "slug": "OmniDriveControl",
     "version": "1.0.0",
@@ -14,9 +18,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
