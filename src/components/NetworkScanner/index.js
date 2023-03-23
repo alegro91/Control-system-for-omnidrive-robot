@@ -61,6 +61,39 @@ function NetworkScanner() {
     ]);
   }, []);
 
+  // Test code to add/remove errors from Robot 1
+  /* 
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setRobotData((prevRobotData) => {
+        // Find the index of Robot 1 in the robotData array
+        const robot1Index = prevRobotData.findIndex(
+          (robot) => robot.agv_id === "Robot 1"
+        );
+
+        // Create a new array with the same contents as the previous robotData array
+        const newRobotData = [...prevRobotData];
+
+        // If Robot 1 has errors, remove them. Otherwise, add errors
+        if (prevRobotData[robot1Index].errors.length > 0) {
+          newRobotData[robot1Index].errors = [];
+        } else {
+          newRobotData[robot1Index].errors = [
+            { error: "Error 1" },
+            { error: "Error 2" },
+          ];
+        }
+
+        return newRobotData;
+      });
+    }, 3000);
+
+    // Clear interval on unmount
+    return () => clearInterval(intervalId);
+  }, []); // Empty array as the second argument ensures that the effect only runs once on mount
+  */
+
   const fetchData = () => {
     const requestOptions = {
       method: "POST",
