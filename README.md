@@ -10,7 +10,6 @@ to manually control them.
 - React Native CLI (`npm install -g react-native-cli`)
 - Expo CLI (`npm install expo-cli --global`)
 
-
 ## Getting Started
 
 1. Clone this repository to your local machine:
@@ -40,3 +39,8 @@ expo start --android #for Android
 expo start --ios #for iOS
 expo start --web #for Web
 ```
+
+## Read these for notification permission
+
+https://docs.expo.dev/push-notifications/push-notifications-setup/#get-credentials-for-development-builds
+https://docs.expo.dev/development/create-development-builds/#on-a-device

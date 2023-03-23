@@ -91,7 +91,7 @@ function NetworkScanner() {
   const notificationAnim = useRef(new Animated.Value(-100)).current;
 
   const [expoPushToken, setExpoPushToken] = useState("");
-  const [notification, setNotification] = useState(false);
+  const [notification, setNotification] = useState(true);
   const notificationListener = useRef();
   const responseListener = useRef();
 
