@@ -62,7 +62,6 @@ function NetworkScanner() {
   }, []);
 
   // Test code to add/remove errors from Robot 1
-  /* 
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -92,7 +91,27 @@ function NetworkScanner() {
     // Clear interval on unmount
     return () => clearInterval(intervalId);
   }, []); // Empty array as the second argument ensures that the effect only runs once on mount
-  */
+
+  const sendPushNotification = async () => {
+    const message = {
+      to: "ExponentPushToken[MBcDrBEO-JjP3oWKe8i-w_]",
+      sound: "default",
+      title: "Error",
+      body: "Some robots appear to have errors, please check the dashboard",
+      data: { name: "max" },
+    };
+    const response = await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+    const data = response._bodyInit;
+    //console.log(`Status & Response ID-> ${JSON.stringify(data)}`);
+  };
 
   const fetchData = () => {
     const requestOptions = {
@@ -185,6 +204,9 @@ function NetworkScanner() {
 
   useEffect(() => {
     if (hasGlobalErrors) {
+      sendPushNotification(); // Send push notification, just expo notification for now
+
+      // Native notifications
       Notifications.setNotificationHandler({
         handleNotification: async () => ({
           shouldShowAlert: true,
