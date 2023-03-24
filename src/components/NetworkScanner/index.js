@@ -10,6 +10,8 @@ import {
   TouchableOpacity,
   Animated,
   Easing,
+  Modal,
+  Platform,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -63,7 +65,7 @@ function NetworkScanner() {
   }, []);
 
   // Test code to add/remove errors from Robot 1
-
+  /*
   useEffect(() => {
     const intervalId = setInterval(() => {
       setRobotData((prevRobotData) => {
@@ -92,6 +94,7 @@ function NetworkScanner() {
     // Clear interval on unmount
     return () => clearInterval(intervalId);
   }, []); // Empty array as the second argument ensures that the effect only runs once on mount
+*/
 
   const sendPushNotification = async () => {
     const message = {
@@ -179,8 +182,10 @@ function NetworkScanner() {
 
     return token;
   }
+  const isMobile = Platform.OS === "ios" || Platform.OS === "android";
 
   useEffect(() => {
+    if (!isMobile) return;
     registerForPushNotificationsAsync().then((token) =>
       setExpoPushToken(token)
     );
@@ -204,6 +209,7 @@ function NetworkScanner() {
   }, []);
 
   useEffect(() => {
+    if (!isMobile) return;
     if (hasGlobalErrors) {
       sendPushNotification(); // Send push notification, just expo notification for now
 
@@ -269,6 +275,66 @@ function NetworkScanner() {
     </Animated.View>
   );
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedError, setSelectedError] = useState(null);
+
+  const ErrorModal = ({ isVisible, error, onClose }) => {
+    return (
+      <Modal isVisible={isVisible} onBackdropPress={onClose}>
+        <View
+          style={{
+            backgroundColor: "white",
+            borderRadius: 4,
+            padding: 20,
+          }}
+        >
+          <TouchableOpacity
+            style={{
+              alignSelf: "flex-start",
+              marginBottom: 20,
+            }}
+            onPress={onClose}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                color: "blue",
+              }}
+            >
+              Back
+            </Text>
+          </TouchableOpacity>
+          {selectedError ? (
+            <View>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 18,
+                }}
+              >
+                {selectedError.title}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 16,
+                }}
+              >
+                {selectedError.description}
+              </Text>
+            </View>
+          ) : (
+            <FlatList
+              data={error}
+              renderItem={renderItem}
+              keyExtractor={(item, index) => index.toString()}
+              style={{ flexGrow: 0 }}
+            />
+          )}
+        </View>
+      </Modal>
+    );
+  };
+
   const renderItem = ({ item }) => {
     const batteryLevel = (battery_capacity) => {
       if (battery_capacity > 80) return "battery-full";
@@ -281,59 +347,65 @@ function NetworkScanner() {
     const hasErrors = item.errors && item.errors.length > 0;
 
     return (
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "center",
-          borderRadius: 12,
-          padding: 20,
-          marginTop: 40,
-          width: "100%",
-          borderWidth: hasErrors ? 2 : 0,
-          backgroundColor: "#DBDBDB",
-          borderColor: hasErrors ? "#F05555" : "#000",
-          shadowColor: "#000",
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 3.84,
-          elevation: 5,
-        }}
-      >
-        <FontAwesome5
-          name="robot"
-          size={20}
-          color={hasErrors ? "#F05555" : "#000"}
-        />
-        <View style={styles.robotContainer}>
-          <Text
-            style={{
-              flex: 2,
-              fontWeight: "700",
-              color: hasErrors ? "#F05555" : "#000",
-            }}
-          >
-            {item.agv_id}
-          </Text>
-          <Text style={styles.robotState}>{item.state}</Text>
-        </View>
-
-        <View
+      <View>
+        <TouchableOpacity
           style={{
-            paddingRight: 20,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: 12,
+            padding: 20,
+            marginTop: 40,
+            width: "100%",
+            borderWidth: hasErrors ? 2 : 0,
+            backgroundColor: "#DBDBDB",
+            borderColor: hasErrors ? "#F05555" : "#000",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }}
+          onPress={() => {
+            setSelectedError(item);
+            setModalVisible(true);
           }}
         >
-          {hasErrors ? (
-            <>
-              <MaterialIcons
-                name="warning"
-                size={24}
-                color={hasErrors ? "#F05555" : "#000"}
-              />
+          <FontAwesome5
+            name="robot"
+            size={20}
+            color={hasErrors ? "#F05555" : "#000"}
+          />
+          <View style={styles.robotContainer}>
+            <Text
+              style={{
+                flex: 2,
+                fontWeight: "700",
+                color: hasErrors ? "#F05555" : "#000",
+              }}
+            >
+              {item.agv_id}
+            </Text>
+            <Text style={styles.robotState}>{item.state}</Text>
+          </View>
+
+          <View
+            style={{
+              paddingRight: 20,
+            }}
+          >
+            {hasErrors ? (
+              <>
+                <MaterialIcons
+                  name="warning"
+                  size={24}
+                  color={hasErrors ? "#F05555" : "#000"}
+                />
+                {/*
               <View style={{}}>
                 <TouchableOpacity
                   style={{
-                    backgroundColor: "#FF0000",
+                    backgroundColor: "#F05555",
                     paddingHorizontal: 5,
                     paddingVertical: 3,
                     borderRadius: 6,
@@ -345,49 +417,51 @@ function NetworkScanner() {
                   <Text style={styles.connectButtonText}>View Error</Text>
                 </TouchableOpacity>
               </View>
-            </>
-          ) : (
-            <FontAwesome
-              name={batteryLevel(item.battery_capacity)}
-              size={20}
-              color={"#000"}
-            />
-          )}
-        </View>
-        <View style={{}}>
-          <TouchableOpacity
+              */}
+              </>
+            ) : (
+              <FontAwesome
+                name={batteryLevel(item.battery_capacity)}
+                size={20}
+                color={"#000"}
+              />
+            )}
+          </View>
+          <View style={{}}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: "#1E90FF",
+                paddingHorizontal: 5,
+                paddingVertical: 3,
+                borderRadius: 6,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+              onPress={() => {}}
+            >
+              <Text style={styles.connectButtonText}>Connect</Text>
+            </TouchableOpacity>
+          </View>
+          <View
             style={{
-              backgroundColor: "#1E90FF",
-              paddingHorizontal: 5,
-              paddingVertical: 3,
-              borderRadius: 6,
-              justifyContent: "center",
+              flexDirection: "row",
               alignItems: "center",
-            }}
-            onPress={() => {}}
-          >
-            <Text style={styles.connectButtonText}>Connect</Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-            paddingLeft: 10,
-          }}
-        >
-          <Entypo name="location-pin" size={20} color="black" />
-          <Text
-            style={{
-              fontSize: 14,
-              fontWeight: "400",
-              textAlign: "center",
+              justifyContent: "center",
+              paddingLeft: 10,
             }}
           >
-            {item.location}
-          </Text>
-        </View>
+            <Entypo name="location-pin" size={20} color="black" />
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: "400",
+                textAlign: "center",
+              }}
+            >
+              {item.location}
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   };
@@ -395,6 +469,7 @@ function NetworkScanner() {
   return (
     <>
       {renderNotification()}
+      {}
 
       <View style={styles.container}>
         {isLoading ? (
