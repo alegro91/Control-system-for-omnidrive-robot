@@ -9,6 +9,7 @@ import QRScanner from "./src/components/QRScanner";
 import NetworkScanner from "./src/components/NetworkScanner";
 import { NavigationContainer } from "@react-navigation/native";
 import MainContainer from "./src/navigation/MainContainer";
+import { Modal } from "react-native";
 
 const Stack = createNativeStackNavigator();
 

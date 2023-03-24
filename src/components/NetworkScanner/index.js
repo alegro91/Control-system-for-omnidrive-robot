@@ -4,6 +4,7 @@ import {
   Text,
   StyleSheet,
   Button,
+  ErrorButton,
   ActivityIndicator,
   FlatList,
   TouchableOpacity,
@@ -323,11 +324,28 @@ function NetworkScanner() {
           }}
         >
           {hasErrors ? (
-            <MaterialIcons
-              name="warning"
-              size={24}
-              color={hasErrors ? "#F05555" : "#000"}
-            />
+            <>
+              <MaterialIcons
+                name="warning"
+                size={24}
+                color={hasErrors ? "#F05555" : "#000"}
+              />
+              <View style={{}}>
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "#FF0000",
+                    paddingHorizontal: 5,
+                    paddingVertical: 3,
+                    borderRadius: 6,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                  onPress={() => {}}
+                >
+                  <Text style={styles.connectButtonText}>View Error</Text>
+                </TouchableOpacity>
+              </View>
+            </>
           ) : (
             <FontAwesome
               name={batteryLevel(item.battery_capacity)}
