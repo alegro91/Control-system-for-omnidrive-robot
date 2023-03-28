@@ -24,19 +24,29 @@ import { MaterialIcons } from "@expo/vector-icons";
 import ErrorModal from "../ErrorModal";
 import ErrorNotification from "../ErrorNotification";
 
+/**
+ * NetworkScanner component that scans the network for robots and displays them in a list view,
+ * with their current status and location.
+ * @returns
+ */
 function NetworkScanner() {
   const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
 
+  /* Robot config */
   const ROBOT_IP = "192.168.100.95";
   const ROBOT_PORT = "7012";
   const ROBOT_COMMAND = "rpc/get_agv_data";
 
+  /* Robot data */
   const [robotData, setRobotData] = useState([]);
 
   /* Error modal */
   const [selectedError, setSelectedError] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
 
+  /*
+   * Fetch dummy robot data
+   */
   useEffect(() => {
     setRobotData([
       {
@@ -105,6 +115,9 @@ function NetworkScanner() {
   }, []); // Empty array as the second argument ensures that the effect only runs once on mount
 */
 
+  /*
+   * Fetch robots from the network and update the robotData state.
+   */
   const fetchData = () => {
     const requestOptions = {
       method: "POST",
@@ -127,10 +140,14 @@ function NetworkScanner() {
       });
   };
 
+  // Fetch robots from the network on mount
   useEffect(() => {
     fetchData();
   }, []);
 
+  /*
+   * Render the list of robots
+   */
   const renderItem = ({ item }) => {
     const batteryLevel = (battery_capacity) => {
       if (battery_capacity > 80) return "battery-full";
@@ -262,6 +279,9 @@ function NetworkScanner() {
     );
   };
 
+  /*
+   * Render UI
+   */
   return (
     <>
       <ErrorNotification robotData={robotData} />
