@@ -48,8 +48,15 @@ function NetworkScanner() {
         battery_capacity: 100,
         location: "A1",
         errors: [
-          { id: "1", error: "Error 1" },
-          { id: "2", error: "Error 2" },
+          { id: "1", errorMessage: "Error 1" },
+          { id: "2", errorMessage: "Error 2" },
+          { id: "3", errorMessage: "Error 3" },
+          { id: "4", errorMessage: "Error 4" },
+          { id: "5", errorMessage: "Error 5" },
+          { id: "6", errorMessage: "Error 6" },
+          { id: "7", errorMessage: "Error 7" },
+          { id: "8", errorMessage: "Error 8" },
+          { id: "9", errorMessage: "Error 9" },
         ],
       },
       {
@@ -286,7 +293,7 @@ function NetworkScanner() {
 
   const renderModal = () => (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent={true}
       visible={modalVisible}
       onRequestClose={() => {
@@ -301,7 +308,9 @@ function NetworkScanner() {
               {selectedError.map((error) => (
                 <View key={error.id} style={modalStyle.errorItem}>
                   <Text style={modalStyle.errorId}>ID: {error.id}</Text>
-                  <Text style={modalStyle.errorMessage}>{error.message}</Text>
+                  <Text style={modalStyle.errorMessage}>
+                    {error.errorMessage}
+                  </Text>
                 </View>
               ))}
             </ScrollView>
@@ -334,7 +343,7 @@ function NetworkScanner() {
     modalView: {
       width: width * 0.8,
       backgroundColor: "white",
-      borderRadius: 20,
+      borderRadius: 12,
       padding: 35,
       alignItems: "center",
       shadowColor: "#000",
@@ -374,20 +383,18 @@ function NetworkScanner() {
       fontSize: 16,
     },
     openButton: {
-      borderRadius: 20,
-      padding: 10,
+      borderRadius: 6,
+      paddingHorizontal: 5,
+      paddingVertical: 3,
       elevation: 2,
     },
     textStyle: {
       color: "white",
       fontWeight: "bold",
       textAlign: "center",
+      fontSize: 16,
     },
   });
-
-  useEffect(() => {
-    console.log(selectedError);
-  }, [selectedError]);
 
   const renderItem = ({ item }) => {
     const batteryLevel = (battery_capacity) => {
@@ -419,10 +426,6 @@ function NetworkScanner() {
             shadowOpacity: 0.25,
             shadowRadius: 3.84,
             elevation: 5,
-          }}
-          onPress={() => {
-            setSelectedError(item.errors);
-            setModalVisible(true);
           }}
         >
           <FontAwesome5
@@ -476,7 +479,10 @@ function NetworkScanner() {
                   alignItems: "center",
                   width: 80,
                 }}
-                onPress={() => {}}
+                onPress={() => {
+                  setSelectedError(item.errors);
+                  setModalVisible(true);
+                }}
               >
                 <Text style={styles.connectButtonText}>View Error</Text>
               </TouchableOpacity>
