@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, TouchableOpacity, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
-
+import RobotControl from "../RobotControl";
 /**
  *
  * @param {navigation} navigation - navigation object from react-navigation to navigate to other screens
@@ -9,8 +9,8 @@ import { BarCodeScanner } from "expo-barcode-scanner";
  */
 const QRScanner = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
-  const [scanned, setScanned] = useState(false);
-
+  const [scanned, setScanned] = useState(true); // state to keep track of whether a QR code has been scanned
+  const [robotIp, setRobotIp] = useState("localhost:5656/robot_1"); // state to keep track of the IP address of the robot
   /**
    * This function will request permission to use the camera.
    * It will set the hasPermission state to true if permission is granted.
@@ -36,7 +36,15 @@ const QRScanner = ({ navigation }) => {
    */
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
-    alert(`Bar code with type ${type} and data ${data} has been scanned!`);
+
+    const regex = /^localhost:5656\/(.*)$/; // regex to extract the IP address from the QR code
+    const match = data.match(regex);
+
+    if (match && match[1]) {
+      setRobotIp(match[1]);
+    } else {
+      alert("Invalid QR code", "The scanned QR code is not valid.");
+    }
   };
 
   if (hasPermission === null) {
@@ -44,6 +52,18 @@ const QRScanner = ({ navigation }) => {
   }
   if (hasPermission === false) {
     return <Text>No access to camera</Text>;
+  }
+
+  if (robotIp && scanned) {
+    return (
+      <RobotControl
+        robotIp={robotIp}
+        onDisconnect={() => {
+          setRobotIp("");
+          setScanned(false);
+        }}
+      ></RobotControl>
+    );
   }
 
   /**
@@ -85,6 +105,9 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 0,
     left: 0,
+  },
+  button: {
+    margin: 20,
   },
 });
 
