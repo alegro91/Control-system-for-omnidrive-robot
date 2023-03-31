@@ -1,0 +1,18 @@
+status meeting solwr 31.03.2023
+
+overview of our project and progress thus far
+rapport final date. needs clarification
+discussed our suggestions for connection technologies
+	bluetooth use signal strength to estimate distance
+	bluetooth use local map coordinates
+showed our app.
+discussed challenges:
+	lack of API access
+	robot moved to customer
+discussed expenses/economy:
+	bluetooth dongles
+	notifaction service subscription
+discussed cross platform functionality. IOS and Android OK, web is dodgy:
+solwr thinks qr-codes are problematic. security is lacking. bluetooth and qr-codes?
+next meeting in 2 weeks
+giortz testing date
