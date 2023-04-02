@@ -44,3 +44,6 @@ expo start --web #for Web
 
 https://docs.expo.dev/push-notifications/push-notifications-setup/#get-credentials-for-development-builds
 https://docs.expo.dev/development/create-development-builds/#on-a-device
+
+5. For the server to properly connect to the frontend, create a .env file in the server
+   folder. Add a PORT variable.
