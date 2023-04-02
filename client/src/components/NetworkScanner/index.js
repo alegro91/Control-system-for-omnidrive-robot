@@ -336,9 +336,15 @@ function NetworkScanner() {
         visible={isLoading}
       />
       <Notification
-        header={"Notification"}
-        message={"No robots found"}
-        visible={!isLoading && robotData.length === 0}
+        header={"No robots found"}
+        message={"Search again maybe?"}
+        visible={!isLoading && robotData.length === 0 && scanStatus === "idle"}
+        color={"#F05555"}
+      />
+      <Notification
+        header={"mDNS Search"}
+        message={"Searching for robots..."}
+        visible={scanStatus === "scanning"}
       />
       <ErrorModal
         selectedError={selectedError}
