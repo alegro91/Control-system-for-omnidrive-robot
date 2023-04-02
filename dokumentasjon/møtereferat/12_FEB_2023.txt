@@ -1,0 +1,6 @@
+Møte referat 16.02.2023
+
+Vi møttes kl 12 Torsdag 16. Alle var til stede.
+På gruppemøtet diskuterte vi hvilke tema vi skulle ta opp med SOLWR.
+Vi mangler fortsatt tilgang til Navitec API for å videreutvikle appen.
+Gruppen jobbet sammen og lagdee user interface ut i fra kravspek som SOLWR har gitt oss.
