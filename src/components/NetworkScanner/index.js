@@ -23,6 +23,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 import ErrorModal from "../ErrorModal";
 import ErrorNotification from "../ErrorNotification";
+import Notification from "../Notification";
 
 /**
  * NetworkScanner component that scans the network for robots and displays them in a list view,
@@ -30,7 +31,7 @@ import ErrorNotification from "../ErrorNotification";
  * @returns
  */
 function NetworkScanner() {
-  const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
+  const [isLoading, setIsLoading] = useState(true); // Set loading to true on component mount
 
   /* Robot config */
   const ROBOT_IP = "192.168.100.95";
@@ -47,6 +48,7 @@ function NetworkScanner() {
   /*
    * Fetch dummy robot data
    */
+  /*
   useEffect(() => {
     setRobotData([
       {
@@ -82,7 +84,7 @@ function NetworkScanner() {
       },
     ]);
   }, []);
-
+*/
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
@@ -285,6 +287,16 @@ function NetworkScanner() {
   return (
     <>
       <ErrorNotification robotData={robotData} />
+      <Notification
+        header={"Notification"}
+        message={"Searching for robots..."}
+        visible={isLoading}
+      />
+      <Notification
+        header={"Notification"}
+        message={"No robots found"}
+        visible={!isLoading && robotData.length === 0}
+      />
       <ErrorModal
         selectedError={selectedError}
         modalVisible={modalVisible}
@@ -305,7 +317,6 @@ function NetworkScanner() {
           />
         ) : (
           <View>
-            <Text>No robots found</Text>
             <Button title="Search Again" onPress={fetchData} />
           </View>
         )}
