@@ -1,14 +1,23 @@
 const express = require("express");
 const mdns = require("multicast-dns")();
 const http = require("http");
+const cors = require("cors");
 
 require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
+app.use(cors());
 
 // Add WebSocket support
-const io = require("socket.io")(server);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*", // Change this to the correct origin for the React app
+    methods: ["GET", "POST"],
+    allowedHeaders: ["my-custom-header"],
+    credentials: true,
+  },
+});
 app.use(express.static("public"));
 
 io.on("connection", (socket) => {
@@ -27,6 +36,11 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("stop-mdns-scan", () => {
+    console.log("Stopping mDNS scan...");
+    mdns.removeAllListeners("response");
+  });
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
@@ -39,8 +53,9 @@ mdns.on("response", (response) => {
 
   if (robotServices.length > 0) {
     io.emit("robot-discovered", robotServices);
+    io.emit("scan-complete");
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));

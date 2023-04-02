@@ -25,13 +25,22 @@ import ErrorModal from "../ErrorModal";
 import ErrorNotification from "../ErrorNotification";
 import Notification from "../Notification";
 
+import useRobots from "../../socket/useRobots";
+
 /**
  * NetworkScanner component that scans the network for robots and displays them in a list view,
  * with their current status and location.
  * @returns
  */
 function NetworkScanner() {
-  const [isLoading, setIsLoading] = useState(true); // Set loading to true on component mount
+  const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
+
+  /* Custom hook */
+  const { robots, startMdnsScan, stopMdnsScan, scanStatus } = useRobots();
+  const searchButtonTitle =
+    scanStatus === "scanning" ? "Stop mDNS Scan" : "Start mDNS Scan";
+  const searchButtonPress =
+    scanStatus === "scanning" ? stopMdnsScan : startMdnsScan;
 
   /* Robot config */
   const ROBOT_IP = "192.168.100.95";
@@ -120,8 +129,9 @@ function NetworkScanner() {
   /*
    * Fetch robots from the network and update the robotData state.
    */
-  /*
+
   const fetchData = () => {
+    /*
     const requestOptions = {
       method: "POST",
     };
@@ -141,13 +151,14 @@ function NetworkScanner() {
         setIsLoading(false);
         console.log("No robots found");
       });
+      */
   };
 
   // Fetch robots from the network on mount
   useEffect(() => {
     fetchData();
   }, []);
-*/
+
   /*
   useEffect(() => {
     const scanNetworkForRobots = async () => {
@@ -350,6 +361,22 @@ function NetworkScanner() {
         ) : (
           <View>
             <Button title="Search Again" onPress={fetchData} />
+            <View style={styles.containerMDNS}>
+              <Button
+                style={{ width: 200, height: 50, backgroundColor: "#1E90FF" }}
+                onPress={searchButtonPress}
+                title={searchButtonTitle}
+              />
+              <Text>Status: {scanStatus}</Text>
+              <Text style={styles.header}>Discovered Robots:</Text>
+              <FlatList
+                data={robots}
+                renderItem={({ item }) => (
+                  <Text style={styles.listItem}>{item.id}</Text>
+                )}
+                keyExtractor={(item, index) => index.toString()}
+              />
+            </View>
           </View>
         )}
       </View>
@@ -358,6 +385,24 @@ function NetworkScanner() {
 }
 
 const styles = StyleSheet.create({
+  containerMDNS: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#F5FCFF",
+    padding: 20,
+    marginTop: 20,
+  },
+  header: {
+    fontSize: 20,
+    textAlign: "center",
+    margin: 10,
+  },
+  listItem: {
+    fontSize: 18,
+    textAlign: "center",
+    padding: 10,
+  },
   container: {
     flex: 1,
     justifyContent: "center",
