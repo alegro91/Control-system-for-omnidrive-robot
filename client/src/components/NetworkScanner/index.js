@@ -360,8 +360,11 @@ function NetworkScanner() {
           />
         ) : (
           <View>
-            <Button title="Search Again" onPress={fetchData} />
             <View style={styles.containerMDNS}>
+              {/*
+              <Button title="Search Again" onPress={fetchData} />
+              */}
+
               <Button
                 style={{ width: 200, height: 50, backgroundColor: "#1E90FF" }}
                 onPress={searchButtonPress}
@@ -369,13 +372,15 @@ function NetworkScanner() {
               />
               <Text>Status: {scanStatus}</Text>
               <Text style={styles.header}>Discovered Robots:</Text>
-              <FlatList
-                data={robots}
-                renderItem={({ item }) => (
-                  <Text style={styles.listItem}>{item.id}</Text>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-              />
+              <View style={styles.flatListContainer}>
+                <FlatList
+                  data={robots}
+                  renderItem={({ item }) => (
+                    <Text style={styles.listItem}>{item.id}</Text>
+                  )}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
             </View>
           </View>
         )}
@@ -386,12 +391,14 @@ function NetworkScanner() {
 
 const styles = StyleSheet.create({
   containerMDNS: {
-    flex: 1,
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
     backgroundColor: "#F5FCFF",
     padding: 20,
     marginTop: 20,
+  },
+  flatListContainer: {
+    height: "50%", // Adjust this value based on your desired height
   },
   header: {
     fontSize: 20,
@@ -404,6 +411,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   container: {
+    display: "flex",
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
