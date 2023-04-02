@@ -120,6 +120,7 @@ function NetworkScanner() {
   /*
    * Fetch robots from the network and update the robotData state.
    */
+  /*
   const fetchData = () => {
     const requestOptions = {
       method: "POST",
@@ -146,6 +147,37 @@ function NetworkScanner() {
   useEffect(() => {
     fetchData();
   }, []);
+*/
+  /*
+  useEffect(() => {
+    const scanNetworkForRobots = async () => {
+      const ipRange = [];
+
+      // Generate IP addresses in the 192.168.x.x range
+      for (let i = 0; i < 256; i++) {
+        for (let j = 0; j < 256; j++) {
+          ipRange.push(`192.168.${i}.${j}`);
+        }
+      }
+
+      ipRange.forEach(async (ip) => {
+        try {
+          const response = await fetch(`http://${ip}:7012/rpc/get_agv_data`);
+          if (response.ok) {
+            const data = await response.json();
+            // You can add validation here to check if the response contains valid robot data
+            setRobots((prevRobots) => [...prevRobots, { ...data, ip }]);
+          }
+        } catch (error) {
+          console.error(`Error fetching robot data from ${ip}:`, error);
+        }
+      });
+      setIsLoading(false);
+    };
+
+    scanNetworkForRobots();
+  }, []);
+  */
 
   /*
    * Render the list of robots
