@@ -93,7 +93,7 @@ function NetworkScanner() {
       },
     ]);
   }, []);
-*/
+  */
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
@@ -359,6 +359,7 @@ function NetworkScanner() {
             data={robotData}
             renderItem={renderItem}
             keyExtractor={(item) => item.agv_id}
+            persistentScrollbar={true}
             style={{
               padding: 30,
               paddingTop: 150,
