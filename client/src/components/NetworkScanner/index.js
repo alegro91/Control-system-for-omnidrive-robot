@@ -387,6 +387,7 @@ function NetworkScanner() {
             data={robotData}
             renderItem={renderItem}
             keyExtractor={(item) => item.agv_id}
+            persistentScrollbar={true}
             style={{
               padding: 30,
               paddingTop: 150,
