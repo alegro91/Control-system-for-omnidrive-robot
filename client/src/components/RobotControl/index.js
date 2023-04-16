@@ -9,6 +9,14 @@ import {
 } from "react-native";
 
 import Joystick from "../Joystick";
+import { FontAwesome } from "@expo/vector-icons/FontAwesome";
+import { FontAwesome5 } from "@expo/vector-icons";
+
+/* Command strings to make the robot perform the specified commands. */
+const moveForwardCMDString = "";
+const moveBackwardCMDString = "";
+const turnRightCMDString = "";
+const turnLeftCMDString = "";
 
 const RobotControl = ({ robotIp, onDisconnect }) => {
   const [steeringType, setSteeringType] = useState("front");
@@ -44,6 +52,13 @@ const RobotControl = ({ robotIp, onDisconnect }) => {
           </TouchableOpacity>
         ))}
       </View>
+      {/* Temporary buttons for forward, backward, rotate controlle */}
+      <View style={styles.robotCommandContainer}>
+        <FontAwesome5.Button name="arrow-up" size={20} />
+        <FontAwesome5.Button name="arrow-down" size={20} />
+        <FontAwesome5.Button name="arrow-right" size={20} />
+        <FontAwesome5.Button name="arrow-left" size={20} />
+      </View>
       <View style={styles.buttonContainer}>
         <Button title="Drive to" onPress={() => setDriveMode("driveTo")} />
         <Button title="Disconnect" onPress={onDisconnect} />
@@ -73,6 +88,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    width: "100%",
+  },
+  robotCommandContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
