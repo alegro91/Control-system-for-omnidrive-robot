@@ -57,7 +57,7 @@ function NetworkScanner() {
   /*
    * Fetch dummy robot data
    */
-  /*
+
   useEffect(() => {
     setRobotData([
       {
@@ -91,9 +91,37 @@ function NetworkScanner() {
         location: "A3",
         errors: [],
       },
+      {
+        agv_id: "Robot 4",
+        state: "Charging",
+        battery_capacity: 0,
+        location: "A3",
+        errors: [],
+      },
+      {
+        agv_id: "Robot 5",
+        state: "Charging",
+        battery_capacity: 0,
+        location: "A3",
+        errors: [],
+      },
+      {
+        agv_id: "Robot 6",
+        state: "Charging",
+        battery_capacity: 0,
+        location: "A3",
+        errors: [],
+      },
+      {
+        agv_id: "Robot 7",
+        state: "Charging",
+        battery_capacity: 0,
+        location: "A3",
+        errors: [],
+      },
     ]);
   }, []);
-  */
+
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
