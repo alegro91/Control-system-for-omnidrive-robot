@@ -52,7 +52,7 @@ io.on("connection", (socket) => {
     setTimeout(() => {
       console.log("Scan complete : " + clientIp);
       mdns.removeAllListeners("response");
-      io.emit("scan-complete");
+      socket.emit("scan-complete");
     }, 5000);
   });
 
@@ -65,17 +65,17 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });
-});
 
-mdns.on("response", (response) => {
-  const robotServices = response.answers.filter(
-    (answer) => answer.name === "_my-robot-service._tcp.local"
-  );
+  mdns.on("response", (response) => {
+    const robotServices = response.answers.filter(
+      (answer) => answer.name === "_my-robot-service._tcp.local"
+    );
 
-  if (robotServices.length > 0) {
-    io.emit("robot-discovered", robotServices);
-    clearTimeout(scanTimeout);
-  }
+    if (robotServices.length > 0) {
+      socket.emit("robot-discovered", robotServices);
+      clearTimeout(scanTimeout);
+    }
+  });
 });
 
 const PORT = process.env.PORT || 3001;
