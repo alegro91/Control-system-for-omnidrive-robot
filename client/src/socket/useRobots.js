@@ -7,6 +7,7 @@ const useRobots = () => {
   const [robots, setRobots] = useState([]);
   const [socket, setSocket] = useState(null);
   const [scanStatus, setScanStatus] = useState("idle");
+  const [searching, setSearching] = useState(false);
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -53,6 +54,7 @@ const useRobots = () => {
   const startMdnsScan = () => {
     if (socket) {
       setScanStatus("scanning");
+      setSearching(true);
       socket.emit("start-mdns-scan");
     }
   };
@@ -60,11 +62,20 @@ const useRobots = () => {
   const stopMdnsScan = () => {
     if (socket) {
       socket.emit("stop-mdns-scan");
+      setSearching(false);
       setScanStatus("idle");
     }
   };
 
-  return { robots, startMdnsScan, stopMdnsScan, scanStatus };
+  useEffect(() => {
+    if (socket) {
+      socket.on("scan-complete", () => {
+        setSearching(false);
+      });
+    }
+  }, [socket]);
+
+  return { robots, startMdnsScan, stopMdnsScan, searching, scanStatus };
 };
 
 export default useRobots;

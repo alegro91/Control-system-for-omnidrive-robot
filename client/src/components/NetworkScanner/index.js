@@ -36,7 +36,9 @@ function NetworkScanner() {
   const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
 
   /* Custom hook */
-  const { robots, startMdnsScan, stopMdnsScan, scanStatus } = useRobots();
+  const { robots, startMdnsScan, stopMdnsScan, searching, scanStatus } =
+    useRobots();
+
   const searchButtonTitle =
     scanStatus === "scanning" ? "Stop mDNS Scan" : "Start mDNS Scan";
   const searchButtonPress =
@@ -57,7 +59,7 @@ function NetworkScanner() {
   /*
    * Fetch dummy robot data
    */
-
+  /*
   useEffect(() => {
     setRobotData([
       {
@@ -121,7 +123,7 @@ function NetworkScanner() {
       },
     ]);
   }, []);
-
+*/
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
@@ -366,13 +368,13 @@ function NetworkScanner() {
       <Notification
         header={"No robots found"}
         message={"Search again maybe?"}
-        visible={!isLoading && robotData.length === 0 && scanStatus === "idle"}
+        visible={!isLoading && robotData.length === 0 && !searching}
         color={"#F05555"}
       />
       <Notification
         header={"mDNS Search"}
         message={"Searching for robots..."}
-        visible={scanStatus === "scanning"}
+        visible={searching}
       />
       <ErrorModal
         selectedError={selectedError}
@@ -380,7 +382,7 @@ function NetworkScanner() {
         setModalVisible={setModalVisible}
       />
       <View style={styles.container}>
-        {isLoading ? (
+        {searching ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : robotData.length > 0 ? (
           <FlatList
@@ -402,10 +404,12 @@ function NetworkScanner() {
 
               <Button
                 style={{ width: 200, height: 50, backgroundColor: "#1E90FF" }}
-                onPress={searchButtonPress}
-                title={searchButtonTitle}
+                onPress={startMdnsScan}
+                title={"Search Again"}
               />
-              <Text>Status: {scanStatus}</Text>
+              <Text>
+                Status: {searching ? "Searching..." : "Not Searching"}
+              </Text>
               <Text style={styles.header}>Discovered Robots:</Text>
               <View style={styles.flatListContainer}>
                 <FlatList

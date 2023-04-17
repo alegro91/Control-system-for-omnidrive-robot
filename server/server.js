@@ -1,13 +1,11 @@
 const express = require("express");
 const mdns = require("multicast-dns")();
 const http = require("http");
-const cors = require("cors");
 
 require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
-app.use(cors());
 
 // Add WebSocket support
 const io = require("socket.io")(server, {
@@ -18,27 +16,44 @@ const io = require("socket.io")(server, {
     credentials: true,
   },
 });
-app.use(express.static("public"));
 
 io.on("connection", (socket) => {
   console.log("Client connected");
 
+  let scanTimeout = null;
+
   // Client requests to start mDNS scan
   socket.on("start-mdns-scan", () => {
+    console.log("Received start-mdns-scan event");
     console.log("Starting mDNS scan...");
-    mdns.query({
-      questions: [
-        {
-          name: "_your-robot-service._tcp.local", // Replace with your service name (e.g. _http._tcp.local)
-          type: "PTR", // PTR is the type for mDNS service discovery
-        },
-      ],
-    });
+
+    try {
+      mdns.query({
+        questions: [
+          {
+            name: "_my-robot-service._tcp.local",
+            type: "PTR",
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Error in mdns.query():", error);
+    }
+
+    console.log("Scan started");
+
+    // Set a timer for 5 seconds
+    setTimeout(() => {
+      console.log("Scan complete");
+      mdns.removeAllListeners("response");
+      io.emit("scan-complete");
+    }, 5000);
   });
 
   socket.on("stop-mdns-scan", () => {
     console.log("Stopping mDNS scan...");
     mdns.removeAllListeners("response");
+    clearTimeout(scanTimeout);
   });
 
   socket.on("disconnect", () => {
@@ -48,12 +63,12 @@ io.on("connection", (socket) => {
 
 mdns.on("response", (response) => {
   const robotServices = response.answers.filter(
-    (answer) => answer.name === "_your-robot-service._tcp.local"
+    (answer) => answer.name === "_my-robot-service._tcp.local"
   );
 
   if (robotServices.length > 0) {
     io.emit("robot-discovered", robotServices);
-    io.emit("scan-complete");
+    clearTimeout(scanTimeout);
   }
 });
 
