@@ -10,6 +10,12 @@ const useRobots = () => {
   const [searching, setSearching] = useState(false);
 
   useEffect(() => {
+    if (socket) {
+      //startMdnsScan(); // uncomment this line to start scanning automatically
+    }
+  }, [socket]);
+
+  useEffect(() => {
     if (Platform.OS === "web") {
       const newSocket = io("http://localhost:3000");
       setSocket(newSocket);

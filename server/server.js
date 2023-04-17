@@ -7,6 +7,14 @@ require("dotenv").config();
 const app = express();
 const server = http.createServer(app);
 
+const getClientIp = (socket) => {
+  const ipAddress = socket.handshake.address;
+  if (ipAddress.substr(0, 7) === "::ffff:") {
+    return ipAddress.substr(7);
+  }
+  return ipAddress;
+};
+
 // Add WebSocket support
 const io = require("socket.io")(server, {
   cors: {
@@ -18,7 +26,8 @@ const io = require("socket.io")(server, {
 });
 
 io.on("connection", (socket) => {
-  console.log("Client connected");
+  const clientIp = getClientIp(socket);
+  console.log("Client connected : " + clientIp);
 
   let scanTimeout = null;
 

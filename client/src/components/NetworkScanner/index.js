@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Button,
   ErrorButton,
   ActivityIndicator,
   FlatList,
@@ -20,6 +19,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Button, Icon } from "react-native-elements";
 
 import ErrorModal from "../ErrorModal";
 import ErrorNotification from "../ErrorNotification";
@@ -397,30 +397,17 @@ function NetworkScanner() {
           />
         ) : (
           <View>
-            <View style={styles.containerMDNS}>
-              {/*
-              <Button title="Search Again" onPress={fetchData} />
-              */}
-
-              <Button
-                style={{ width: 200, height: 50, backgroundColor: "#1E90FF" }}
-                onPress={startMdnsScan}
-                title={"Search Again"}
-              />
-              <Text>
-                Status: {searching ? "Searching..." : "Not Searching"}
-              </Text>
-              <Text style={styles.header}>Discovered Robots:</Text>
-              <View style={styles.flatListContainer}>
-                <FlatList
-                  data={robots}
-                  renderItem={({ item }) => (
-                    <Text style={styles.listItem}>{item.id}</Text>
-                  )}
-                  keyExtractor={(item, index) => index.toString()}
-                />
-              </View>
-            </View>
+            <Button
+              icon={<Icon name="refresh" size={24} color="white" />}
+              buttonStyle={{
+                backgroundColor: "#1E90FF",
+                width: 200,
+                height: 50,
+                justifyContent: "center",
+              }}
+              onPress={startMdnsScan}
+              title="Search Again"
+            />
           </View>
         )}
       </View>
