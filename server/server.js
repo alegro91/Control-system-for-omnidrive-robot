@@ -34,7 +34,7 @@ io.on("connection", (socket) => {
   // Client requests to start mDNS scan
   socket.on("start-mdns-scan", () => {
     console.log("Received start-mdns-scan event");
-    console.log("Starting mDNS scan...");
+    console.log("Starting mDNS scan : " + clientIp);
 
     try {
       mdns.query({
@@ -48,12 +48,9 @@ io.on("connection", (socket) => {
     } catch (error) {
       console.error("Error in mdns.query():", error);
     }
-
-    console.log("Scan started");
-
     // Set a timer for 5 seconds
     setTimeout(() => {
-      console.log("Scan complete");
+      console.log("Scan complete : " + clientIp);
       mdns.removeAllListeners("response");
       io.emit("scan-complete");
     }, 5000);
