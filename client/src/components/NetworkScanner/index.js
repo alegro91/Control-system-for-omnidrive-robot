@@ -14,12 +14,20 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button, Icon } from "react-native-elements";
+import {
+  storeData,
+  getData,
+  removeData,
+  clearData,
+  getAllKeys,
+} from "../../utils/CacheStorage";
 
 import ErrorModal from "../ErrorModal";
 import ErrorNotification from "../ErrorNotification";
@@ -33,6 +41,8 @@ import useRobots from "../../socket/useRobots";
  * @returns
  */
 function NetworkScanner() {
+  const navigation = useNavigation();
+
   const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
 
   /* Custom hook */
@@ -59,7 +69,7 @@ function NetworkScanner() {
   /*
    * Fetch dummy robot data
    */
-  /*
+
   useEffect(() => {
     setRobotData([
       {
@@ -123,7 +133,7 @@ function NetworkScanner() {
       },
     ]);
   }, []);
-*/
+
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
@@ -219,6 +229,21 @@ function NetworkScanner() {
     scanNetworkForRobots();
   }, []);
   */
+
+  const handleRobotConnect = (robot) => {
+    console.log("Connecting to robot:", robot);
+    console.log("Robot IP:", "192.168.1.127");
+
+    storeData("robotIP", "192.168.1.127");
+
+    navigation.navigate("RobotControl", {
+      robot,
+      robotIP: "192.168.1.127",
+      onDisconnect: () => {
+        navigation.navigate("NetworkScanner");
+      },
+    });
+  };
 
   /*
    * Render the list of robots
@@ -324,7 +349,9 @@ function NetworkScanner() {
                   alignItems: "center",
                   width: 80,
                 }}
-                onPress={() => {}}
+                onPress={() => {
+                  handleRobotConnect(item);
+                }}
               >
                 <Text style={styles.connectButtonText}>Connect</Text>
               </TouchableOpacity>

@@ -9,6 +9,8 @@ import NetworkScanner from "../../components/NetworkScanner";
 import AlertsScreen from "../screens/AlertsScreen.js";
 import MapScreen from "../screens/MapScreen.js";
 import QRScanner from "../../components/QRScanner/index.js";
+import RobotControlScreen from "../../screens/RobotControlScreen";
+import RobotControl from "../../components/RobotControl";
 
 const Tab = createBottomTabNavigator();
 
@@ -30,6 +32,10 @@ function MainContainer() {
               iconName = focused ? "map" : "map-outline";
             } else if (route.name === "QRScanner") {
               iconName = focused ? "ios-qr-code" : "ios-qr-code-outline";
+            } else if (route.name === "RobotControl") {
+              iconName = focused
+                ? "game-controller-outline"
+                : "game-controller-outline";
             }
 
             // You can return any component that you like here!
@@ -64,6 +70,11 @@ function MainContainer() {
           name="QRScanner"
           component={QRScanner}
           options={{ title: "QR Scanner", headerShown: false }}
+        />
+        <Tab.Screen
+          name="RobotControl"
+          component={RobotControlScreen}
+          options={{ title: "Robot Control", headerShown: false }}
         />
       </Tab.Navigator>
     </NavigationContainer>
