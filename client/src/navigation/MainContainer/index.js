@@ -1,7 +1,9 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createDrawerNavigator } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import { Platform } from "react-native";
 
 // Screens
 
@@ -13,10 +15,32 @@ import RobotControlScreen from "../../screens/RobotControlScreen";
 import RobotControl from "../../components/RobotControl";
 
 const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
+const isMobile = Platform.OS === "web" ? false : true;
 
 function MainContainer() {
   return (
     <NavigationContainer>
+      {isMobile && (
+        <Drawer.Navigator
+          initialRouteName="Home"
+          drawerContentOptions={{
+            activeTintColor: "#e91e63",
+            itemStyle: { marginVertical: 5 },
+          }}
+        >
+          <Drawer.Screen
+            name="Home"
+            component={NetworkScanner}
+            options={{ drawerLabel: "Home" }}
+          />
+          <Drawer.Screen
+            name="Notifications"
+            component={AlertsScreen}
+            options={{ drawerLabel: "Notifications" }}
+          />
+        </Drawer.Navigator>
+      )}
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -25,7 +49,7 @@ function MainContainer() {
             let customSize = focused ? 25 : 25; // Change size values as needed
 
             if (routeName === "NetworkScanner") {
-              iconName = focused ? "list-sharp" : "list-outline";
+              iconName = focused ? "ios-list" : "ios-list-outline";
             } else if (route.name === "Alerts") {
               iconName = focused ? "notifications" : "notifications-outline";
             } else if (route.name === "Map") {
@@ -41,6 +65,8 @@ function MainContainer() {
             // You can return any component that you like here!
             return <Ionicons name={iconName} size={customSize} color={color} />;
           },
+          tabBarActiveTintColor: "tomato",
+          tabBarInactiveTintColor: "gray",
         })}
         tabBarOptions={{
           activeTintColor: "blue",
@@ -59,18 +85,21 @@ function MainContainer() {
         <Tab.Screen
           name="Alerts"
           component={AlertsScreen}
-          options={{ title: "Alerts", headerShown: false }}
+          options={{ title: "Alerts", headerShown: false, tabBarBadge: 3 }}
         />
         <Tab.Screen
           name="Map"
           component={MapScreen}
           options={{ title: "Map", headerShown: false }}
         />
+        {/*
         <Tab.Screen
           name="QRScanner"
           component={QRScanner}
           options={{ title: "QR Scanner", headerShown: false }}
         />
+        */}
+
         <Tab.Screen
           name="RobotControl"
           component={RobotControlScreen}
