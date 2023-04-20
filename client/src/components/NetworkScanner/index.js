@@ -231,10 +231,10 @@ function NetworkScanner() {
   */
 
   const handleRobotConnect = (robot) => {
-    console.log("Connecting to robot:", robot);
-    console.log("Robot IP:", "192.168.1.127");
+    //console.log("Connecting to robot:", robot);
+    //console.log("Robot IP:", "192.168.1.127");
 
-    storeData("robotIP", "192.168.1.127");
+    //storeData("robotIP", "192.168.1.127");
 
     navigation.navigate("RobotControl", {
       robot,

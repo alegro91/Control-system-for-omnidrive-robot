@@ -28,9 +28,14 @@ const turnRightCMDString = "";
 const turnLeftCMDString = "";
 
 const RobotControl = ({ route }) => {
-  const { robot, robotIP: initialRobotIP, onDisconnect } = route.params;
-  const [robotIP, setRobotIP] = useState(initialRobotIP);
+  const robot = route?.params?.robot || null;
+  const robotIP = route?.params?.robotIP || null;
+  const onDisconnect = route?.params?.onDisconnect || (() => {});
 
+  const [connected, setConnected] = useState(robotIP !== null);
+  const [robotAddress, setRobotAddress] = useState("");
+
+  /*
   useEffect(() => {
     const getRobotIP = async () => {
       const ip = await getData("robotIP");
@@ -40,12 +45,12 @@ const RobotControl = ({ route }) => {
     };
     getRobotIP();
   }, []);
-
+  */
   useEffect(() => {
+    setRobotAddress(robotIP);
     console.log("RobotControl useEffect");
     console.log("robotIP: " + robotIP);
-    console.log("initialRobotIP: " + initialRobotIP);
-    setRobotIP(initialRobotIP);
+    console.log("initialRobotIP: " + robotAddress);
   }); // Have to find a way to make this only run once
 
   const [steeringType, setSteeringType] = useState("front");
@@ -70,17 +75,18 @@ const RobotControl = ({ route }) => {
 
   const handleActualDisconnect = () => {
     console.log("Disconnecting from robot");
-    setRobotIP(null);
+    setRobotAddress(null);
     setDisconnectModalVisible(false);
     onDisconnect();
+    setConnected(false);
   };
 
   return (
     <>
-      {getData("robotIP") ? (
+      {robotAddress ? (
         <>
           <View style={styles.robotControlContainer}>
-            <Text style={styles.ipText}>Connected to: {robotIP}</Text>
+            <Text style={styles.ipText}>Connected to: {robotAddress}</Text>
             <Joystick
               robotIp={robotIP}
               steeringType={steeringType}

@@ -10,10 +10,17 @@ import {
   getAllKeys,
 } from "../../utils/CacheStorage";
 
+/**
+ * Screen that displays the robot control interface.
+ * @param {Object} route - The route object passed to the screen. Contains the robot object.
+ */
 const RobotControlScreen = ({ route }) => {
   const navigation = useNavigation();
-  const [robotIP, setRobotIP] = useState("");
+  const robot = route?.params?.robot || null;
+  const robotIP = route?.params?.robotIP || null;
+  const onDisconnect = route?.params?.onDisconnect || (() => {});
 
+  /*
   useEffect(() => {
     const fetchRobotIP = async () => {
       const ip = await getData("robotIP");
@@ -21,30 +28,18 @@ const RobotControlScreen = ({ route }) => {
     };
     fetchRobotIP();
   }, []);
-
-  if (route.params && route.params.robot) {
-    const { robot, onDisconnect } = route.params;
-    return (
-      <RobotControl
-        route={{
-          params: {
-            robot: robot,
-            robotIP: robotIP,
-            onDisconnect: onDisconnect,
-          },
-        }}
-      />
-    );
-  }
+    */
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Text style={{ fontSize: 24 }}>Connect to a Robot</Text>
-      <Button
-        title="Go to Main Screen"
-        onPress={() => navigation.navigate("NetworkScanner")}
-      />
-    </View>
+    <RobotControl
+      route={{
+        params: {
+          robot: robot,
+          robotIP: robotIP,
+          onDisconnect: onDisconnect,
+        },
+      }}
+    />
   );
 };
 
