@@ -13,6 +13,7 @@ import {
   Platform,
   Dimensions,
   ScrollView,
+  LayoutAnimation,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -43,11 +44,17 @@ import useRobots from "../../socket/useRobots";
  * with their current status and location.
  * @returns
  */
-function NetworkScanner() {
+const NetworkScanner = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
+
+  const [isExpanded, setIsExpanded] = useState(false);
+  const toggleBox = () => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    setIsExpanded(!isExpanded);
+  };
 
   /* Custom hook */
   const { robots, startMdnsScan, stopMdnsScan, searching, scanStatus } =
@@ -257,6 +264,8 @@ function NetworkScanner() {
    * Render the list of robots
    */
   const renderItem = ({ item }) => {
+    // For robot list animation
+
     const batteryLevel = (battery_capacity) => {
       if (battery_capacity > 80) return "battery-full";
       if (battery_capacity > 60) return "battery-three-quarters";
@@ -266,6 +275,14 @@ function NetworkScanner() {
     };
 
     const hasErrors = item.errors && item.errors.length > 0;
+
+    item.visited_places = [
+      "Warehouse A",
+      "Loading Dock",
+      "Storage Area 1",
+      "Storage Area 2",
+      "Assembly Line",
+    ];
 
     return (
       <View>
@@ -290,6 +307,7 @@ function NetworkScanner() {
             shadowRadius: 3.84,
             elevation: 5,
           }}
+          onPress={toggleBox}
         >
           <FontAwesome5
             name="robot"
@@ -388,6 +406,41 @@ function NetworkScanner() {
             </Text>
           </View>
         </TouchableOpacity>
+
+        {/* Additions */}
+        {isExpanded && (
+          <Animated.View
+            style={{
+              paddingTop: 15,
+              paddingBottom: 15,
+              backgroundColor: "#DBDBDB",
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: "700",
+                fontSize: 18,
+                paddingLeft: 20,
+                paddingBottom: 10,
+              }}
+            >
+              Places Visited:
+            </Text>
+            {item.visited_places.map((place, index) => (
+              <Text
+                key={index}
+                style={{
+                  paddingLeft: 20,
+                  paddingBottom: 5,
+                  fontSize: 16,
+                  fontWeight: "400",
+                }}
+              >
+                {place}
+              </Text>
+            ))}
+          </Animated.View>
+        )}
       </View>
     );
   };
@@ -451,7 +504,7 @@ function NetworkScanner() {
       </View>
     </>
   );
-}
+};
 
 const styles = StyleSheet.create({
   containerMDNS: {
