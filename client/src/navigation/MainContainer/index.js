@@ -21,7 +21,7 @@ const isMobile = Platform.OS === "web" ? false : true;
 function MainContainer() {
   return (
     <NavigationContainer>
-      {isMobile && (
+      {/*isMobile && (
         <Drawer.Navigator
           initialRouteName="Home"
           drawerContentOptions={{
@@ -40,7 +40,7 @@ function MainContainer() {
             options={{ drawerLabel: "Notifications" }}
           />
         </Drawer.Navigator>
-      )}
+        )*/}
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
