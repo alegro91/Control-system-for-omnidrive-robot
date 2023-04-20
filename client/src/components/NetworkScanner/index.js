@@ -29,6 +29,9 @@ import {
   getAllKeys,
 } from "../../utils/CacheStorage";
 
+import { useDispatch, useSelector } from "react-redux";
+import { updateRobotIP } from "../../redux/robotSlice";
+
 import ErrorModal from "../ErrorModal";
 import ErrorNotification from "../ErrorNotification";
 import Notification from "../Notification";
@@ -42,6 +45,7 @@ import useRobots from "../../socket/useRobots";
  */
 function NetworkScanner() {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
 
@@ -230,12 +234,16 @@ function NetworkScanner() {
   }, []);
   */
 
+  const handleRobotIPChange = (ip) => {
+    dispatch(updateRobotIP(ip));
+  };
+
   const handleRobotConnect = (robot) => {
     //console.log("Connecting to robot:", robot);
     //console.log("Robot IP:", "192.168.1.127");
 
     //storeData("robotIP", "192.168.1.127");
-
+    handleRobotIPChange("192.168.1.127");
     navigation.navigate("RobotControl", {
       robot,
       robotIP: "192.168.1.127",

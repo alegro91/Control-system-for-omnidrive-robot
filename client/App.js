@@ -10,6 +10,8 @@ import NetworkScanner from "./src/components/NetworkScanner";
 import { NavigationContainer } from "@react-navigation/native";
 import MainContainer from "./src/navigation/MainContainer";
 import { Modal } from "react-native";
+import { Provider } from "react-redux";
+import store from "./src/redux/store";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,7 +30,9 @@ export default function App() {
       </Stack.Navigator>
     </NavigationContainer>
     */
-    <MainContainer></MainContainer>
+    <Provider store={store}>
+      <MainContainer></MainContainer>
+    </Provider>
   );
 }
 

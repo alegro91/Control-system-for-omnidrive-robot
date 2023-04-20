@@ -21,6 +21,9 @@ import Joystick from "../Joystick";
 import { FontAwesome } from "@expo/vector-icons/FontAwesome";
 import { FontAwesome5 } from "@expo/vector-icons";
 
+import { useDispatch, useSelector } from "react-redux";
+import { updateRobotIP } from "../../redux/robotSlice";
+
 /* Command strings to make the robot perform the specified commands. */
 const moveForwardCMDString = "";
 const moveBackwardCMDString = "";
@@ -28,30 +31,9 @@ const turnRightCMDString = "";
 const turnLeftCMDString = "";
 
 const RobotControl = ({ route }) => {
-  const robot = route?.params?.robot || null;
-  const robotIP = route?.params?.robotIP || null;
   const onDisconnect = route?.params?.onDisconnect || (() => {});
-
-  const [connected, setConnected] = useState(robotIP !== null);
-  const [robotAddress, setRobotAddress] = useState("");
-
-  /*
-  useEffect(() => {
-    const getRobotIP = async () => {
-      const ip = await getData("robotIP");
-      if (ip !== null) {
-        setRobotIP(ip);
-      }
-    };
-    getRobotIP();
-  }, []);
-  */
-  useEffect(() => {
-    setRobotAddress(robotIP);
-    console.log("RobotControl useEffect");
-    console.log("robotIP: " + robotIP);
-    console.log("initialRobotIP: " + robotAddress);
-  }); // Have to find a way to make this only run once
+  const robotIP = useSelector((state) => state.robot.robotIP);
+  const dispatch = useDispatch();
 
   const [steeringType, setSteeringType] = useState("front");
   const [driveMode, setDriveMode] = useState("manual");
@@ -75,18 +57,17 @@ const RobotControl = ({ route }) => {
 
   const handleActualDisconnect = () => {
     console.log("Disconnecting from robot");
-    setRobotAddress(null);
+    dispatch(updateRobotIP(null));
     setDisconnectModalVisible(false);
     onDisconnect();
-    setConnected(false);
   };
 
   return (
     <>
-      {robotAddress ? (
+      {robotIP ? (
         <>
           <View style={styles.robotControlContainer}>
-            <Text style={styles.ipText}>Connected to: {robotAddress}</Text>
+            <Text style={styles.ipText}>Connected to: {robotIP}</Text>
             <Joystick
               robotIp={robotIP}
               steeringType={steeringType}
