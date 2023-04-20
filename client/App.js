@@ -11,7 +11,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import MainContainer from "./src/navigation/MainContainer";
 import { Modal } from "react-native";
 import { Provider } from "react-redux";
-import store from "./src/redux/store";
+import { store, persistor } from "./src/redux/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 const Stack = createNativeStackNavigator();
 
@@ -31,7 +32,9 @@ export default function App() {
     </NavigationContainer>
     */
     <Provider store={store}>
-      <MainContainer></MainContainer>
+      <PersistGate loading={null} persistor={persistor}>
+        <MainContainer></MainContainer>
+      </PersistGate>
     </Provider>
   );
 }

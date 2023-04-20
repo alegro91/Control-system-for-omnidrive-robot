@@ -9,8 +9,11 @@ export const robotSlice = createSlice({
     updateRobotIP: (state, action) => {
       state.robotIP = action.payload;
     },
+    disconnectRobot: (state) => {
+      state.robotIP = "";
+    },
   },
 });
 
-export const { updateRobotIP } = robotSlice.actions;
+export const { updateRobotIP, disconnectRobot } = robotSlice.actions;
 export default robotSlice.reducer;

@@ -1,10 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
-import robotReducer from "./robotSlice";
+import { persistStore } from "redux-persist";
+import persistedReducer from "./persistConfig";
 
 const store = configureStore({
-  reducer: {
-    robot: robotReducer,
-  },
+  reducer: persistedReducer,
 });
 
-export default store;
+const persistor = persistStore(store);
+
+export { store, persistor };

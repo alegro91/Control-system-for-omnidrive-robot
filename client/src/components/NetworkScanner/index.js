@@ -248,7 +248,7 @@ function NetworkScanner() {
       robot,
       robotIP: "192.168.1.127",
       onDisconnect: () => {
-        navigation.navigate("NetworkScanner");
+        //navigation.navigate("NetworkScanner");
       },
     });
   };

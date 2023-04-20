@@ -17,12 +17,15 @@ import {
 } from "../../utils/CacheStorage";
 import { useNavigation } from "@react-navigation/native";
 
+import Notification from "../Notification";
 import Joystick from "../Joystick";
 import { FontAwesome } from "@expo/vector-icons/FontAwesome";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 import { useDispatch, useSelector } from "react-redux";
-import { updateRobotIP } from "../../redux/robotSlice";
+import { store } from "../../redux/store";
+import { persistStore } from "redux-persist";
+import { disconnectRobot } from "../../redux/robotSlice";
 
 /* Command strings to make the robot perform the specified commands. */
 const moveForwardCMDString = "";
@@ -57,17 +60,34 @@ const RobotControl = ({ route }) => {
 
   const handleActualDisconnect = () => {
     console.log("Disconnecting from robot");
-    dispatch(updateRobotIP(null));
+
+    // Redux action to disconnect from robot
+    dispatch(disconnectRobot());
+    persistStore(store, null, () => {
+      console.log("Persisted store");
+    });
+
     setDisconnectModalVisible(false);
     onDisconnect();
   };
 
   return (
     <>
+      <Notification
+        header={"Connected to robot!"}
+        message={`You are now connected to ${robotIP}`}
+        visible={robotIP ? true : false}
+      />
+      <Notification
+        header={"Not connected to robot"}
+        message={"Please connect to a robot to control it."}
+        visible={robotIP ? false : true}
+        color={"#F05555"}
+      />
       {robotIP ? (
         <>
           <View style={styles.robotControlContainer}>
-            <Text style={styles.ipText}>Connected to: {robotIP}</Text>
+            {/*<Text style={styles.ipText}>Connected to: {robotIP}</Text>*/}
             <Joystick
               robotIp={robotIP}
               steeringType={steeringType}
@@ -126,13 +146,12 @@ const RobotControl = ({ route }) => {
         </>
       ) : (
         <View style={styles.robotControlContainer}>
-          <Text style={styles.ipText}>Not connected to a robot</Text>
-          <View style={styles.buttonContainer}>
-            <Button
-              title="Connect"
-              onPress={() => navigation.navigate("NetworkScanner")}
-            />
-          </View>
+          <TouchableOpacity
+            style={styles.connectButton}
+            onPress={() => navigation.navigate("NetworkScanner")}
+          >
+            <Text style={styles.connectButtonText}>Connect</Text>
+          </TouchableOpacity>
         </View>
       )}
     </>
@@ -144,9 +163,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-evenly",
     alignItems: "center",
+    marginTop: 60,
   },
   ipText: {
     fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  connectButton: {
+    backgroundColor: "#1E90FF",
+    paddingHorizontal: 30,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  connectButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
     fontWeight: "bold",
   },
   steeringTypeContainer: {
