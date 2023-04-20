@@ -34,8 +34,8 @@ const RobotControlScreen = ({ route }) => {
     <RobotControl
       route={{
         params: {
-          robot: robot,
-          robotIP: robotIP,
+          //robot: robot,
+          //robotIP: robotIP,
           onDisconnect: onDisconnect,
         },
       }}
