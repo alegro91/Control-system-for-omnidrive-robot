@@ -1,0 +1,16 @@
+status meeting 21.04.2023
+
+error messages
+- where to store previous error messages?
+- not a priority according to solwr
+
+proximity detection
+- SOLWR wants it prioritized above everything else
+
+finding location/coordinates of the robot
+- we request access to endpoint for robot
+
+issues
+- mDNS connection testing
+- desktop app development
+- proximity tech
