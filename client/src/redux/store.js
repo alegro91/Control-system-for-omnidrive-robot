@@ -4,10 +4,6 @@ import persistedReducer from "./persistConfig";
 
 const store = configureStore({
   reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
 });
 
 const persistor = persistStore(store);
