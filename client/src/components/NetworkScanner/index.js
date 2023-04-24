@@ -57,8 +57,14 @@ const NetworkScanner = () => {
   };
 
   /* Custom hook */
-  const { robots, startMdnsScan, stopMdnsScan, searching, scanStatus } =
-    useRobots();
+  const {
+    robots,
+    startMdnsScan,
+    stopMdnsScan,
+    searching,
+    scanStatus,
+    socketConnected,
+  } = useRobots();
 
   const searchButtonTitle =
     scanStatus === "scanning" ? "Stop mDNS Scan" : "Start mDNS Scan";
@@ -80,7 +86,7 @@ const NetworkScanner = () => {
   /*
    * Fetch dummy robot data
    */
-
+  /*
   useEffect(() => {
     setRobotData([
       {
@@ -144,7 +150,7 @@ const NetworkScanner = () => {
       },
     ]);
   }, []);
-
+*/
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
@@ -459,7 +465,15 @@ const NetworkScanner = () => {
       <Notification
         header={"No robots found"}
         message={"Search again maybe?"}
-        visible={!isLoading && robotData.length === 0 && !searching}
+        visible={
+          !isLoading && robotData.length === 0 && !searching && socketConnected
+        }
+        color={"#F05555"}
+      />
+      <Notification
+        header={"Backend Error"}
+        message={"Service is not running"}
+        visible={!socketConnected && !searching}
         color={"#F05555"}
       />
       <Notification
@@ -488,17 +502,30 @@ const NetworkScanner = () => {
           />
         ) : (
           <View>
-            <Button
-              icon={<Icon name="refresh" size={24} color="white" />}
-              buttonStyle={{
-                backgroundColor: "#1E90FF",
-                width: 200,
-                height: 50,
-                justifyContent: "center",
-              }}
-              onPress={startMdnsScan}
-              title="Search Again"
-            />
+            {socketConnected ? (
+              <Button
+                icon={<Icon name="refresh" size={24} color="white" />}
+                buttonStyle={{
+                  backgroundColor: "#1E90FF",
+                  width: 200,
+                  height: 50,
+                  justifyContent: "center",
+                }}
+                onPress={startMdnsScan}
+                title="Search Again"
+              />
+            ) : (
+              <Button
+                icon={<Icon name="error" size={24} color="white" />}
+                buttonStyle={{
+                  backgroundColor: "#F05555",
+                  width: 200,
+                  height: 50,
+                  justifyContent: "center",
+                }}
+                title=""
+              />
+            )}
           </View>
         )}
       </View>

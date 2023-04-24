@@ -8,6 +8,7 @@ const useRobots = () => {
   const [socket, setSocket] = useState(null);
   const [scanStatus, setScanStatus] = useState("idle");
   const [searching, setSearching] = useState(false);
+  const [socketConnected, setSocketConnected] = useState(false);
 
   useEffect(() => {
     if (socket) {
@@ -19,6 +20,16 @@ const useRobots = () => {
     if (Platform.OS === "web") {
       const newSocket = io("http://localhost:3000");
       setSocket(newSocket);
+
+      newSocket.on("connect", () => {
+        // Set socket connected state when socket connects
+        setSocketConnected(true);
+      });
+
+      newSocket.on("disconnect", () => {
+        // Set socket connected state when socket disconnects
+        setSocketConnected(false);
+      });
 
       newSocket.on("robot-discovered", (robotServices) => {
         setScanStatus("discovering");
@@ -40,6 +51,16 @@ const useRobots = () => {
         const serverAddress = `http://192.168.128.15:3000`; // replace ip address with ${ipAddress} to use the servers IP address
         const newSocket = io(serverAddress);
         setSocket(newSocket);
+
+        newSocket.on("connect", () => {
+          // Set socket connected state when socket connects
+          setSocketConnected(true);
+        });
+
+        newSocket.on("disconnect", () => {
+          // Set socket connected state when socket disconnects
+          setSocketConnected(false);
+        });
 
         newSocket.on("robot-discovered", (robotServices) => {
           setScanStatus("discovering");
@@ -81,7 +102,14 @@ const useRobots = () => {
     }
   }, [socket]);
 
-  return { robots, startMdnsScan, stopMdnsScan, searching, scanStatus };
+  return {
+    robots,
+    startMdnsScan,
+    stopMdnsScan,
+    searching,
+    scanStatus,
+    socketConnected,
+  };
 };
 
 export default useRobots;

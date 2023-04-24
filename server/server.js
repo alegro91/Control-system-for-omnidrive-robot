@@ -67,6 +67,7 @@ io.on("connection", (socket) => {
   });
 
   mdns.on("response", (response) => {
+    console.log("Received mDNS response");
     const robotServices = response.answers.filter(
       (answer) => answer.name === "_my-robot-service._tcp.local"
     );
