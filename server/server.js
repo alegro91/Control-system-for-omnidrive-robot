@@ -1,5 +1,8 @@
 const express = require("express");
-const mdns = require("multicast-dns")();
+const { spawn } = require("child_process");
+const mdns = require("mdns-js");
+const dns = require("dns");
+const ping = require("ping");
 const http = require("http");
 
 require("dotenv").config();
@@ -13,6 +16,24 @@ const getClientIp = (socket) => {
     return ipAddress.substr(7);
   }
   return ipAddress;
+};
+
+const resolveHostnameAndFilter = async (ip) => {
+  return new Promise((resolve, reject) => {
+    dns.reverse(ip, (err, hostnames) => {
+      if (err) {
+        console.error("Error resolving hostname:", err);
+        resolve(null);
+        return;
+      }
+      const hostname = hostnames[0];
+      if (hostname.startsWith("solwr")) {
+        resolve({ ip, name: hostname });
+      } else {
+        resolve(null);
+      }
+    });
+  });
 };
 
 // Add WebSocket support
@@ -31,52 +52,99 @@ io.on("connection", (socket) => {
 
   let scanTimeout = null;
 
-  // Client requests to start mDNS scan
-  socket.on("start-mdns-scan", () => {
-    console.log("Received start-mdns-scan event");
-    console.log("Starting mDNS scan : " + clientIp);
+  // Client requests to start LAN scan
+  socket.on("start-scan", async () => {
+    console.log("Received start-lan-scan event");
+    console.log("Starting LAN scan : " + clientIp);
 
-    try {
-      mdns.query({
-        questions: [
-          {
-            name: "solwr-Nuvo-7100VTC-Series.local",
-            type: "PTR",
-          },
-        ],
+    const hosts = [];
+
+    // Use the 'arp' command to find devices on the LAN
+    const arp = spawn("arp", ["-a"]);
+
+    arp.stdout.on("data", (data) => {
+      const output = data.toString().split("\n");
+
+      output.forEach((line) => {
+        if (line.includes("incomplete") || !line.includes("ether")) {
+          return;
+        }
+        const parts = line.split(" ");
+        const ip = parts[1].replace("(", "").replace(")", "");
+        const mac = parts[3].toUpperCase();
+        hosts.push({ ip, mac });
+        console.log("Found device:", ip, mac);
       });
-    } catch (error) {
-      console.error("Error in mdns.query():", error);
+    });
+
+    arp.on("close", () => {
+      console.log("ARP scan complete");
+    });
+
+    // Use the 'ping' module to check if devices are online
+    const subnet = clientIp.split(".").slice(0, 3).join(".");
+    const promises = [];
+
+    for (let i = 1; i < 255; i++) {
+      const ip = subnet + "." + i;
+      promises.push(
+        new Promise(async (resolve) => {
+          ping.sys.probe(ip, async (isAlive) => {
+            if (isAlive) {
+              console.log("Device online:", ip);
+              const host = await resolveHostnameAndFilter(ip);
+              if (host) {
+                hosts.push(host);
+              }
+            }
+            resolve();
+          });
+        })
+      );
     }
-    // Set a timer for 5 seconds
-    setTimeout(() => {
-      console.log("Scan complete : " + clientIp);
-      mdns.removeAllListeners("response");
-      socket.emit("scan-complete");
-    }, 5000);
+
+    // Use the 'dns' module to resolve hostnames
+    dns.reverse(clientIp, (err, hostnames) => {
+      if (err) {
+        console.error("Error resolving hostname:", err);
+        return;
+      }
+      console.log("Hostname:", hostnames[0]);
+      hosts.push({ name: hostnames[0] });
+    });
+
+    // Use the 'mdns' module to discover devices via mDNS
+    const browser = mdns.createBrowser(mdns.tcp("http"));
+
+    browser.on("ready", () => {
+      browser.discover();
+    });
+
+    browser.on("update", (data) => {
+      if (data.host === undefined) return;
+      if (hosts.some((host) => host.ip === data.addresses[0])) return;
+      hosts.push({ ip: data.addresses[0], name: data.host });
+      console.log("Found device via mDNS:", data.host, data.addresses[0]);
+    });
+
+    // Stop scan after 10 seconds
+    scanTimeout = setTimeout(async () => {
+      console.log("Stopping LAN scan...");
+
+      await Promise.all(promises);
+      socket.emit("scan-complete", hosts);
+      console.log(hosts);
+      browser.stop();
+    }, 10000);
   });
 
-  socket.on("stop-mdns-scan", () => {
-    console.log("Stopping mDNS scan...");
-    mdns.removeAllListeners("response");
+  socket.on("stop-scan", () => {
+    console.log("Stopping scan...");
     clearTimeout(scanTimeout);
   });
 
   socket.on("disconnect", () => {
     console.log("Client disconnected");
-  });
-
-  mdns.on("response", (response) => {
-    //console.log("Received mDNS response");
-    //console.log("response.answers:", response.answers);
-    const robotServices = response.answers.filter(
-      (answer) => answer.name === "solwr-Nuvo-7100VTC-Series.local"
-    );
-
-    if (robotServices.length > 0) {
-      socket.emit("robot-discovered", robotServices);
-      clearTimeout(scanTimeout);
-    }
   });
 });
 

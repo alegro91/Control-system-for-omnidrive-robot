@@ -82,13 +82,13 @@ const useRobots = () => {
     if (socket) {
       setScanStatus("scanning");
       setSearching(true);
-      socket.emit("start-mdns-scan");
+      socket.emit("start-scan");
     }
   };
 
   const stopMdnsScan = () => {
     if (socket) {
-      socket.emit("stop-mdns-scan");
+      socket.emit("stop-scan");
       setSearching(false);
       setScanStatus("idle");
     }

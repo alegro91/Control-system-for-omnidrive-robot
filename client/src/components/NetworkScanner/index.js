@@ -86,7 +86,7 @@ const NetworkScanner = () => {
   /*
    * Fetch dummy robot data
    */
-
+  /*
   useEffect(() => {
     setRobotData([
       {
@@ -150,7 +150,7 @@ const NetworkScanner = () => {
       },
     ]);
   }, []);
-
+*/
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
