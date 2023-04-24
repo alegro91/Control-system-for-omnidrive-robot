@@ -1,7 +1,6 @@
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { Platform } from "react-native";
 
@@ -15,7 +14,6 @@ import RobotControlScreen from "../../screens/RobotControlScreen";
 import RobotControl from "../../components/RobotControl";
 
 const Tab = createBottomTabNavigator();
-const Drawer = createDrawerNavigator();
 const isMobile = Platform.OS === "web" ? false : true;
 
 function MainContainer() {
