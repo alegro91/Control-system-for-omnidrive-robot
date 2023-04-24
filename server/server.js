@@ -40,7 +40,7 @@ io.on("connection", (socket) => {
       mdns.query({
         questions: [
           {
-            name: "_my-robot-service._tcp.local",
+            name: "solwr-Nuvo-7100VTC-Series.local",
             type: "PTR",
           },
         ],
@@ -67,9 +67,10 @@ io.on("connection", (socket) => {
   });
 
   mdns.on("response", (response) => {
-    console.log("Received mDNS response");
+    //console.log("Received mDNS response");
+    //console.log("response.answers:", response.answers);
     const robotServices = response.answers.filter(
-      (answer) => answer.name === "_my-robot-service._tcp.local"
+      (answer) => answer.name === "solwr-Nuvo-7100VTC-Series.local"
     );
 
     if (robotServices.length > 0) {

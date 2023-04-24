@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { PanResponder, StyleSheet } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Svg, Circle } from "react-native-svg";
 
 export default function Joystick({ robotIp, steeringType, driveMode }) {
@@ -39,9 +39,23 @@ export default function Joystick({ robotIp, steeringType, driveMode }) {
     };
   }
 
-  const handleMove = (gestureState) => {
-    let x = gestureState.dx;
-    let y = gestureState.dy;
+  const handleStart = (event) => {
+    event.preventDefault();
+  };
+
+  const handleTouchStart = (event) => {
+    event.preventDefault();
+    event.target.addEventListener("touchmove", handleMove, { passive: false });
+    event.target.addEventListener("touchend", handleEnd, { passive: false });
+    event.target.addEventListener("touchcancel", handleEnd, { passive: false });
+  };
+
+  const handleMove = (event) => {
+    const { pageX, pageY, target } = event.nativeEvent;
+    const { left, top } = target.getBoundingClientRect();
+
+    let x = pageX - left - 100;
+    let y = pageY - top - 100;
 
     // Calculate the distance from the center.
     const distance = Math.sqrt(x * x + y * y);
@@ -60,37 +74,37 @@ export default function Joystick({ robotIp, steeringType, driveMode }) {
     debouncedSendJoystickDataRef.current(x, y, normalizedDistance);
   };
 
-  const handleRelease = () => {
+  const handleEnd = () => {
     setPosition({ x: 0, y: 0 });
     sendJoystickData(0, 0, 0);
   };
 
-  const panResponder = PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
-    onPanResponderMove: (evt, gestureState) => handleMove(gestureState),
-    onPanResponderRelease: () => handleRelease(),
-  });
-
   return (
-    <Svg
-      height="200"
-      width="200"
-      style={styles.joystickContainer}
-      {...panResponder.panHandlers}
+    <View
+      onStartShouldSetResponder={handleStart}
+      onResponderGrant={handleStart}
+      onResponderMove={handleMove}
+      onResponderRelease={handleEnd}
+      onResponderTerminate={handleEnd}
+      onTouchStart={handleTouchStart}
+      style={styles.viewContainer}
     >
-      <Circle cx="100" cy="100" r="100" fill="rgba(200, 200, 200, 0.3)" />
-      <Circle
-        cx={100 + position.x}
-        cy={100 + position.y}
-        r="50"
-        fill="rgba(80, 80, 80, 0.7)"
-      />
-    </Svg>
+      <Svg height="200" width="200" style={styles.joystickContainer}>
+        <Circle cx="100" cy="100" r="100" fill="rgba(200, 200, 200, 0.3)" />
+        <Circle
+          cx={100 + position.x}
+          cy={100 + position.y}
+          r="50"
+          fill="rgba(80, 80, 80, 0.7)"
+        />
+      </Svg>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  joystickContainer: {
+  viewContainer: {
     alignSelf: "center",
   },
+  joystickContainer: {},
 });

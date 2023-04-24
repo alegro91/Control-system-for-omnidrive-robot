@@ -37,7 +37,6 @@ const RobotControl = ({ route }) => {
   const onDisconnect = route?.params?.onDisconnect || (() => {});
   const robotIP = useSelector((state) => state.robot.robotIP);
   const dispatch = useDispatch();
-
   const [steeringType, setSteeringType] = useState("front");
   const [driveMode, setDriveMode] = useState("manual");
   const [speed, setSpeed] = useState(0);
