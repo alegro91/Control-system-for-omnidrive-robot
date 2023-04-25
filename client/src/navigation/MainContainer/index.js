@@ -16,7 +16,70 @@ import RobotControl from "../../components/RobotControl";
 const Tab = createBottomTabNavigator();
 const isMobile = Platform.OS === "web" ? false : true;
 
+const robotsData = [
+  {
+    agv_id: "Robot 1",
+    state: "Idle",
+    battery_capacity: 100,
+    location: "A1",
+    errors: [
+      { id: "1", errorMessage: "Super dangerous error" },
+      { id: "2", errorMessage: "Error 2" },
+      { id: "3", errorMessage: "Error 3" },
+    ],
+  },
+  {
+    agv_id: "Robot 2",
+    state: "Moving",
+    battery_capacity: 20,
+    location: "A2",
+    errors: [
+      { id: "1", errorMessage: "Super dangerous error" },
+      { id: "2", errorMessage: "Error 2" },
+      { id: "3", errorMessage: "Error 3" },
+    ],
+  },
+  {
+    agv_id: "Robot 3",
+    state: "Charging",
+    battery_capacity: 0,
+    location: "A3",
+    errors: [],
+  },
+  {
+    agv_id: "Robot 4",
+    state: "Charging",
+    battery_capacity: 0,
+    location: "A3",
+    errors: [],
+  },
+  {
+    agv_id: "Robot 5",
+    state: "Charging",
+    battery_capacity: 0,
+    location: "A3",
+    errors: [],
+  },
+  {
+    agv_id: "Robot 6",
+    state: "Charging",
+    battery_capacity: 0,
+    location: "A3",
+    errors: [],
+  },
+  {
+    agv_id: "Robot 7",
+    state: "Charging",
+    battery_capacity: 0,
+    location: "A3",
+    errors: [],
+  },
+];
+
 function MainContainer() {
+  const totalErrors = robotsData.reduce((total, robot) => {
+    return total + robot.errors.length;
+  }, 0);
   return (
     <NavigationContainer>
       {/*isMobile && (
@@ -83,7 +146,17 @@ function MainContainer() {
         <Tab.Screen
           name="Alerts"
           component={AlertsScreen}
-          options={{ title: "Alerts", headerShown: false, tabBarBadge: 3 }}
+          options={{
+            title: "Alerts",
+            headerShown: false,
+            tabBarBadge: totalErrors,
+            tabBarBadgeStyle: {
+              backgroundColor: "#F05555",
+              color: "white",
+              fontSize: 12,
+              width: 20,
+            },
+          }}
         />
         <Tab.Screen
           name="Map"
