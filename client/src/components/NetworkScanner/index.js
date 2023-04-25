@@ -477,7 +477,7 @@ const NetworkScanner = () => {
         color={"#F05555"}
       />
       <Notification
-        header={"mDNS Search"}
+        header={"Scanning"}
         message={"Searching for robots..."}
         visible={searching}
       />
@@ -504,15 +504,23 @@ const NetworkScanner = () => {
           <View>
             {socketConnected ? (
               <Button
-                icon={<Icon name="refresh" size={24} color="white" />}
+                icon={<Icon name="wifi" size={24} color="black" />}
                 buttonStyle={{
-                  backgroundColor: "#1E90FF",
+                  backgroundColor: "#fff",
                   width: 200,
                   height: 50,
                   justifyContent: "center",
+                  shadowColor: "#000",
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 3.84,
+                }}
+                titleStyle={{
+                  color: "black",
+                  paddingLeft: 10,
                 }}
                 onPress={startMdnsScan}
-                title="Search Again"
+                title=""
               />
             ) : (
               <Button
@@ -559,6 +567,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#ddd",
   },
   robotContainer: {
     display: "flex",
