@@ -88,10 +88,17 @@ const NetworkScanner = () => {
   /* Error modal */
   const [selectedError, setSelectedError] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [timeout, setTimeout] = useState(false);
 
   /*
    * Fetch dummy robot data
    */
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTimeout(true);
+    }, 5000);
+  }, [socketConnected]);
 
   useEffect(() => {
     setRobotData([
@@ -465,7 +472,7 @@ const NetworkScanner = () => {
    */
   return (
     <>
-      {socketConnected ? (
+      {socketConnected || timeout ? (
         <>
           <ErrorNotification robotData={robotData} />
           <Notification
