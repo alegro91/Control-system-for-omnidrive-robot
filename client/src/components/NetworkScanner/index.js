@@ -316,8 +316,8 @@ const NetworkScanner = () => {
             borderRadius: 12,
             paddingLeft: 20,
             paddingRight: 20,
-            paddingTop: 25,
-            paddingBottom: 25,
+            paddingTop: 30,
+            paddingBottom: 30,
             marginTop: 40,
             width: "100%",
             borderWidth: hasErrors ? 2 : 0,
@@ -517,6 +517,9 @@ const NetworkScanner = () => {
                   {...props}
                 />
               )}
+              style={{
+                paddingTop: 15,
+              }}
               buttons={
                 <HStack spacing={2}>
                   <CButton

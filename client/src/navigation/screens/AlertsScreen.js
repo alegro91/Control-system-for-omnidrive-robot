@@ -8,9 +8,14 @@ import {
   ScrollView,
 } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { Button, Icon } from "react-native-elements";
+import { Icon, Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
-import { HStack, Banner } from "@react-native-material/core";
+import {
+  HStack,
+  Banner,
+  Avatar,
+  Button as CButton,
+} from "@react-native-material/core";
 import { useNavigation } from "@react-navigation/native";
 import Notification from "../../components/Notification";
 
@@ -230,10 +235,31 @@ const AlertsScreen = () => {
     */}
       <Banner
         text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        illustration={(props) => (
+          <Avatar
+            color="primary"
+            icon={(props) => <Icon name="wifi-off" {...props} />}
+            {...props}
+          />
+        )}
+        style={{
+          paddingTop: 15,
+        }}
         buttons={
           <HStack spacing={2}>
+            <CButton
+              key="fix-it"
+              variant="text"
+              title="View"
+              compact
+              onPress={() => {
+                navigation.navigate("NetworkScanner");
+              }}
+            />
+
             <Button
-              icon={<Icon name="wifi" size={24} color="black" />}
+              // Hidden to make the rescan positioned to the left
+              //icon={<Icon name="wifi" size={24} color="black" />}
               buttonStyle={{
                 backgroundColor: "#fff",
                 width: 200,
@@ -249,9 +275,7 @@ const AlertsScreen = () => {
                 paddingLeft: 10,
               }}
               title=""
-              onPress={() => {
-                navigation.navigate("NetworkScanner");
-              }}
+              onPress={() => {}}
             />
           </HStack>
         }

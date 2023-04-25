@@ -126,12 +126,12 @@ function MainContainer() {
             // You can return any component that you like here!
             return <Ionicons name={iconName} size={customSize} color={color} />;
           },
-          tabBarActiveTintColor: "tomato",
+          tabBarActiveTintColor: "#8a2be2",
           tabBarInactiveTintColor: "gray",
         })}
         tabBarOptions={{
           activeTintColor: "blue",
-          inactiveTintColor: "gray",
+          inactiveTintColor: "black",
           tabBarStyle: {
             paddingTop: 10, // Adjust padding as needed
             paddingBottom: 10, // Adjust padding as needed
@@ -151,7 +151,8 @@ function MainContainer() {
             headerShown: false,
             tabBarBadge: totalErrors,
             tabBarBadgeStyle: {
-              backgroundColor: "#F05555",
+              //backgroundColor: "#F05555",
+              backgroundColor: "#8a2be2",
               color: "white",
               fontSize: 12,
               width: 20,
