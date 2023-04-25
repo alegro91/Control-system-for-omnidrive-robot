@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-const Notification = ({ header, message, visible, color }) => {
+const Notification = ({ header, message, visible, color, opacity }) => {
   const notificationAnim = useRef(new Animated.Value(-100)).current;
 
   useEffect(() => {
@@ -48,6 +48,7 @@ const Notification = ({ header, message, visible, color }) => {
           width: "100%",
           backgroundColor: color || "#1E90FF",
           borderRadius: 12,
+          opacity: opacity,
         }}
       >
         <View style={styles.notificationContent}>

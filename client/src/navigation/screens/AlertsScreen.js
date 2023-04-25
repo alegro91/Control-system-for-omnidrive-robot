@@ -8,7 +8,11 @@ import {
   ScrollView,
 } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { Button, Icon } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
+import { HStack, Banner } from "@react-native-material/core";
+import { useNavigation } from "@react-navigation/native";
+import Notification from "../../components/Notification";
 
 import { useState } from "react";
 
@@ -101,6 +105,8 @@ const AlertsScreen = () => {
   const [expanded, setExpanded] = useState([]);
 
   const robotsWithError = robotsData.filter((robot) => robot.errors.length > 0);
+
+  const navigation = useNavigation();
 
   const renderItem = ({ item, index }) => {
     let iconColor = "#666";
@@ -214,13 +220,52 @@ const AlertsScreen = () => {
   };
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={robotsWithError} // change to robots for real data
-        renderItem={renderItem}
-        keyExtractor={(item) => item.agv_id}
+    <>
+      {/*
+      <Notification
+        header={"Notification"}
+        message={"Test"}
+        visible={robotsWithError.length > 0}
       />
-    </View>
+    */}
+      <Banner
+        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        buttons={
+          <HStack spacing={2}>
+            <Button
+              icon={<Icon name="wifi" size={24} color="black" />}
+              buttonStyle={{
+                backgroundColor: "#fff",
+                width: 200,
+                height: 50,
+                justifyContent: "center",
+                shadowColor: "#000",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.25,
+                shadowRadius: 3.84,
+              }}
+              titleStyle={{
+                color: "black",
+                paddingLeft: 10,
+              }}
+              title=""
+              onPress={() => {
+                navigation.navigate("NetworkScanner");
+              }}
+            />
+          </HStack>
+        }
+      />
+      <View style={styles.container}>
+        <View style={styles.robotContainer}>
+          <FlatList
+            data={robotsWithError} // change to robots for real data
+            renderItem={renderItem}
+            keyExtractor={(item) => item.agv_id}
+          />
+        </View>
+      </View>
+    </>
   );
 };
 
@@ -228,6 +273,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ddd",
+  },
+  robotContainer: {
+    backgroundColor: "#fff",
+    overflow: "hidden",
   },
   item: {
     flexDirection: "row",
@@ -301,7 +350,11 @@ const styles = StyleSheet.create({
   expandedContainer: {
     flex: 1,
     paddingLeft: 32,
-    maxHeight: 100,
+    maxHeight: 150,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    backgroundColor: "#ddd",
   },
   errorItem: {
     flexDirection: "row",
