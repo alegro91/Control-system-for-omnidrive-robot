@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React from "react";
+import { View, StyleSheet } from "react-native";
 
 const MapScreen = () => {
   return (
@@ -12,14 +12,14 @@ const MapScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#ccc",
   },
   square: {
     width: 200,
     height: 200,
-    backgroundColor: 'gray',
+    backgroundColor: "gray",
   },
 });
 

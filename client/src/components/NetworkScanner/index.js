@@ -23,6 +23,12 @@ import { Entypo } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Button, Icon } from "react-native-elements";
 import {
+  HStack,
+  Banner,
+  Avatar,
+  Button as CButton,
+} from "@react-native-material/core";
+import {
   storeData,
   getData,
   removeData,
@@ -82,11 +88,18 @@ const NetworkScanner = () => {
   /* Error modal */
   const [selectedError, setSelectedError] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [timeout, setTimeout] = useState(false);
 
   /*
    * Fetch dummy robot data
    */
-  /*
+
+  useEffect(() => {
+    setTimeout(() => {
+      setTimeout(true);
+    }, 5000);
+  }, [socketConnected]);
+
   useEffect(() => {
     setRobotData([
       {
@@ -95,6 +108,8 @@ const NetworkScanner = () => {
         battery_capacity: 100,
         location: "A1",
         errors: [
+          //{ id: "1", errorMessage: "Error 1" },
+          /*
           { id: "1", errorMessage: "Error 1" },
           { id: "2", errorMessage: "Error 2" },
           { id: "3", errorMessage: "Error 3" },
@@ -104,6 +119,7 @@ const NetworkScanner = () => {
           { id: "7", errorMessage: "Error 7" },
           { id: "8", errorMessage: "Error 8" },
           { id: "9", errorMessage: "Error 9" },
+          */
         ],
       },
       {
@@ -150,7 +166,7 @@ const NetworkScanner = () => {
       },
     ]);
   }, []);
-*/
+
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
@@ -300,12 +316,12 @@ const NetworkScanner = () => {
             borderRadius: 12,
             paddingLeft: 20,
             paddingRight: 20,
-            paddingTop: 25,
-            paddingBottom: 25,
+            paddingTop: 30,
+            paddingBottom: 30,
             marginTop: 40,
             width: "100%",
             borderWidth: hasErrors ? 2 : 0,
-            backgroundColor: "#DBDBDB",
+            backgroundColor: "#fff",
             borderColor: hasErrors ? "#F05555" : "#000",
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 2 },
@@ -456,79 +472,147 @@ const NetworkScanner = () => {
    */
   return (
     <>
-      <ErrorNotification robotData={robotData} />
-      <Notification
-        header={"Notification"}
-        message={"Searching for robots..."}
-        visible={isLoading}
-      />
-      <Notification
-        header={"No robots found"}
-        message={"Search again maybe?"}
-        visible={
-          !isLoading && robotData.length === 0 && !searching && socketConnected
-        }
-        color={"#F05555"}
-      />
-      <Notification
-        header={"Backend Error"}
-        message={"Service is not running"}
-        visible={!socketConnected && !searching}
-        color={"#F05555"}
-      />
-      <Notification
-        header={"mDNS Search"}
-        message={"Searching for robots..."}
-        visible={searching}
-      />
-      <ErrorModal
-        selectedError={selectedError}
-        modalVisible={modalVisible}
-        setModalVisible={setModalVisible}
-      />
-      <View style={styles.container}>
-        {searching ? (
-          <ActivityIndicator size="large" color="#0000ff" />
-        ) : robotData.length > 0 ? (
-          <FlatList
-            data={robotData}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.agv_id}
-            persistentScrollbar={true}
-            style={{
-              padding: 30,
-              paddingTop: 150,
-            }}
+      {socketConnected || timeout ? (
+        <>
+          <ErrorNotification robotData={robotData} />
+          <Notification
+            header={"Notification"}
+            message={"Searching for robots..."}
+            visible={isLoading}
           />
-        ) : (
-          <View>
-            {socketConnected ? (
-              <Button
-                icon={<Icon name="refresh" size={24} color="white" />}
-                buttonStyle={{
-                  backgroundColor: "#1E90FF",
-                  width: 200,
-                  height: 50,
-                  justifyContent: "center",
+          <Notification
+            header={"No robots found"}
+            message={"Search again maybe?"}
+            visible={
+              !isLoading &&
+              robotData.length === 0 &&
+              !searching &&
+              socketConnected
+            }
+            color={"#F05555"}
+          />
+          <Notification
+            header={"Backend Error"}
+            message={"Service is not running"}
+            visible={!socketConnected && !searching}
+            color={"#F05555"}
+          />
+          <Notification
+            header={"Scanning"}
+            message={"Searching for robots..."}
+            visible={searching}
+          />
+          <ErrorModal
+            selectedError={selectedError}
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+          />
+          {!searching && (
+            <Banner
+              text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+              illustration={(props) => (
+                <Avatar
+                  color="primary"
+                  icon={(props) => <Icon name="wifi-off" {...props} />}
+                  {...props}
+                />
+              )}
+              style={{
+                paddingTop: 15,
+              }}
+              buttons={
+                <HStack spacing={2}>
+                  <CButton
+                    key="fix-it"
+                    variant="text"
+                    title="Rescan"
+                    compact
+                    onPress={() => {
+                      startMdnsScan();
+                    }}
+                  />
+
+                  <Button
+                    // Hidden to make the rescan positioned to the left
+                    //icon={<Icon name="wifi" size={24} color="black" />}
+                    buttonStyle={{
+                      backgroundColor: "#fff",
+                      width: 200,
+                      height: 50,
+                      justifyContent: "center",
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+                    }}
+                    titleStyle={{
+                      color: "black",
+                      paddingLeft: 10,
+                    }}
+                    title=""
+                    onPress={() => {}}
+                  />
+                </HStack>
+              }
+            />
+          )}
+          <View style={styles.container}>
+            {searching ? (
+              <ActivityIndicator size="large" color="#0000ff" />
+            ) : robotData.length > 0 ? (
+              <FlatList
+                data={robotData}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.agv_id}
+                persistentScrollbar={true}
+                style={{
+                  padding: 30,
+                  paddingTop: 0,
                 }}
-                onPress={startMdnsScan}
-                title="Search Again"
               />
             ) : (
-              <Button
-                icon={<Icon name="error" size={24} color="white" />}
-                buttonStyle={{
-                  backgroundColor: "#F05555",
-                  width: 200,
-                  height: 50,
-                  justifyContent: "center",
-                }}
-                title=""
-              />
+              <View>
+                {socketConnected ? (
+                  <Button
+                    icon={<Icon name="wifi" size={24} color="black" />}
+                    buttonStyle={{
+                      backgroundColor: "#fff",
+                      width: 200,
+                      height: 50,
+                      justifyContent: "center",
+                      shadowColor: "#000",
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.25,
+                      shadowRadius: 3.84,
+                    }}
+                    titleStyle={{
+                      color: "black",
+                      paddingLeft: 10,
+                    }}
+                    onPress={startMdnsScan}
+                    title=""
+                  />
+                ) : (
+                  <Button
+                    icon={<Icon name="error" size={24} color="white" />}
+                    buttonStyle={{
+                      backgroundColor: "#F05555",
+                      width: 200,
+                      height: 50,
+                      justifyContent: "center",
+                    }}
+                    title=""
+                  />
+                )}
+              </View>
             )}
           </View>
-        )}
-      </View>
+        </>
+      ) : (
+        <View style={styles.container}>
+          <ActivityIndicator size="large" color="#0000ff" />
+        </View>
+      )}
     </>
   );
 };
@@ -559,6 +643,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#ddd",
   },
   robotContainer: {
     display: "flex",

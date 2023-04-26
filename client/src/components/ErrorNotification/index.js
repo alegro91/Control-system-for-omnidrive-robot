@@ -41,7 +41,7 @@ const sendPushNotification = async () => {
   //console.log(`Status & Response ID-> ${JSON.stringify(data)}`);
 };
 
-const ErrorNotification = ({ robotData }) => {
+const ErrorNotification = ({ robotData, color, opacity }) => {
   const [hasGlobalErrors, setHasGlobalErrors] = useState(false);
   const notificationAnim = useRef(new Animated.Value(-100)).current;
 
@@ -160,8 +160,9 @@ const ErrorNotification = ({ robotData }) => {
       <View
         style={{
           width: "100%",
-          backgroundColor: "#F05555",
+          backgroundColor: color || "#F05555",
           borderRadius: 12,
+          opacity: opacity || 1,
         }}
       >
         <View style={styles.notificationContent}>

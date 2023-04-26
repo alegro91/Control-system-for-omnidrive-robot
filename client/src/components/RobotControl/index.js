@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
-  Button,
   StyleSheet,
   TouchableOpacity,
   Alert,
@@ -15,6 +14,7 @@ import {
   clearData,
   getAllKeys,
 } from "../../utils/CacheStorage";
+import { Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 
 import Notification from "../Notification";
@@ -145,12 +145,27 @@ const RobotControl = ({ route }) => {
         </>
       ) : (
         <View style={styles.robotControlContainer}>
-          <TouchableOpacity
-            style={styles.connectButton}
-            onPress={() => navigation.navigate("NetworkScanner")}
-          >
-            <Text style={styles.connectButtonText}>Connect</Text>
-          </TouchableOpacity>
+          <Button
+            icon={<Icon name="wifi" size={24} color="black" />}
+            buttonStyle={{
+              backgroundColor: "#fff",
+              width: 200,
+              height: 50,
+              justifyContent: "center",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+            }}
+            titleStyle={{
+              color: "black",
+              paddingLeft: 10,
+            }}
+            onPress={() => {
+              navigation.navigate("NetworkScanner");
+            }}
+            title=""
+          />
         </View>
       )}
     </>
@@ -159,10 +174,11 @@ const RobotControl = ({ route }) => {
 
 const styles = StyleSheet.create({
   robotControlContainer: {
+    display: "flex",
     flex: 1,
-    justifyContent: "space-evenly",
+    justifyContent: "center",
     alignItems: "center",
-    marginTop: 60,
+    backgroundColor: "#ddd",
   },
   ipText: {
     fontSize: 18,
