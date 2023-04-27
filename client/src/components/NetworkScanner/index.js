@@ -44,6 +44,10 @@ import ErrorNotification from "../ErrorNotification";
 import Notification from "../Notification";
 
 import useRobots from "../../socket/useRobots";
+import ProximityDetectorBT, {
+  scanForDevice,
+  addNumbers,
+} from "../ProximityDetector";
 
 /**
  * NetworkScanner component that scans the network for robots and displays them in a list view,
@@ -89,6 +93,14 @@ const NetworkScanner = () => {
   const [selectedError, setSelectedError] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [timeout, setTimeout] = useState(false);
+
+  /* Proximity Detection */
+
+  const handleAddNumbers = () => {
+    const proximityDetector = new ProximityDetectorBT();
+    result = proximityDetector.addNumbers(2, 5);
+    console.log(result); // Output: 7
+  };
 
   /*
    * Fetch dummy robot data
@@ -308,6 +320,20 @@ const NetworkScanner = () => {
 
     return (
       <View>
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#1E90FF",
+            paddingHorizontal: 5,
+            paddingVertical: 3,
+            borderRadius: 6,
+            justifyContent: "center",
+            alignItems: "center",
+            width: 80,
+          }}
+          onPress={handleAddNumbers}
+        >
+          <Text>Testbutton</Text>
+        </TouchableOpacity>
         <TouchableOpacity
           style={{
             flexDirection: "row",

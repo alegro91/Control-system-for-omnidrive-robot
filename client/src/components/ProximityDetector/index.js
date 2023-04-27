@@ -1,5 +1,6 @@
 import { BleManager } from "react-native-ble-plx";
 
+//Class for handeling proximity detection of Bluetooth devices
 class ProximityDetectorBT {
   ProximityDetector = new BleManager();
 
@@ -24,9 +25,10 @@ class ProximityDetectorBT {
     });
   }
 
+  //Test function to ensure the import worked as intended without having to think about the rest of the logic for now.
   addNumbers(num1, num2) {
     return num1 + num2;
   }
 }
 
-export default BluetoothLE;
+export default ProximityDetectorBT;
