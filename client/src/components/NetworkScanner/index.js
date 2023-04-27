@@ -576,25 +576,81 @@ const NetworkScanner = () => {
             ) : (
               <View>
                 {socketConnected && !searching && (
-                  <Button
-                    icon={<Icon name="wifi" size={24} color="black" />}
-                    buttonStyle={{
-                      backgroundColor: "#fff",
-                      width: 200,
-                      height: 50,
-                      justifyContent: "center",
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 3.84,
-                    }}
-                    titleStyle={{
-                      color: "black",
-                      paddingLeft: 10,
-                    }}
-                    onPress={startMdnsScan}
-                    title=""
-                  />
+                  <>
+                    <Button
+                      icon={<Icon name="bluetooth" size={24} color="black" />}
+                      buttonStyle={{
+                        backgroundColor: "#fff",
+                        width: 200,
+                        height: 50,
+                        justifyContent: "center",
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                        marginBottom: 10,
+                      }}
+                      titleStyle={{
+                        color: "black",
+                        paddingLeft: 10,
+                      }}
+                      onPress={() => {
+                        const referenceRSSI = -59; // RSSI value measured at 1 meter
+                        const pathLossExponent = 4; // Varies between 2 and 4, depending on the environment
+
+                        navigator.bluetooth
+                          .requestDevice({
+                            filters: [
+                              {
+                                namePrefix: "Elias",
+                              },
+                            ],
+                            //optionalServices: ["your-service-uuid"],
+                          })
+                          .then((device) => {
+                            device.addEventListener(
+                              "advertisementreceived",
+                              (event) => {
+                                const currentRSSI = event.rssi;
+                                const distance =
+                                  10 **
+                                  ((referenceRSSI - currentRSSI) /
+                                    (10 * pathLossExponent));
+                                console.log(
+                                  `Device: ${device.name}, RSSI: ${currentRSSI}, Estimated distance: ${distance} meters`
+                                );
+                              }
+                            );
+
+                            return device.watchAdvertisements();
+                          })
+                          .catch((error) => {
+                            console.error("Error:", error);
+                          });
+                      }}
+                      title=""
+                    />
+                    <Button
+                      icon={<Icon name="wifi" size={24} color="black" />}
+                      buttonStyle={{
+                        backgroundColor: "#fff",
+                        width: 200,
+                        height: 50,
+                        justifyContent: "center",
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                        marginBottom: 10,
+                      }}
+                      titleStyle={{
+                        color: "black",
+                        paddingLeft: 10,
+                      }}
+                      onPress={startMdnsScan}
+                      title=""
+                    />
+                  </>
                 )}
               </View>
             )}
