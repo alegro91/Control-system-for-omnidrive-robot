@@ -9,6 +9,7 @@ const useRobots = () => {
   const [scanStatus, setScanStatus] = useState("idle");
   const [searching, setSearching] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     if (socket) {
@@ -24,7 +25,15 @@ const useRobots = () => {
       newSocket.on("connect", () => {
         // Set socket connected state when socket connects
         setSocketConnected(true);
+        setSearching(false);
+        setError(false);
       });
+
+      const connectionTimeout = setTimeout(() => {
+        if (!socketConnected) {
+          setError(true);
+        }
+      }, 10000); // 10 seconds timeout
 
       newSocket.on("disconnect", () => {
         // Set socket connected state when socket disconnects
@@ -32,17 +41,21 @@ const useRobots = () => {
       });
 
       newSocket.on("robot-discovered", (robotServices) => {
-        setScanStatus("discovering");
+        //setScanStatus("discovering");
         robotServices.forEach((service) => {
           setRobots((prevRobots) => [...prevRobots, { id: service.data }]);
         });
+        console.log("robot-discovered", robotServices);
       });
 
       newSocket.on("scan-complete", () => {
         setScanStatus("idle");
       });
 
-      return () => newSocket.close();
+      return () => {
+        newSocket.close();
+        clearTimeout(connectionTimeout); // Clear the timeout
+      };
     } else {
       NetInfo.fetch().then((state) => {
         const ipAddress = state.details.ipAddress;
@@ -55,7 +68,15 @@ const useRobots = () => {
         newSocket.on("connect", () => {
           // Set socket connected state when socket connects
           setSocketConnected(true);
+          setError(false);
+          setSearching(false);
         });
+
+        const connectionTimeout = setTimeout(() => {
+          if (!socketConnected) {
+            setError(true);
+          }
+        }, 10000); // 10 seconds timeout
 
         newSocket.on("disconnect", () => {
           // Set socket connected state when socket disconnects
@@ -73,7 +94,10 @@ const useRobots = () => {
           setScanStatus("idle");
         });
 
-        return () => newSocket.close();
+        return () => {
+          newSocket.close();
+          clearTimeout(connectionTimeout); // Clear the timeout
+        };
       });
     }
   }, []);
@@ -109,6 +133,7 @@ const useRobots = () => {
     searching,
     scanStatus,
     socketConnected,
+    error,
   };
 };
 

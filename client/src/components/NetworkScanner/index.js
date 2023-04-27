@@ -70,6 +70,7 @@ const NetworkScanner = () => {
     searching,
     scanStatus,
     socketConnected,
+    error,
   } = useRobots();
 
   const searchButtonTitle =
@@ -100,6 +101,7 @@ const NetworkScanner = () => {
     }, 5000);
   }, [socketConnected]);
 
+  /*
   useEffect(() => {
     setRobotData([
       {
@@ -108,8 +110,8 @@ const NetworkScanner = () => {
         battery_capacity: 100,
         location: "A1",
         errors: [
-          //{ id: "1", errorMessage: "Error 1" },
-          /*
+          { id: "1", errorMessage: "Error 1" },
+          
           { id: "1", errorMessage: "Error 1" },
           { id: "2", errorMessage: "Error 2" },
           { id: "3", errorMessage: "Error 3" },
@@ -119,7 +121,7 @@ const NetworkScanner = () => {
           { id: "7", errorMessage: "Error 7" },
           { id: "8", errorMessage: "Error 8" },
           { id: "9", errorMessage: "Error 9" },
-          */
+          
         ],
       },
       {
@@ -166,7 +168,7 @@ const NetworkScanner = () => {
       },
     ]);
   }, []);
-
+*/
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
@@ -480,7 +482,8 @@ const NetworkScanner = () => {
             message={"Searching for robots..."}
             visible={isLoading}
           />
-          <Notification
+
+          {/*<Notification
             header={"No robots found"}
             message={"Search again maybe?"}
             visible={
@@ -490,7 +493,7 @@ const NetworkScanner = () => {
               socketConnected
             }
             color={"#F05555"}
-          />
+          />*/}
           <Notification
             header={"Backend Error"}
             message={"Service is not running"}
@@ -500,7 +503,7 @@ const NetworkScanner = () => {
           <Notification
             header={"Scanning"}
             message={"Searching for robots..."}
-            visible={searching}
+            visible={searching && socketConnected}
           />
           <ErrorModal
             selectedError={selectedError}
@@ -559,11 +562,11 @@ const NetworkScanner = () => {
           <View style={styles.container}>
             {searching ? (
               <ActivityIndicator size="large" color="#0000ff" />
-            ) : robotData.length > 0 ? (
+            ) : robots.length > 0 ? (
               <FlatList
-                data={robotData}
+                data={robots}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.agv_id}
+                keyExtractor={(item) => item.mac}
                 persistentScrollbar={true}
                 style={{
                   padding: 30,
@@ -572,7 +575,7 @@ const NetworkScanner = () => {
               />
             ) : (
               <View>
-                {socketConnected ? (
+                {socketConnected && !searching && (
                   <Button
                     icon={<Icon name="wifi" size={24} color="black" />}
                     buttonStyle={{
@@ -590,17 +593,6 @@ const NetworkScanner = () => {
                       paddingLeft: 10,
                     }}
                     onPress={startMdnsScan}
-                    title=""
-                  />
-                ) : (
-                  <Button
-                    icon={<Icon name="error" size={24} color="white" />}
-                    buttonStyle={{
-                      backgroundColor: "#F05555",
-                      width: 200,
-                      height: 50,
-                      justifyContent: "center",
-                    }}
                     title=""
                   />
                 )}
