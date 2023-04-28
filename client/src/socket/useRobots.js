@@ -42,10 +42,11 @@ const useRobots = () => {
 
       newSocket.on("robot-discovered", (robotServices) => {
         //setScanStatus("discovering");
-        robotServices.forEach((service) => {
-          setRobots((prevRobots) => [...prevRobots, { id: service.data }]);
+        robotServices.forEach((robot) => {
+          console.log("robot", robot);
+          setRobots((prevRobots) => [...prevRobots, robot]);
         });
-        console.log("robot-discovered", robotServices);
+        console.log("robot-discovered", robots);
       });
 
       newSocket.on("scan-complete", () => {

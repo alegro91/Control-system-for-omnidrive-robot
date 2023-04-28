@@ -90,6 +90,7 @@ io.on("connection", (socket) => {
 
     arp.stdout.on("data", async (data) => {
       const output = data.toString().split("\n");
+      let robotCount = 1;
 
       const fetchPromises = output.map(async (line) => {
         if (line.includes("incomplete") || !line.includes("ether")) {
@@ -103,7 +104,8 @@ io.on("connection", (socket) => {
         const mac = parts[3].toUpperCase();
         if (mac.startsWith(MAC_PREFIX)) {
           /* Test purposes only */
-          //hosts.push({ ip, mac });
+          const id = robotCount++;
+          hosts.push({ id, ip, mac });
           console.log("Found device:", mac);
 
           // Fetch robot data

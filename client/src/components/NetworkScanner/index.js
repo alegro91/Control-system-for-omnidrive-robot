@@ -101,6 +101,10 @@ const NetworkScanner = () => {
     }, 5000);
   }, [socketConnected]);
 
+  useEffect(() => {
+    console.log("ROBOTS", robots);
+  }, [robots]);
+
   /*
   useEffect(() => {
     setRobotData([
@@ -272,12 +276,12 @@ const NetworkScanner = () => {
   const handleRobotConnect = (robot) => {
     //console.log("Connecting to robot:", robot);
     //console.log("Robot IP:", "192.168.1.127");
-
+    console.log("Robot:", robot);
     //storeData("robotIP", "192.168.1.127");
-    handleRobotIPChange("192.168.1.127");
+    handleRobotIPChange(robot.ip);
     navigation.navigate("RobotControl", {
       robot,
-      robotIP: "192.168.1.127",
+      robotIP: robot.ip,
       onDisconnect: () => {
         //navigation.navigate("NetworkScanner");
       },
@@ -543,10 +547,6 @@ const NetworkScanner = () => {
                       width: 200,
                       height: 50,
                       justifyContent: "center",
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 3.84,
                     }}
                     titleStyle={{
                       color: "black",
@@ -566,7 +566,7 @@ const NetworkScanner = () => {
               <FlatList
                 data={robots}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.mac}
+                keyExtractor={(item) => item.id}
                 persistentScrollbar={true}
                 style={{
                   padding: 30,
