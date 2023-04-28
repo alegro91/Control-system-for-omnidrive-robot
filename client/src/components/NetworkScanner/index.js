@@ -596,7 +596,7 @@ const NetworkScanner = () => {
                       }}
                       onPress={() => {
                         const referenceRSSI = -59; // RSSI value measured at 1 meter
-                        const pathLossExponent = 4; // Varies between 2 and 4, depending on the environment
+                        const pathLossExponent = 2.5; // Varies between 2 and 4, depending on the environment
 
                         navigator.bluetooth
                           .requestDevice({

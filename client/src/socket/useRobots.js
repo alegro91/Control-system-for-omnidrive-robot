@@ -104,6 +104,7 @@ const useRobots = () => {
 
   const startMdnsScan = () => {
     if (socket) {
+      setRobots([]);
       setScanStatus("scanning");
       setSearching(true);
       socket.emit("start-scan");

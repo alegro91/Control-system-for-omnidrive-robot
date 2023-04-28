@@ -14,7 +14,7 @@ const server = http.createServer(app);
 /* CONSTS */
 const ROBOT_PORT = "7012";
 const ROBOT_COMMAND = "rpc/get_agv_data";
-const MAC_PREFIX = "4C:32:75";
+const MAC_PREFIX = "F6:40:CF";
 
 const getClientIp = (socket) => {
   const ipAddress = socket.handshake.address;
@@ -96,10 +96,17 @@ io.on("connection", (socket) => {
           return;
         }
         const parts = line.split(" ");
+        if (parts.length < 4) {
+          return;
+        }
         const ip = parts[1].replace("(", "").replace(")", "");
         const mac = parts[3].toUpperCase();
-
         if (mac.startsWith(MAC_PREFIX)) {
+          /* Test purposes only */
+          //hosts.push({ ip, mac });
+          console.log("Found device:", mac);
+
+          // Fetch robot data
           const robotData = await fetchRobotData(ip);
           if (robotData) {
             hosts.push({ ip, mac, data: robotData });
@@ -180,7 +187,7 @@ io.on("connection", (socket) => {
       //await Promise.all(promises);
       socket.emit("scan-complete");
       socket.emit("robot-discovered", hosts);
-      console.log(hosts);
+      console.log("Robots discovered", hosts);
       //browser.stop();
     }, 10000);
   });
