@@ -28,6 +28,7 @@ import { store } from "../../redux/store";
 import { persistStore } from "redux-persist";
 import { disconnectRobot } from "../../redux/robotSlice";
 import JoystickNative from "../JoystickNative";
+import useBluetoothDistance from "../../hooks/useBluetoothDistance";
 
 /* Command strings to make the robot perform the specified commands. */
 const moveForwardCMDString = "";
@@ -43,6 +44,7 @@ const RobotControl = ({ route }) => {
   const [driveMode, setDriveMode] = useState("manual");
   const [speed, setSpeed] = useState(0);
 
+  const { distance, status, connect, disconnect } = useBluetoothDistance();
   const isWeb = Platform.OS === "web";
 
   const navigation = useNavigation();
@@ -92,11 +94,25 @@ const RobotControl = ({ route }) => {
           <View style={styles.robotControlContainer}>
             {/*<Text style={styles.ipText}>Connected to: {robotIP}</Text>*/}
             {isWeb ? (
-              <Joystick
-                robotIp={robotIP}
-                steeringType={steeringType}
-                driveMode={driveMode}
-              />
+              <View>
+                {distance !== null && status === "connected" ? (
+                  <Text
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    Approximate distance to device {distance.toFixed(2)} meters
+                  </Text>
+                ) : (
+                  <Button title="Connect" onPress={connect} />
+                )}
+                <Text> {status} </Text>
+                <Joystick
+                  robotIp={robotIP}
+                  steeringType={steeringType}
+                  driveMode={driveMode}
+                />
+              </View>
             ) : (
               <JoystickNative
                 robotIp={robotIP}
