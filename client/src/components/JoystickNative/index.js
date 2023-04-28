@@ -1,31 +1,69 @@
-// JoystickNative.js
-import React from "react";
-import { PanResponder, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View } from "react-native";
 import { Svg, Circle } from "react-native-svg";
-import useJoystick from "./useJoystick";
+import { PanGestureHandler } from "react-native-gesture-handler";
 
 export default function JoystickNative({ robotIp, steeringType, driveMode }) {
-  const { position, setPosition, debouncedSendJoystickDataRef } = useJoystick({
-    robotIp,
-    steeringType,
-    driveMode,
-  });
+  const [position, setPosition] = useState({ x: 0, y: 0 });
 
-  const handleMove = (gestureState) => {
-    // ...same as before
-  };
+  function sendJoystickData(x, y, normalizedDistance) {
+    // Your sendJoystickData implementation
+  }
 
-  const handleRelease = () => {
-    // ...same as before
-  };
+  function onGestureEvent(event) {
+    const { nativeEvent } = event;
+    let x = nativeEvent.translationX;
+    let y = nativeEvent.translationY;
 
-  const panResponder = PanResponder.create({
-    // ...same as before
-  });
+    const distance = Math.sqrt(x * x + y * y);
+    const maxDistance = 100;
 
-  return <></>;
+    if (distance > maxDistance) {
+      x = (x / distance) * maxDistance;
+      y = (y / distance) * maxDistance;
+    }
+
+    const normalizedDistance = distance / maxDistance;
+
+    setPosition({ x, y });
+    sendJoystickData(x, y, normalizedDistance);
+  }
+
+  function onHandlerStateChange(event) {
+    const { nativeEvent } = event;
+
+    if (
+      nativeEvent.oldState === 4 || // State.END
+      nativeEvent.oldState === 5 // State.CANCELLED
+    ) {
+      setPosition({ x: 0, y: 0 });
+      sendJoystickData(0, 0, 0);
+    }
+  }
+
+  return (
+    <View style={styles.viewContainer}>
+      <PanGestureHandler
+        onGestureEvent={onGestureEvent}
+        onHandlerStateChange={onHandlerStateChange}
+      >
+        <Svg height="400" width="400" style={styles.joystickContainer}>
+          <Circle cx="200" cy="200" r="100" fill="rgba(200, 200, 200, 0.3)" />
+          <Circle
+            cx={200 + position.x}
+            cy={200 + position.y}
+            r="50"
+            fill="rgba(80, 80, 80, 0.7)"
+          />
+        </Svg>
+      </PanGestureHandler>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
-  // ...same as before
+  viewContainer: {
+    alignSelf: "center",
+  },
+  joystickContainer: {},
 });

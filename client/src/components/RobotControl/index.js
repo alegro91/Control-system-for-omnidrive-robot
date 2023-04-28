@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
+  Platform,
 } from "react-native";
 import {
   storeData,
@@ -26,6 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { store } from "../../redux/store";
 import { persistStore } from "redux-persist";
 import { disconnectRobot } from "../../redux/robotSlice";
+import JoystickNative from "../JoystickNative";
 
 /* Command strings to make the robot perform the specified commands. */
 const moveForwardCMDString = "";
@@ -40,6 +42,8 @@ const RobotControl = ({ route }) => {
   const [steeringType, setSteeringType] = useState("front");
   const [driveMode, setDriveMode] = useState("manual");
   const [speed, setSpeed] = useState(0);
+
+  const isWeb = Platform.OS === "web";
 
   const navigation = useNavigation();
 
@@ -87,11 +91,20 @@ const RobotControl = ({ route }) => {
         <>
           <View style={styles.robotControlContainer}>
             {/*<Text style={styles.ipText}>Connected to: {robotIP}</Text>*/}
-            <Joystick
-              robotIp={robotIP}
-              steeringType={steeringType}
-              driveMode={driveMode}
-            />
+            {isWeb ? (
+              <Joystick
+                robotIp={robotIP}
+                steeringType={steeringType}
+                driveMode={driveMode}
+              />
+            ) : (
+              <JoystickNative
+                robotIp={robotIP}
+                steeringType={steeringType}
+                driveMode={driveMode}
+              />
+            )}
+
             <View style={styles.steeringTypeContainer}>
               {["Front", "Mid", "Rear", "Pivoting", "Parallel"].map((type) => (
                 <TouchableOpacity
