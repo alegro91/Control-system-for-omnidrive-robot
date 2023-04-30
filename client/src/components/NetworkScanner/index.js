@@ -16,7 +16,6 @@ import {
   LayoutAnimation,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
@@ -113,20 +112,7 @@ const NetworkScanner = () => {
         state: "Idle",
         battery_capacity: 100,
         location: "A1",
-        errors: [
-          { id: "1", errorMessage: "Error 1" },
-          
-          { id: "1", errorMessage: "Error 1" },
-          { id: "2", errorMessage: "Error 2" },
-          { id: "3", errorMessage: "Error 3" },
-          { id: "4", errorMessage: "Error 4" },
-          { id: "5", errorMessage: "Error 5" },
-          { id: "6", errorMessage: "Error 6" },
-          { id: "7", errorMessage: "Error 7" },
-          { id: "8", errorMessage: "Error 8" },
-          { id: "9", errorMessage: "Error 9" },
-          
-        ],
+        errors: [{ id: "1", errorMessage: "Error 1" }],
       },
       {
         agv_id: "Robot 2",
@@ -149,30 +135,10 @@ const NetworkScanner = () => {
         location: "A3",
         errors: [],
       },
-      {
-        agv_id: "Robot 5",
-        state: "Charging",
-        battery_capacity: 0,
-        location: "A3",
-        errors: [],
-      },
-      {
-        agv_id: "Robot 6",
-        state: "Charging",
-        battery_capacity: 0,
-        location: "A3",
-        errors: [],
-      },
-      {
-        agv_id: "Robot 7",
-        state: "Charging",
-        battery_capacity: 0,
-        location: "A3",
-        errors: [],
-      },
     ]);
   }, []);
-*/
+  */
+
   // Test code to add/remove errors from Robot 1
   /*
   useEffect(() => {
@@ -509,12 +475,17 @@ const NetworkScanner = () => {
             message={"Searching for robots..."}
             visible={searching && socketConnected}
           />
+          <Notification
+            header={"Search?"}
+            message={"Press the button to search for robots"}
+            visible={!searching && robots.length === 0 && socketConnected}
+          />
           <ErrorModal
             selectedError={selectedError}
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
           />
-          {!searching && (
+          {!searching && robots.length > 0 && (
             <Banner
               text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
               illustration={(props) => (
@@ -578,7 +549,14 @@ const NetworkScanner = () => {
                 {socketConnected && !searching && (
                   <>
                     <Button
-                      icon={<Icon name="bluetooth" size={24} color="black" />}
+                      icon={
+                        <Icon
+                          name="bluetooth"
+                          type="ionicon"
+                          size={24}
+                          color="black"
+                        />
+                      }
                       buttonStyle={{
                         backgroundColor: "#fff",
                         width: 200,

@@ -17,6 +17,7 @@ import {
 } from "../../utils/CacheStorage";
 import { Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 import Notification from "../Notification";
 import Joystick from "../Joystick";
@@ -175,7 +176,14 @@ const RobotControl = ({ route }) => {
       ) : (
         <View style={styles.robotControlContainer}>
           <Button
-            icon={<Icon name="wifi" size={24} color="black" />}
+            icon={
+              <Icon
+                name="return-up-back-outline"
+                type="ionicon"
+                size={32}
+                color="black"
+              />
+            }
             buttonStyle={{
               backgroundColor: "#fff",
               width: 200,
@@ -185,6 +193,7 @@ const RobotControl = ({ route }) => {
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.25,
               shadowRadius: 3.84,
+              marginBottom: 10,
             }}
             titleStyle={{
               color: "black",

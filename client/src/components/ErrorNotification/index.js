@@ -163,6 +163,11 @@ const ErrorNotification = ({ robotData, color, opacity }) => {
           backgroundColor: color || "#F05555",
           borderRadius: 12,
           opacity: opacity || 1,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          marginBottom: 10,
         }}
       >
         <View style={styles.notificationContent}>
