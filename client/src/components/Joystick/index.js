@@ -10,7 +10,15 @@ export default function Joystick({
 }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [speed, setSpeed] = useState(0);
-  const debouncedSendJoystickDataRef = useRef(debounce(sendJoystickData, 10));
+  const debouncedSendJoystickDataRef = useRef();
+
+  useEffect(() => {
+    debouncedSendJoystickDataRef.current = debounce(
+      (x, y, normalizedDistance) => sendJoystickData(x, y, normalizedDistance),
+      10
+    );
+  }, [slowMode]);
+
   const viewRef = useRef(null);
 
   const minSpeedColor = { r: 80, g: 80, b: 80 }; // Gray
