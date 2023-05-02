@@ -105,9 +105,15 @@ const RobotControl = ({ route }) => {
                     Approximate distance to device {distance.toFixed(2)} meters
                   </Text>
                 ) : (
-                  <Button title="Connect" onPress={connect} />
+                  <Button title="Distance" onPress={connect} />
                 )}
-                <Text> {status} </Text>
+                <Text
+                  style={{
+                    textAlign: "center",
+                  }}
+                >
+                  {status}
+                </Text>
                 <Joystick
                   robotIp={robotIP}
                   steeringType={steeringType}
@@ -115,11 +121,35 @@ const RobotControl = ({ route }) => {
                 />
               </View>
             ) : (
-              <JoystickNative
-                robotIp={robotIP}
-                steeringType={steeringType}
-                driveMode={driveMode}
-              />
+              <>
+                <View style={{}}>
+                  {distance !== null && status === "connected" ? (
+                    <Text
+                      style={{
+                        textAlign: "center",
+                      }}
+                    >
+                      Approximate distance to device {distance.toFixed(2)}{" "}
+                      meters
+                    </Text>
+                  ) : (
+                    <Button title="Distance" onPress={connect} />
+                  )}
+                  <Text
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    {status}
+                  </Text>
+
+                  <JoystickNative
+                    robotIp={robotIP}
+                    steeringType={steeringType}
+                    driveMode={driveMode}
+                  />
+                </View>
+              </>
             )}
 
             <View style={styles.steeringTypeContainer}>

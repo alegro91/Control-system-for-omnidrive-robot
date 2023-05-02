@@ -91,7 +91,16 @@ io.on("connection", (socket) => {
     arp.stdout.on("data", async (data) => {
       const output = data.toString().split("\n");
       let robotCount = 1;
+      output.map(async (line) => {
+        const parts = line.split(" ");
+        if (parts.length < 4) {
+          return;
+        }
+        const ip = parts[1].replace("(", "").replace(")", "");
+        const mac = parts[3].toUpperCase();
 
+        hosts.push({ ip, mac });
+      });
       const fetchPromises = output.map(async (line) => {
         if (line.includes("incomplete") || !line.includes("ether")) {
           return;

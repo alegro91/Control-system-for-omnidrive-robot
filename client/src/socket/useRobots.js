@@ -3,19 +3,40 @@ import io from "socket.io-client";
 import { Platform } from "react-native";
 import NetInfo from "@react-native-community/netinfo";
 
+import { useDispatch, useSelector } from "react-redux";
+
+import { updateRobots, disconnectRobot } from "../redux/robotSlice";
+
 const useRobots = () => {
-  const [robots, setRobots] = useState([]);
+  const robotsState = useSelector((state) => state.robot.robots);
+  const [robots, setRobots] = useState(
+    useSelector((state) => state.robot.robots) || []
+  );
   const [socket, setSocket] = useState(null);
   const [scanStatus, setScanStatus] = useState("idle");
   const [searching, setSearching] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
   const [error, setError] = useState(false);
+  const [robotDiscoveryFinished, setRobotDiscoveryFinished] = useState(false);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (socket) {
       //startMdnsScan(); // uncomment this line to start scanning automatically
     }
   }, [socket]);
+
+  useEffect(() => {
+    console.log("robots state changed", robotsState);
+  }, [robotsState]);
+
+  useEffect(() => {
+    if (robotDiscoveryFinished) {
+      console.log("robots discovered", robots);
+      dispatch(updateRobots(robots));
+    }
+  }, [robotDiscoveryFinished]);
 
   useEffect(() => {
     if (Platform.OS === "web") {
@@ -42,11 +63,14 @@ const useRobots = () => {
 
       newSocket.on("robot-discovered", (robotServices) => {
         //setScanStatus("discovering");
-        robotServices.forEach((robot) => {
-          console.log("robot", robot);
+        setRobotDiscoveryFinished(false);
+        robotServices.forEach((robot, index) => {
           setRobots((prevRobots) => [...prevRobots, robot]);
+          if (index === robotServices.length - 1) {
+            // If this is the last robot in the array, set the flag to indicate that the loop has finished
+            setRobotDiscoveryFinished(true);
+          }
         });
-        console.log("robot-discovered", robots);
       });
 
       newSocket.on("scan-complete", () => {
@@ -62,7 +86,7 @@ const useRobots = () => {
         const ipAddress = state.details.ipAddress;
         console.log("Device IP address:", ipAddress);
 
-        const serverAddress = `http://192.168.128.15:3000`; // replace ip address with ${ipAddress} to use the servers IP address
+        const serverAddress = `http://192.168.128.58:3000`; // replace ip address with ${ipAddress} to use the servers IP address
         const newSocket = io(serverAddress);
         setSocket(newSocket);
 
@@ -85,12 +109,14 @@ const useRobots = () => {
         });
 
         newSocket.on("robot-discovered", (robotServices) => {
-          //setScanStatus("discovering");
-          robotServices.forEach((robot) => {
-            console.log("robot", robot);
+          setRobotDiscoveryFinished(false);
+          robotServices.forEach((robot, index) => {
             setRobots((prevRobots) => [...prevRobots, robot]);
+            if (index === robotServices.length - 1) {
+              // If this is the last robot in the array, set the flag to indicate that the loop has finished
+              setRobotDiscoveryFinished(true);
+            }
           });
-          console.log("robot-discovered", robots);
         });
 
         newSocket.on("scan-complete", () => {
@@ -108,6 +134,7 @@ const useRobots = () => {
   const startMdnsScan = () => {
     if (socket) {
       setRobots([]);
+      dispatch(updateRobots([]));
       setScanStatus("scanning");
       setSearching(true);
       socket.emit("start-scan");

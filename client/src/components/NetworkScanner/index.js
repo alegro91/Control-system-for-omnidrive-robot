@@ -100,9 +100,11 @@ const NetworkScanner = () => {
     }, 5000);
   }, [socketConnected]);
 
+  /*
   useEffect(() => {
     console.log("ROBOTS", robots);
   }, [robots]);
+  */
 
   /*
   useEffect(() => {
@@ -270,6 +272,7 @@ const NetworkScanner = () => {
 
     const hasErrors = item.errors && item.errors.length > 0;
 
+    /*
     item.visited_places = [
       "Warehouse A",
       "Loading Dock",
@@ -277,6 +280,7 @@ const NetworkScanner = () => {
       "Storage Area 2",
       "Assembly Line",
     ];
+    */
 
     return (
       <View>
