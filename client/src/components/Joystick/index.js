@@ -67,21 +67,21 @@ export default function Joystick({ robotIp, steeringType, driveMode }) {
 
   const handleMove = (event) => {
     const { pageX, pageY, target, touches } = event.nativeEvent;
-    const { left, top } = target.getBoundingClientRect();
+    const { left, top } = viewRef.current.getBoundingClientRect();
 
     let x, y;
 
     if (touches && touches.length > 0) {
-      x = touches[0].pageX - left - 100;
-      y = touches[0].pageY - top - 100;
+      x = touches[0].pageX - left - 150;
+      y = touches[0].pageY - top - 150;
     } else {
-      x = pageX - left - 100;
-      y = pageY - top - 100;
+      x = pageX - left - 150;
+      y = pageY - top - 150;
     }
 
     // Calculate the distance from the center.
     const distance = Math.sqrt(x * x + y * y);
-    const maxDistance = 100;
+    const maxDistance = 110;
 
     // Clamp the position within the circle boundary.
     if (distance > maxDistance) {
