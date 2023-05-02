@@ -4,8 +4,12 @@ import { Svg, Circle } from "react-native-svg";
 
 export default function Joystick({ robotIp, steeringType, driveMode }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [speed, setSpeed] = useState(0);
   const debouncedSendJoystickDataRef = useRef(debounce(sendJoystickData, 10));
   const viewRef = useRef(null);
+
+  const minSpeedColor = { r: 80, g: 80, b: 80 }; // Gray
+  const maxSpeedColor = { r: 0, g: 200, b: 50 }; // Green
 
   function sendJoystickData(x, y, normalizedDistance) {
     const angle = Math.atan2(y, x);
@@ -58,6 +62,13 @@ export default function Joystick({ robotIp, steeringType, driveMode }) {
     event.target.addEventListener("mouseup", handleEnd, { passive: false });
   };
 
+  const interpolateColor = (color1, color2, speed) => {
+    const r = color1.r + (color2.r - color1.r) * speed;
+    const g = color1.g + (color2.g - color1.g) * speed;
+    const b = color1.b + (color2.b - color1.b) * speed;
+    return `rgba(${r}, ${g}, ${b}, 0.7)`;
+  };
+
   const handleTouchStart = (event) => {
     event.preventDefault();
     event.target.addEventListener("touchmove", handleMove, { passive: false });
@@ -93,11 +104,16 @@ export default function Joystick({ robotIp, steeringType, driveMode }) {
 
     setPosition({ x, y });
 
+    // Calculate the speed based on the normalized distance
+    const speed = normalizedDistance.toFixed(2);
+    setSpeed(speed);
+
     debouncedSendJoystickDataRef.current(x, y, normalizedDistance);
   };
 
   const handleEnd = () => {
     setPosition({ x: 0, y: 0 });
+    setSpeed(0);
     sendJoystickData(0, 0, 0);
   };
 
@@ -149,7 +165,7 @@ export default function Joystick({ robotIp, steeringType, driveMode }) {
           cx={150 + position.x}
           cy={150 + position.y}
           r="40"
-          fill="rgba(80, 80, 80, 0.7)"
+          fill={interpolateColor(minSpeedColor, maxSpeedColor, speed)}
         />
       </Svg>
     </View>

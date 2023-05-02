@@ -5,6 +5,10 @@ import { PanGestureHandler } from "react-native-gesture-handler";
 
 export default function JoystickNative({ robotIp, steeringType, driveMode }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [speed, setSpeed] = useState(0);
+
+  const minSpeedColor = { r: 80, g: 80, b: 80 }; // Gray
+  const maxSpeedColor = { r: 0, g: 200, b: 50 }; // Green
 
   function sendJoystickData(x, y, normalizedDistance) {
     const angle = Math.atan2(y, x);
@@ -39,6 +43,13 @@ export default function JoystickNative({ robotIp, steeringType, driveMode }) {
     */
   }
 
+  const interpolateColor = (color1, color2, speed) => {
+    const r = color1.r + (color2.r - color1.r) * speed;
+    const g = color1.g + (color2.g - color1.g) * speed;
+    const b = color1.b + (color2.b - color1.b) * speed;
+    return `rgba(${r}, ${g}, ${b}, 0.7)`;
+  };
+
   function onGestureEvent(event) {
     const { nativeEvent } = event;
     let x = nativeEvent.translationX;
@@ -54,6 +65,9 @@ export default function JoystickNative({ robotIp, steeringType, driveMode }) {
 
     const normalizedDistance = distance / maxDistance;
 
+    const speed = normalizedDistance.toFixed(2);
+    setSpeed(speed);
+
     setPosition({ x, y });
     sendJoystickData(x, y, normalizedDistance);
   }
@@ -66,6 +80,7 @@ export default function JoystickNative({ robotIp, steeringType, driveMode }) {
       nativeEvent.oldState === 5 // State.CANCELLED
     ) {
       setPosition({ x: 0, y: 0 });
+      setSpeed(0);
       sendJoystickData(0, 0, 0);
     }
   }
@@ -82,7 +97,7 @@ export default function JoystickNative({ robotIp, steeringType, driveMode }) {
             cx={150 + position.x}
             cy={150 + position.y}
             r="40"
-            fill="rgba(80, 80, 80, 0.7)"
+            fill={interpolateColor(minSpeedColor, maxSpeedColor, speed)}
           />
         </Svg>
       </PanGestureHandler>
