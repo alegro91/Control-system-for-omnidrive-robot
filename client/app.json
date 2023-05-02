@@ -32,6 +32,7 @@
         "projectId": "fd3a68ef-3868-400b-8eb6-0157339cc9c6"
       }
     },
-    "owner": "streafe"
+    "owner": "streafe",
+    "plugins": ["@config-plugins/react-native-ble-plx"]
   }
 }
