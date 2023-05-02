@@ -3,7 +3,12 @@ import { StyleSheet, View } from "react-native";
 import { Svg, Circle } from "react-native-svg";
 import { PanGestureHandler } from "react-native-gesture-handler";
 
-export default function JoystickNative({ robotIp, steeringType, driveMode }) {
+export default function JoystickNative({
+  robotIp,
+  steeringType,
+  driveMode,
+  slowMode,
+}) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [speed, setSpeed] = useState(0);
 
@@ -12,12 +17,18 @@ export default function JoystickNative({ robotIp, steeringType, driveMode }) {
 
   function sendJoystickData(x, y, normalizedDistance) {
     const angle = Math.atan2(y, x);
-    const vectorX = normalizedDistance * Math.cos(angle);
-    const vectorY = normalizedDistance * Math.sin(angle);
+    const slowModeFactor = slowMode ? 0.1 : 1;
+    const slowModeClamp = 0.1; // Set the maximum allowed value when in slow mode
+    const vectorX = normalizedDistance * slowModeFactor * Math.cos(angle);
+    const vectorY = normalizedDistance * slowModeFactor * Math.sin(angle);
 
-    // Clamp the vectorized output between 0 and 1
-    const clampedVectorX = Math.min(Math.max(vectorX, -1), 1).toFixed(2);
-    const clampedVectorY = Math.min(Math.max(vectorY, -1), 1).toFixed(2);
+    // Clamp the vectorized output based on the current mode (slow or normal)
+    const clampedVectorX = slowMode
+      ? Math.min(Math.max(vectorX, -slowModeClamp), slowModeClamp).toFixed(2)
+      : Math.min(Math.max(vectorX, -1), 1).toFixed(2);
+    const clampedVectorY = slowMode
+      ? Math.min(Math.max(vectorY, -slowModeClamp), slowModeClamp).toFixed(2)
+      : Math.min(Math.max(vectorY, -1), 1).toFixed(2);
 
     console.log("Clamped vectorized output:", {
       x: clampedVectorX,

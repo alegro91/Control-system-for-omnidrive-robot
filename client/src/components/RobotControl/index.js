@@ -7,6 +7,7 @@ import {
   Alert,
   Modal,
   Platform,
+  Switch,
 } from "react-native";
 import {
   storeData,
@@ -43,7 +44,7 @@ const RobotControl = ({ route }) => {
   const dispatch = useDispatch();
   const [steeringType, setSteeringType] = useState("front");
   const [driveMode, setDriveMode] = useState("manual");
-  const [speed, setSpeed] = useState(0);
+  const [slowMode, setSlowMode] = useState(false);
 
   const { distance, status, connect, disconnect } = useBluetoothDistance();
   const isWeb = Platform.OS === "web";
@@ -118,11 +119,46 @@ const RobotControl = ({ route }) => {
                   robotIp={robotIP}
                   steeringType={steeringType}
                   driveMode={driveMode}
+                  slowMode={slowMode}
                 />
+                <View
+                  style={{
+                    position: "relative",
+                    top: 0,
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    Slow mode
+                  </Text>
+                  <Switch
+                    style={{
+                      alignSelf: "center",
+                    }}
+                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                    thumbColor={
+                      driveMode === "slowMode" ? "#f5dd4b" : "#f4f3f4"
+                    }
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={() => {
+                      console.log("Slow mode set to:", !slowMode);
+                      setSlowMode(!slowMode);
+                    }}
+                    value={slowMode}
+                  />
+                </View>
               </View>
             ) : (
               <>
-                <View style={{}}>
+                <View
+                  style={{
+                    top: 40,
+                    paddingBottom: 40,
+                  }}
+                >
                   {distance !== null && status === "connected" ? (
                     <Text
                       style={{
@@ -147,11 +183,37 @@ const RobotControl = ({ route }) => {
                     robotIp={robotIP}
                     steeringType={steeringType}
                     driveMode={driveMode}
+                    slowMode={slowMode}
                   />
+                  <View
+                    style={{
+                      position: "relative",
+                      top: 0,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        textAlign: "center",
+                      }}
+                    >
+                      Slow mode
+                    </Text>
+                    <Switch
+                      style={{
+                        alignSelf: "center",
+                      }}
+                      trackColor={{ false: "#767577", true: "#81b0ff" }}
+                      thumbColor={
+                        driveMode === "slowMode" ? "#f5dd4b" : "#f4f3f4"
+                      }
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={() => setSlowMode(!slowMode)}
+                      value={slowMode}
+                    />
+                  </View>
                 </View>
               </>
             )}
-
             <View style={styles.steeringTypeContainer}>
               {["Front", "Mid", "Rear", "Pivoting", "Parallel"].map((type) => (
                 <TouchableOpacity
@@ -265,6 +327,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   steeringTypeContainer: {
+    position: "relative",
+    top: 30,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -279,6 +343,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
+    position: "relative",
+    top: 50,
   },
   robotCommandContainer: {
     flexDirection: "row",
