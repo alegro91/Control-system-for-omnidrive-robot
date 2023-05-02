@@ -8,25 +8,35 @@ export default function Joystick({ robotIp, steeringType, driveMode }) {
   const viewRef = useRef(null);
 
   function sendJoystickData(x, y, normalizedDistance) {
-    /*
-    const url = `http://${robotIp}:5656/control`;
-    const data = {
-      x: x,
-      y: y,
-      speed: normalizedDistance,
-      steeringType: steeringType,
-      driveMode: driveMode,
-    };
+    const angle = Math.atan2(y, x);
+    const vectorX = normalizedDistance * Math.cos(angle);
+    const vectorY = normalizedDistance * Math.sin(angle);
 
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    }).catch((error) => {
-      console.error("Error:", error);
+    // Clamp the vectorized output between 0 and 1
+    const clampedVectorX = Math.min(Math.max(vectorX, -1), 1).toFixed(2);
+    const clampedVectorY = Math.min(Math.max(vectorY, -1), 1).toFixed(2);
+
+    console.log("Clamped vectorized output:", {
+      x: clampedVectorX,
+      y: clampedVectorY,
     });
+
+    // Replace the URL with your desired endpoint
+    /*
+    const url = `http://${robotIp}/move`;
+    const payload = {
+      x: vectorX.toFixed(2),
+      y: vectorY.toFixed(2),
+    };
+  
+    axios
+      .post(url, payload)
+      .then((response) => {
+        console.log("POST request successful:", response.data);
+      })
+      .catch((error) => {
+        console.error("POST request failed:", error);
+      });
     */
   }
 
@@ -133,12 +143,12 @@ export default function Joystick({ robotIp, steeringType, driveMode }) {
 
   return (
     <View ref={viewRef} style={styles.viewContainer}>
-      <Svg height="400" width="400" style={styles.joystickContainer}>
-        <Circle cx="200" cy="200" r="100" fill="rgba(200, 200, 200, 0.3)" />
+      <Svg height="300" width="300" style={styles.joystickContainer}>
+        <Circle cx="150" cy="150" r="110" fill="rgba(200, 200, 200, 0.3)" />
         <Circle
-          cx={200 + position.x}
-          cy={200 + position.y}
-          r="50"
+          cx={150 + position.x}
+          cy={150 + position.y}
+          r="40"
           fill="rgba(80, 80, 80, 0.7)"
         />
       </Svg>
