@@ -48,6 +48,7 @@ import ProximityDetectorBT, {
   scanForDevice,
   addNumbers,
 } from "../ProximityDetector";
+import useBLE from "../../useBLE";
 
 /**
  * NetworkScanner component that scans the network for robots and displays them in a list view,
@@ -100,6 +101,12 @@ const NetworkScanner = () => {
     const proximityDetector = new ProximityDetectorBT();
     result = proximityDetector.addNumbers(2, 5);
     console.log(result); // Output: 7
+  };
+
+  /* useBLE */
+  const bleScan = async () => {
+    scanForDevices();
+    console.log("bleScan() called.");
   };
 
   /*
@@ -330,7 +337,7 @@ const NetworkScanner = () => {
             alignItems: "center",
             width: 80,
           }}
-          onPress={handleAddNumbers}
+          onPress={bleScan}
         >
           <Text>Testbutton</Text>
         </TouchableOpacity>
