@@ -55,10 +55,19 @@ const NetworkScanner = () => {
 
   const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
 
-  const [isExpanded, setIsExpanded] = useState(false);
-  const toggleBox = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setIsExpanded(!isExpanded);
+  const [isExpanded, setIsExpanded] = useState([]);
+
+  const toggleBox = (item) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    setIsExpanded((prev) => {
+      return prev.includes(item)
+        ? prev.filter((i) => i !== item)
+        : [...prev, item];
+    });
+  };
+
+  const isExpandedBox = (item) => {
+    return isExpanded.includes(item);
   };
 
   /* Custom hook */
@@ -270,7 +279,11 @@ const NetworkScanner = () => {
       return "battery-empty";
     };
 
-    const hasErrors = item.errors && item.errors.length > 0;
+    const hasErrors = item.errors?.length > 0;
+
+    //item.isExpanded = false;
+    //item.loaded = true;
+    //item.is_blocked = false;
 
     /*
     item.visited_places = [
@@ -305,7 +318,7 @@ const NetworkScanner = () => {
             shadowRadius: 3.84,
             elevation: 5,
           }}
-          onPress={toggleBox}
+          onPress={() => toggleBox(item)}
         >
           <FontAwesome5
             name="robot"
@@ -406,37 +419,105 @@ const NetworkScanner = () => {
         </TouchableOpacity>
 
         {/* Additions */}
-        {isExpanded && (
+        {isExpandedBox(item) && (
           <Animated.View
             style={{
-              paddingTop: 15,
+              position: "relative",
+              top: -10,
+              paddingTop: 25,
               paddingBottom: 15,
-              backgroundColor: "#DBDBDB",
+              backgroundColor: "#fff",
+              shadowColor: "#000",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.25,
+              shadowRadius: 3.84,
+              elevation: 5,
+              borderBottomLeftRadius: 10,
+              borderBottomRightRadius: 10,
+              zIndex: -1,
+              overflow: "hidden",
             }}
           >
-            <Text
-              style={{
-                fontWeight: "700",
-                fontSize: 18,
-                paddingLeft: 20,
-                paddingBottom: 10,
-              }}
-            >
-              Places Visited:
-            </Text>
-            {item.visited_places.map((place, index) => (
-              <Text
-                key={index}
-                style={{
-                  paddingLeft: 20,
-                  paddingBottom: 5,
-                  fontSize: 16,
-                  fontWeight: "400",
-                }}
-              >
-                {place}
-              </Text>
-            ))}
+            {item.loaded != null ||
+            item.last_location != null ||
+            item.is_blocked != null ? (
+              <>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingLeft: 20,
+                    paddingBottom: 15,
+                  }}
+                >
+                  <Icon
+                    name="package"
+                    type="material-community"
+                    size={20}
+                    color="#000"
+                    style={{ marginRight: 10 }}
+                  />
+                  <Text style={{ fontSize: 16, fontWeight: "400" }}>
+                    {item.loaded ? "Loaded" : "Not loaded"}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingLeft: 20,
+                    paddingBottom: 15,
+                  }}
+                >
+                  <Icon
+                    name="map-marker"
+                    type="material-community"
+                    size={20}
+                    color="#000"
+                    style={{ marginRight: 10 }}
+                  />
+                  <Text style={{ fontSize: 16, fontWeight: "400" }}>
+                    {item.last_location ? item.last_location : "Unknown"}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingLeft: 20,
+                  }}
+                >
+                  <Icon
+                    type="material-community"
+                    name={
+                      item.is_blocked ? "motion-sensor" : "motion-sensor-off"
+                    }
+                    size={20}
+                    color={item.is_blocked ? "red" : "green"}
+                    style={{ marginRight: 10 }}
+                  />
+                  <Text style={{ fontSize: 16, fontWeight: "400" }}>
+                    {item.is_blocked ? "Sensor blocked" : "Sensor clear"}
+                  </Text>
+                </View>
+              </>
+            ) : (
+              <View style={{ alignItems: "center", padding: 20 }}>
+                <Icon
+                  name="alert-circle-outline"
+                  type="material-community"
+                  size={40}
+                  color="gray"
+                />
+                <Text
+                  style={{ fontSize: 16, fontWeight: "400", paddingTop: 10 }}
+                >
+                  No information available
+                </Text>
+              </View>
+            )}
           </Animated.View>
         )}
       </View>

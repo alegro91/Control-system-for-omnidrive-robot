@@ -20,5 +20,8 @@
     "ping": "^0.4.4",
     "smb2": "^0.2.11",
     "socket.io": "^4.6.1"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0"
   }
 }
