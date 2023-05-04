@@ -59,14 +59,26 @@ const NetworkScanner = () => {
 
   const toggleBox = (item) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
-    setIsExpanded((prev) => {
-      return prev.includes(item)
-        ? prev.filter((i) => i !== item)
-        : [...prev, item];
-    });
+    if (item.agv_id === undefined) {
+      setIsExpanded((prev) => {
+        return prev.includes(item)
+          ? prev.filter((i) => i !== item)
+          : [...prev, item];
+      });
+      return;
+    } else {
+      setIsExpanded((prev) => {
+        return prev.includes(item.agv_id)
+          ? prev.filter((i) => i !== item.agv_id)
+          : [...prev, item.agv_id];
+      });
+    }
   };
 
   const isExpandedBox = (item) => {
+    if (isExpanded.includes(item.agv_id)) {
+      return true;
+    }
     return isExpanded.includes(item);
   };
 
@@ -427,11 +439,6 @@ const NetworkScanner = () => {
               paddingTop: 25,
               paddingBottom: 15,
               backgroundColor: "#fff",
-              shadowColor: "#000",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.25,
-              shadowRadius: 3.84,
-              elevation: 5,
               borderBottomLeftRadius: 10,
               borderBottomRightRadius: 10,
               zIndex: -1,
@@ -572,7 +579,7 @@ const NetworkScanner = () => {
           />
           {!searching && robots.length > 0 && (
             <Banner
-              text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+              text="If you can't find your robot, try pressing the rescan button"
               illustration={(props) => (
                 <Avatar
                   color="primary"

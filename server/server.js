@@ -119,14 +119,16 @@ io.on("connection", (socket) => {
         const mac = parts[3].toUpperCase();
         if (mac.startsWith(MAC_PREFIX)) {
           /* Test purposes only */
-          const id = robotCount++;
-          hosts.push({ id, ip, mac });
-          console.log("Found device:", mac);
+          //const id = robotCount++;
+          //hosts.push({ /*id,*/ ip, mac });
+          //console.log("Found device:", mac);
 
           // Fetch robot data
           const robotData = await fetchRobotData(ip);
           if (robotData) {
-            hosts.push({ ip, mac, data: robotData });
+            robotData.ip = ip;
+            robotData.mac = mac;
+            hosts.push(robotData);
             console.log("Found device:", ip, mac);
           }
         }
