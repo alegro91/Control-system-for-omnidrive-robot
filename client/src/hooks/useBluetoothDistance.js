@@ -13,11 +13,8 @@ const useBluetoothDistance = () => {
 
       try {
         const device = await navigator.bluetooth.requestDevice({
-          filters: [
-            {
-              namePrefix: "Elias",
-            },
-          ],
+          acceptAllDevices: true,
+
           //optionalServices: ['your-service-uuid'],
         });
 
