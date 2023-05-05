@@ -1,0 +1,6 @@
+Meeting notes 05.03
+Steady progress on movement controls
+Hit a snag on BLE proximinity. Expo Go framework does not support bluetooth functionality.
+Consdering other options, geolocation is possible.
+	- Signal triangulation with WLAN routers (too inaccurate, not enough time)
+	- Warehouse map (unable to retrieve current robot location as xy coordinates, need it to implement this option as well as other functionalities)
