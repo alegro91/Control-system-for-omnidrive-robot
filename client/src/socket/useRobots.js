@@ -12,6 +12,9 @@ const useRobots = () => {
   const [robots, setRobots] = useState(
     useSelector((state) => state.robot.robots) || []
   );
+  const [locations, setLocations] = useState(
+    useSelector((state) => state.robot.locations) || []
+  );
   const [socket, setSocket] = useState(null);
   const [scanStatus, setScanStatus] = useState("idle");
   const [searching, setSearching] = useState(false);
@@ -70,7 +73,7 @@ const useRobots = () => {
 
   useEffect(() => {
     if (Platform.OS === "web") {
-      const newSocket = io("http://localhost:3000");
+      const newSocket = io("http://localhost:3002");
       setSocket(newSocket);
 
       newSocket.on("connect", () => {
@@ -140,6 +143,7 @@ const useRobots = () => {
 
         newSocket.on("robot-discovered", (robotServices) => {
           setRobotDiscoveryFinished(false);
+          console.log("robot discovered", robotServices);
           robotServices.forEach((robot, index) => {
             setRobots((prevRobots) => [...prevRobots, robot]);
             if (index === robotServices.length - 1) {

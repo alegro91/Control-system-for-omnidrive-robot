@@ -8,6 +8,7 @@ import {
   Modal,
   Platform,
   Switch,
+  FlatList,
 } from "react-native";
 import {
   storeData,
@@ -46,6 +47,26 @@ const RobotControl = ({ route }) => {
   const [driveMode, setDriveMode] = useState("manual");
   const [slowMode, setSlowMode] = useState(false);
 
+  const [showModal, setShowModal] = useState(false);
+  const [locations, setLocations] = useSelector((state) =>
+    state.locations !== undefined && state.locations !== null
+      ? state.locations
+      : [
+          {
+            id: "1",
+            name: "A1",
+          },
+          {
+            id: "2",
+            name: "A2",
+          },
+        ]
+  );
+
+  const handlePress = () => {
+    setShowModal(true);
+  };
+
   const { distance, status, connect, disconnect } = useBluetoothDistance();
   const isWeb = Platform.OS === "web";
 
@@ -77,6 +98,8 @@ const RobotControl = ({ route }) => {
     setDisconnectModalVisible(false);
     onDisconnect();
   };
+
+  const renderItem = ({ item }) => <Text>{item.name}</Text>;
 
   return (
     <>
@@ -234,7 +257,9 @@ const RobotControl = ({ route }) => {
             <View style={styles.buttonContainer}>
               <Button
                 title="Drive to"
-                onPress={() => setDriveMode("driveTo")}
+                onPress={() => {
+                  handlePress();
+                }}
               />
               <Button
                 title="Disconnect"
@@ -244,6 +269,36 @@ const RobotControl = ({ route }) => {
               />
             </View>
           </View>
+          <Modal visible={showModal} animationType="slide">
+            <View>
+              <Button
+                title="Close"
+                onPress={() => {
+                  setShowModal(false);
+                  console.log(locations);
+                }}
+              />
+              <FlatList
+                data={locations}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "grey",
+                      padding: 10,
+                      borderRadius: 5,
+                      margin: 5,
+                    }}
+                    onPress={() => {
+                      handleLocationPress(item);
+                    }}
+                  >
+                    <Text>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item.id}
+              />
+            </View>
+          </Modal>
           <Modal
             animationType="slide"
             transparent={true}

@@ -343,6 +343,7 @@ const NetworkScanner = () => {
                 flex: 2,
                 fontWeight: "700",
                 color: hasErrors ? "#F05555" : "#000",
+                width: 80,
               }}
             >
               {item.agv_id}

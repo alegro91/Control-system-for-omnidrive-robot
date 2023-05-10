@@ -14,7 +14,7 @@ const server = http.createServer(app);
 /* CONSTS */
 const ROBOT_PORT = "7012";
 const ROBOT_COMMAND = "rpc/get_agv_data";
-const MAC_PREFIX = "F6:40:CF";
+const MAC_PREFIX = "0:E:8E";
 
 const getClientIp = (socket) => {
   const ipAddress = socket.handshake.address;
@@ -40,6 +40,23 @@ const fetchRobotData = async (ip) => {
         resolve(null);
       });
   });
+};
+
+const fetchListLocations = async (ip) => {
+  const P_COMMAND = "rpc/list_locations";
+  const MAX_ITEMS = 10; // maximum number of items to retrieve
+  const requestOptions = {
+    method: "POST",
+  };
+  try {
+    const response = await fetch(
+      `http://${ip}:${ROBOT_PORT}/${P_COMMAND}`,
+      requestOptions
+    );
+    const responseJson = await response.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const resolveHostnameAndFilter = async (ip) => {
@@ -82,6 +99,7 @@ io.on("connection", (socket) => {
     console.log("Starting LAN scan : " + clientIp);
 
     const hosts = [];
+    const locations = [];
 
     // Use the 'arp' command to find devices on the LAN
     const arp = spawn("arp", ["-a"]);
@@ -93,6 +111,7 @@ io.on("connection", (socket) => {
       let robotCount = 1;
       /* Test purposes only */
       //
+      /*
       output.map(async (line) => {
         const parts = line.split(" ");
         if (parts.length < 4) {
@@ -105,6 +124,7 @@ io.on("connection", (socket) => {
           hosts.push({ ip, mac });
         }
       });
+      */
       //
 
       const fetchPromises = output.map(async (line) => {
@@ -117,6 +137,7 @@ io.on("connection", (socket) => {
         }
         const ip = parts[1].replace("(", "").replace(")", "");
         const mac = parts[3].toUpperCase();
+        console.log("Found device:", ip, mac);
         if (mac.startsWith(MAC_PREFIX)) {
           /* Test purposes only */
           //const id = robotCount++;
@@ -125,10 +146,12 @@ io.on("connection", (socket) => {
 
           // Fetch robot data
           const robotData = await fetchRobotData(ip);
+          //const locationsData = await fetchListLocations(ip);
           if (robotData) {
             robotData.ip = ip;
             robotData.mac = mac;
             hosts.push(robotData);
+            locations.push(locations);
             console.log("Found device:", ip, mac);
           }
         }
