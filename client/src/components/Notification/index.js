@@ -49,6 +49,11 @@ const Notification = ({ header, message, visible, color, opacity }) => {
           backgroundColor: color || "#1E90FF",
           borderRadius: 12,
           opacity: opacity,
+          shadowColor: "#000",
+          shadowOffset: { width: 0, height: 2 },
+          shadowOpacity: 0.25,
+          shadowRadius: 3.84,
+          marginBottom: 10,
         }}
       >
         <View style={styles.notificationContent}>

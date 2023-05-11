@@ -109,7 +109,7 @@ const AlertsScreen = () => {
 
   const [expanded, setExpanded] = useState([]);
 
-  const robotsWithError = robotsData.filter((robot) => robot.errors.length > 0);
+  const robotsWithError = robots.filter((robot) => robot.errors?.length > 0);
 
   const navigation = useNavigation();
 
@@ -265,10 +265,6 @@ const AlertsScreen = () => {
                 width: 200,
                 height: 50,
                 justifyContent: "center",
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
               }}
               titleStyle={{
                 color: "black",

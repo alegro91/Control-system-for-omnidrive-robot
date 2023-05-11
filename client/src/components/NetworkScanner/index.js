@@ -16,7 +16,6 @@ import {
   LayoutAnimation,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
@@ -56,10 +55,31 @@ const NetworkScanner = () => {
 
   const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
 
-  const [isExpanded, setIsExpanded] = useState(false);
-  const toggleBox = () => {
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-    setIsExpanded(!isExpanded);
+  const [isExpanded, setIsExpanded] = useState([]);
+
+  const toggleBox = (item) => {
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
+    if (item.agv_id === undefined) {
+      setIsExpanded((prev) => {
+        return prev.includes(item)
+          ? prev.filter((i) => i !== item)
+          : [...prev, item];
+      });
+      return;
+    } else {
+      setIsExpanded((prev) => {
+        return prev.includes(item.agv_id)
+          ? prev.filter((i) => i !== item.agv_id)
+          : [...prev, item.agv_id];
+      });
+    }
+  };
+
+  const isExpandedBox = (item) => {
+    if (isExpanded.includes(item.agv_id)) {
+      return true;
+    }
+    return isExpanded.includes(item);
   };
 
   /* Custom hook */
@@ -70,6 +90,7 @@ const NetworkScanner = () => {
     searching,
     scanStatus,
     socketConnected,
+    error,
   } = useRobots();
 
   const searchButtonTitle =
@@ -100,6 +121,13 @@ const NetworkScanner = () => {
     }, 5000);
   }, [socketConnected]);
 
+  /*
+  useEffect(() => {
+    console.log("ROBOTS", robots);
+  }, [robots]);
+  */
+
+  /*
   useEffect(() => {
     setRobotData([
       {
@@ -107,20 +135,7 @@ const NetworkScanner = () => {
         state: "Idle",
         battery_capacity: 100,
         location: "A1",
-        errors: [
-          //{ id: "1", errorMessage: "Error 1" },
-          /*
-          { id: "1", errorMessage: "Error 1" },
-          { id: "2", errorMessage: "Error 2" },
-          { id: "3", errorMessage: "Error 3" },
-          { id: "4", errorMessage: "Error 4" },
-          { id: "5", errorMessage: "Error 5" },
-          { id: "6", errorMessage: "Error 6" },
-          { id: "7", errorMessage: "Error 7" },
-          { id: "8", errorMessage: "Error 8" },
-          { id: "9", errorMessage: "Error 9" },
-          */
-        ],
+        errors: [{ id: "1", errorMessage: "Error 1" }],
       },
       {
         agv_id: "Robot 2",
@@ -143,29 +158,9 @@ const NetworkScanner = () => {
         location: "A3",
         errors: [],
       },
-      {
-        agv_id: "Robot 5",
-        state: "Charging",
-        battery_capacity: 0,
-        location: "A3",
-        errors: [],
-      },
-      {
-        agv_id: "Robot 6",
-        state: "Charging",
-        battery_capacity: 0,
-        location: "A3",
-        errors: [],
-      },
-      {
-        agv_id: "Robot 7",
-        state: "Charging",
-        battery_capacity: 0,
-        location: "A3",
-        errors: [],
-      },
     ]);
   }, []);
+  */
 
   // Test code to add/remove errors from Robot 1
   /*
@@ -270,12 +265,12 @@ const NetworkScanner = () => {
   const handleRobotConnect = (robot) => {
     //console.log("Connecting to robot:", robot);
     //console.log("Robot IP:", "192.168.1.127");
-
+    console.log("Robot:", robot);
     //storeData("robotIP", "192.168.1.127");
-    handleRobotIPChange("192.168.1.127");
+    handleRobotIPChange(robot.ip);
     navigation.navigate("RobotControl", {
       robot,
-      robotIP: "192.168.1.127",
+      robotIP: robot.ip,
       onDisconnect: () => {
         //navigation.navigate("NetworkScanner");
       },
@@ -296,8 +291,13 @@ const NetworkScanner = () => {
       return "battery-empty";
     };
 
-    const hasErrors = item.errors && item.errors.length > 0;
+    const hasErrors = item.errors?.length > 0;
 
+    //item.isExpanded = false;
+    //item.loaded = true;
+    //item.is_blocked = false;
+
+    /*
     item.visited_places = [
       "Warehouse A",
       "Loading Dock",
@@ -305,6 +305,7 @@ const NetworkScanner = () => {
       "Storage Area 2",
       "Assembly Line",
     ];
+    */
 
     return (
       <View>
@@ -329,7 +330,7 @@ const NetworkScanner = () => {
             shadowRadius: 3.84,
             elevation: 5,
           }}
-          onPress={toggleBox}
+          onPress={() => toggleBox(item)}
         >
           <FontAwesome5
             name="robot"
@@ -342,6 +343,7 @@ const NetworkScanner = () => {
                 flex: 2,
                 fontWeight: "700",
                 color: hasErrors ? "#F05555" : "#000",
+                width: 80,
               }}
             >
               {item.agv_id}
@@ -430,37 +432,100 @@ const NetworkScanner = () => {
         </TouchableOpacity>
 
         {/* Additions */}
-        {isExpanded && (
+        {isExpandedBox(item) && (
           <Animated.View
             style={{
-              paddingTop: 15,
+              position: "relative",
+              top: -10,
+              paddingTop: 25,
               paddingBottom: 15,
-              backgroundColor: "#DBDBDB",
+              backgroundColor: "#fff",
+              borderBottomLeftRadius: 10,
+              borderBottomRightRadius: 10,
+              zIndex: -1,
+              overflow: "hidden",
             }}
           >
-            <Text
-              style={{
-                fontWeight: "700",
-                fontSize: 18,
-                paddingLeft: 20,
-                paddingBottom: 10,
-              }}
-            >
-              Places Visited:
-            </Text>
-            {item.visited_places.map((place, index) => (
-              <Text
-                key={index}
-                style={{
-                  paddingLeft: 20,
-                  paddingBottom: 5,
-                  fontSize: 16,
-                  fontWeight: "400",
-                }}
-              >
-                {place}
-              </Text>
-            ))}
+            {item.loaded != null ||
+            item.last_location != null ||
+            item.is_blocked != null ? (
+              <>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingLeft: 20,
+                    paddingBottom: 15,
+                  }}
+                >
+                  <Icon
+                    name="package"
+                    type="material-community"
+                    size={20}
+                    color="#000"
+                    style={{ marginRight: 10 }}
+                  />
+                  <Text style={{ fontSize: 16, fontWeight: "400" }}>
+                    {item.loaded ? "Loaded" : "Not loaded"}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingLeft: 20,
+                    paddingBottom: 15,
+                  }}
+                >
+                  <Icon
+                    name="map-marker"
+                    type="material-community"
+                    size={20}
+                    color="#000"
+                    style={{ marginRight: 10 }}
+                  />
+                  <Text style={{ fontSize: 16, fontWeight: "400" }}>
+                    {item.last_location ? item.last_location : "Unknown"}
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    paddingLeft: 20,
+                  }}
+                >
+                  <Icon
+                    type="material-community"
+                    name={
+                      item.is_blocked ? "motion-sensor" : "motion-sensor-off"
+                    }
+                    size={20}
+                    color={item.is_blocked ? "red" : "green"}
+                    style={{ marginRight: 10 }}
+                  />
+                  <Text style={{ fontSize: 16, fontWeight: "400" }}>
+                    {item.is_blocked ? "Sensor blocked" : "Sensor clear"}
+                  </Text>
+                </View>
+              </>
+            ) : (
+              <View style={{ alignItems: "center", padding: 20 }}>
+                <Icon
+                  name="alert-circle-outline"
+                  type="material-community"
+                  size={40}
+                  color="gray"
+                />
+                <Text
+                  style={{ fontSize: 16, fontWeight: "400", paddingTop: 10 }}
+                >
+                  No information available
+                </Text>
+              </View>
+            )}
           </Animated.View>
         )}
       </View>
@@ -480,7 +545,8 @@ const NetworkScanner = () => {
             message={"Searching for robots..."}
             visible={isLoading}
           />
-          <Notification
+
+          {/*<Notification
             header={"No robots found"}
             message={"Search again maybe?"}
             visible={
@@ -490,7 +556,7 @@ const NetworkScanner = () => {
               socketConnected
             }
             color={"#F05555"}
-          />
+          />*/}
           <Notification
             header={"Backend Error"}
             message={"Service is not running"}
@@ -500,16 +566,21 @@ const NetworkScanner = () => {
           <Notification
             header={"Scanning"}
             message={"Searching for robots..."}
-            visible={searching}
+            visible={searching && socketConnected}
+          />
+          <Notification
+            header={"Search?"}
+            message={"Press the button to search for robots"}
+            visible={!searching && robots.length === 0 && socketConnected}
           />
           <ErrorModal
             selectedError={selectedError}
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
           />
-          {!searching && (
+          {!searching && robots.length > 0 && (
             <Banner
-              text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+              text="If you can't find your robot, try pressing the rescan button"
               illustration={(props) => (
                 <Avatar
                   color="primary"
@@ -540,10 +611,6 @@ const NetworkScanner = () => {
                       width: 200,
                       height: 50,
                       justifyContent: "center",
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 3.84,
                     }}
                     titleStyle={{
                       color: "black",
@@ -559,11 +626,11 @@ const NetworkScanner = () => {
           <View style={styles.container}>
             {searching ? (
               <ActivityIndicator size="large" color="#0000ff" />
-            ) : robotData.length > 0 ? (
+            ) : robots.length > 0 ? (
               <FlatList
-                data={robotData}
+                data={robots}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.agv_id}
+                keyExtractor={(item) => item.id}
                 persistentScrollbar={true}
                 style={{
                   padding: 30,
@@ -572,37 +639,89 @@ const NetworkScanner = () => {
               />
             ) : (
               <View>
-                {socketConnected ? (
-                  <Button
-                    icon={<Icon name="wifi" size={24} color="black" />}
-                    buttonStyle={{
-                      backgroundColor: "#fff",
-                      width: 200,
-                      height: 50,
-                      justifyContent: "center",
-                      shadowColor: "#000",
-                      shadowOffset: { width: 0, height: 2 },
-                      shadowOpacity: 0.25,
-                      shadowRadius: 3.84,
-                    }}
-                    titleStyle={{
-                      color: "black",
-                      paddingLeft: 10,
-                    }}
-                    onPress={startMdnsScan}
-                    title=""
-                  />
-                ) : (
-                  <Button
-                    icon={<Icon name="error" size={24} color="white" />}
-                    buttonStyle={{
-                      backgroundColor: "#F05555",
-                      width: 200,
-                      height: 50,
-                      justifyContent: "center",
-                    }}
-                    title=""
-                  />
+                {socketConnected && !searching && (
+                  <>
+                    <Button
+                      icon={
+                        <Icon
+                          name="bluetooth"
+                          type="ionicon"
+                          size={24}
+                          color="black"
+                        />
+                      }
+                      buttonStyle={{
+                        backgroundColor: "#fff",
+                        width: 200,
+                        height: 50,
+                        justifyContent: "center",
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                        marginBottom: 10,
+                      }}
+                      titleStyle={{
+                        color: "black",
+                        paddingLeft: 10,
+                      }}
+                      onPress={() => {
+                        const referenceRSSI = -59; // RSSI value measured at 1 meter
+                        const pathLossExponent = 2.5; // Varies between 2 and 4, depending on the environment
+
+                        navigator.bluetooth
+                          .requestDevice({
+                            filters: [
+                              {
+                                namePrefix: "Elias",
+                              },
+                            ],
+                            //optionalServices: ["your-service-uuid"],
+                          })
+                          .then((device) => {
+                            device.addEventListener(
+                              "advertisementreceived",
+                              (event) => {
+                                const currentRSSI = event.rssi;
+                                const distance =
+                                  10 **
+                                  ((referenceRSSI - currentRSSI) /
+                                    (10 * pathLossExponent));
+                                console.log(
+                                  `Device: ${device.name}, RSSI: ${currentRSSI}, Estimated distance: ${distance} meters`
+                                );
+                              }
+                            );
+
+                            return device.watchAdvertisements();
+                          })
+                          .catch((error) => {
+                            console.error("Error:", error);
+                          });
+                      }}
+                      title=""
+                    />
+                    <Button
+                      icon={<Icon name="wifi" size={24} color="black" />}
+                      buttonStyle={{
+                        backgroundColor: "#fff",
+                        width: 200,
+                        height: 50,
+                        justifyContent: "center",
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 2 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                        marginBottom: 10,
+                      }}
+                      titleStyle={{
+                        color: "black",
+                        paddingLeft: 10,
+                      }}
+                      onPress={startMdnsScan}
+                      title=""
+                    />
+                  </>
                 )}
               </View>
             )}

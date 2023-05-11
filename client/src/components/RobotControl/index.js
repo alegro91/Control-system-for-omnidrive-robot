@@ -6,6 +6,9 @@ import {
   TouchableOpacity,
   Alert,
   Modal,
+  Platform,
+  Switch,
+  FlatList,
 } from "react-native";
 import {
   storeData,
@@ -16,6 +19,7 @@ import {
 } from "../../utils/CacheStorage";
 import { Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
 import Notification from "../Notification";
 import Joystick from "../Joystick";
@@ -26,6 +30,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { store } from "../../redux/store";
 import { persistStore } from "redux-persist";
 import { disconnectRobot } from "../../redux/robotSlice";
+import JoystickNative from "../JoystickNative";
+import useBluetoothDistance from "../../hooks/useBluetoothDistance";
 
 /* Command strings to make the robot perform the specified commands. */
 const moveForwardCMDString = "";
@@ -39,7 +45,30 @@ const RobotControl = ({ route }) => {
   const dispatch = useDispatch();
   const [steeringType, setSteeringType] = useState("front");
   const [driveMode, setDriveMode] = useState("manual");
-  const [speed, setSpeed] = useState(0);
+  const [slowMode, setSlowMode] = useState(false);
+
+  const [showModal, setShowModal] = useState(false);
+  const [locations, setLocations] = useSelector((state) =>
+    state.locations !== undefined && state.locations !== null
+      ? state.locations
+      : [
+          {
+            id: "1",
+            name: "A1",
+          },
+          {
+            id: "2",
+            name: "A2",
+          },
+        ]
+  );
+
+  const handlePress = () => {
+    setShowModal(true);
+  };
+
+  const { distance, status, connect, disconnect } = useBluetoothDistance();
+  const isWeb = Platform.OS === "web";
 
   const navigation = useNavigation();
 
@@ -70,6 +99,8 @@ const RobotControl = ({ route }) => {
     onDisconnect();
   };
 
+  const renderItem = ({ item }) => <Text>{item.name}</Text>;
+
   return (
     <>
       <Notification
@@ -87,11 +118,125 @@ const RobotControl = ({ route }) => {
         <>
           <View style={styles.robotControlContainer}>
             {/*<Text style={styles.ipText}>Connected to: {robotIP}</Text>*/}
-            <Joystick
-              robotIp={robotIP}
-              steeringType={steeringType}
-              driveMode={driveMode}
-            />
+            {isWeb ? (
+              <View>
+                {distance !== null && status === "connected" ? (
+                  <Text
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    Approximate distance to device {distance.toFixed(2)} meters
+                  </Text>
+                ) : (
+                  <Button title="Distance" onPress={connect} />
+                )}
+                <Text
+                  style={{
+                    textAlign: "center",
+                  }}
+                >
+                  {status}
+                </Text>
+                <Joystick
+                  robotIp={robotIP}
+                  steeringType={steeringType}
+                  driveMode={driveMode}
+                  slowMode={slowMode}
+                />
+                <View
+                  style={{
+                    position: "relative",
+                    top: 0,
+                  }}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    Slow mode
+                  </Text>
+                  <Switch
+                    style={{
+                      alignSelf: "center",
+                    }}
+                    trackColor={{ false: "#767577", true: "#81b0ff" }}
+                    thumbColor={
+                      driveMode === "slowMode" ? "#f5dd4b" : "#f4f3f4"
+                    }
+                    ios_backgroundColor="#3e3e3e"
+                    onValueChange={() => {
+                      console.log("Slow mode set to:", !slowMode);
+                      setSlowMode(!slowMode);
+                    }}
+                    value={slowMode}
+                  />
+                </View>
+              </View>
+            ) : (
+              <>
+                <View
+                  style={{
+                    top: 40,
+                    paddingBottom: 40,
+                  }}
+                >
+                  {distance !== null && status === "connected" ? (
+                    <Text
+                      style={{
+                        textAlign: "center",
+                      }}
+                    >
+                      Approximate distance to device {distance.toFixed(2)}{" "}
+                      meters
+                    </Text>
+                  ) : (
+                    <Button title="Distance" onPress={connect} />
+                  )}
+                  <Text
+                    style={{
+                      textAlign: "center",
+                    }}
+                  >
+                    {status}
+                  </Text>
+
+                  <JoystickNative
+                    robotIp={robotIP}
+                    steeringType={steeringType}
+                    driveMode={driveMode}
+                    slowMode={slowMode}
+                  />
+                  <View
+                    style={{
+                      position: "relative",
+                      top: 0,
+                    }}
+                  >
+                    <Text
+                      style={{
+                        textAlign: "center",
+                      }}
+                    >
+                      Slow mode
+                    </Text>
+                    <Switch
+                      style={{
+                        alignSelf: "center",
+                      }}
+                      trackColor={{ false: "#767577", true: "#81b0ff" }}
+                      thumbColor={
+                        driveMode === "slowMode" ? "#f5dd4b" : "#f4f3f4"
+                      }
+                      ios_backgroundColor="#3e3e3e"
+                      onValueChange={() => setSlowMode(!slowMode)}
+                      value={slowMode}
+                    />
+                  </View>
+                </View>
+              </>
+            )}
             <View style={styles.steeringTypeContainer}>
               {["Front", "Mid", "Rear", "Pivoting", "Parallel"].map((type) => (
                 <TouchableOpacity
@@ -112,7 +257,9 @@ const RobotControl = ({ route }) => {
             <View style={styles.buttonContainer}>
               <Button
                 title="Drive to"
-                onPress={() => setDriveMode("driveTo")}
+                onPress={() => {
+                  handlePress();
+                }}
               />
               <Button
                 title="Disconnect"
@@ -122,6 +269,36 @@ const RobotControl = ({ route }) => {
               />
             </View>
           </View>
+          <Modal visible={showModal} animationType="slide">
+            <View>
+              <Button
+                title="Close"
+                onPress={() => {
+                  setShowModal(false);
+                  console.log(locations);
+                }}
+              />
+              <FlatList
+                data={locations}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={{
+                      backgroundColor: "grey",
+                      padding: 10,
+                      borderRadius: 5,
+                      margin: 5,
+                    }}
+                    onPress={() => {
+                      handleLocationPress(item);
+                    }}
+                  >
+                    <Text>{item.name}</Text>
+                  </TouchableOpacity>
+                )}
+                keyExtractor={(item) => item.id}
+              />
+            </View>
+          </Modal>
           <Modal
             animationType="slide"
             transparent={true}
@@ -146,7 +323,14 @@ const RobotControl = ({ route }) => {
       ) : (
         <View style={styles.robotControlContainer}>
           <Button
-            icon={<Icon name="wifi" size={24} color="black" />}
+            icon={
+              <Icon
+                name="return-up-back-outline"
+                type="ionicon"
+                size={32}
+                color="black"
+              />
+            }
             buttonStyle={{
               backgroundColor: "#fff",
               width: 200,
@@ -156,6 +340,7 @@ const RobotControl = ({ route }) => {
               shadowOffset: { width: 0, height: 2 },
               shadowOpacity: 0.25,
               shadowRadius: 3.84,
+              marginBottom: 10,
             }}
             titleStyle={{
               color: "black",
@@ -197,6 +382,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   steeringTypeContainer: {
+    position: "relative",
+    top: 30,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -211,6 +398,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
     width: "100%",
+    position: "relative",
+    top: 50,
   },
   robotCommandContainer: {
     flexDirection: "row",

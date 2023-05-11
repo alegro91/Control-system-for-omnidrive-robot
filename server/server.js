@@ -4,11 +4,17 @@ const mdns = require("mdns-js");
 const dns = require("dns");
 const ping = require("ping");
 const http = require("http");
+const fetch = require("node-fetch");
 
 require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
+
+/* CONSTS */
+const ROBOT_PORT = "7012";
+const ROBOT_COMMAND = "rpc/get_agv_data";
+const MAC_PREFIX = "0:E:8E";
 
 const getClientIp = (socket) => {
   const ipAddress = socket.handshake.address;
@@ -16,6 +22,41 @@ const getClientIp = (socket) => {
     return ipAddress.substr(7);
   }
   return ipAddress;
+};
+
+const fetchRobotData = async (ip) => {
+  return new Promise((resolve, reject) => {
+    const requestOptions = {
+      method: "POST",
+    };
+
+    fetch(`http://${ip}:${ROBOT_PORT}/${ROBOT_COMMAND}`, requestOptions)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        resolve(responseJson.Result);
+      })
+      .catch((error) => {
+        console.log(`No robot data found for IP: ${ip}`);
+        resolve(null);
+      });
+  });
+};
+
+const fetchListLocations = async (ip) => {
+  const P_COMMAND = "rpc/list_locations";
+  const MAX_ITEMS = 10; // maximum number of items to retrieve
+  const requestOptions = {
+    method: "POST",
+  };
+  try {
+    const response = await fetch(
+      `http://${ip}:${ROBOT_PORT}/${P_COMMAND}`,
+      requestOptions
+    );
+    const responseJson = await response.json();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
 const resolveHostnameAndFilter = async (ip) => {
@@ -58,29 +99,78 @@ io.on("connection", (socket) => {
     console.log("Starting LAN scan : " + clientIp);
 
     const hosts = [];
+    const locations = [];
 
     // Use the 'arp' command to find devices on the LAN
     const arp = spawn("arp", ["-a"]);
 
-    arp.stdout.on("data", (data) => {
-      const output = data.toString().split("\n");
+    let fetchingDataCompleted = false;
 
-      output.forEach((line) => {
+    arp.stdout.on("data", async (data) => {
+      const output = data.toString().split("\n");
+      let robotCount = 1;
+      /* Test purposes only */
+      //
+      /*
+      output.map(async (line) => {
+        const parts = line.split(" ");
+        if (parts.length < 4) {
+          return;
+        }
+        const ip = parts[1].replace("(", "").replace(")", "");
+        const mac = parts[3].toUpperCase();
+
+        if (ip !== "") {
+          hosts.push({ ip, mac });
+        }
+      });
+      */
+      //
+
+      const fetchPromises = output.map(async (line) => {
         if (line.includes("incomplete") || !line.includes("ether")) {
           return;
         }
         const parts = line.split(" ");
+        if (parts.length < 4) {
+          return;
+        }
         const ip = parts[1].replace("(", "").replace(")", "");
         const mac = parts[3].toUpperCase();
-        hosts.push({ ip, mac });
         console.log("Found device:", ip, mac);
+        if (mac.startsWith(MAC_PREFIX)) {
+          /* Test purposes only */
+          //const id = robotCount++;
+          //hosts.push({ /*id,*/ ip, mac });
+          //console.log("Found device:", mac);
+
+          // Fetch robot data
+          const robotData = await fetchRobotData(ip);
+          //const locationsData = await fetchListLocations(ip);
+          if (robotData) {
+            robotData.ip = ip;
+            robotData.mac = mac;
+            hosts.push(robotData);
+            locations.push(locations);
+            console.log("Found device:", ip, mac);
+          }
+        }
       });
+
+      await Promise.all(fetchPromises);
+      fetchingDataCompleted = true;
     });
 
     arp.on("close", () => {
-      console.log("ARP scan complete");
+      const waitForDataFetching = setInterval(() => {
+        if (fetchingDataCompleted) {
+          console.log("ARP scan complete");
+          clearInterval(waitForDataFetching);
+        }
+      }, 500);
     });
 
+    /*
     // Use the 'ping' module to check if devices are online
     const subnet = clientIp.split(".").slice(0, 3).join(".");
     const promises = [];
@@ -102,8 +192,10 @@ io.on("connection", (socket) => {
         })
       );
     }
+    */
 
     // Use the 'dns' module to resolve hostnames
+    /*
     dns.reverse(clientIp, (err, hostnames) => {
       if (err) {
         console.error("Error resolving hostname:", err);
@@ -112,8 +204,10 @@ io.on("connection", (socket) => {
       console.log("Hostname:", hostnames[0]);
       hosts.push({ name: hostnames[0] });
     });
+    */
 
     // Use the 'mdns' module to discover devices via mDNS
+    /*
     const browser = mdns.createBrowser(mdns.tcp("http"));
 
     browser.on("ready", () => {
@@ -123,18 +217,20 @@ io.on("connection", (socket) => {
     browser.on("update", (data) => {
       if (data.host === undefined) return;
       if (hosts.some((host) => host.ip === data.addresses[0])) return;
-      hosts.push({ ip: data.addresses[0], name: data.host });
-      console.log("Found device via mDNS:", data.host, data.addresses[0]);
+      //hosts.push({ ip: data.addresses[0], name: data.host });
+      //console.log("Found device via mDNS:", data.host, data.addresses[0]);
     });
+    */
 
     // Stop scan after 10 seconds
     scanTimeout = setTimeout(async () => {
       console.log("Stopping LAN scan...");
 
-      await Promise.all(promises);
-      socket.emit("scan-complete", hosts);
-      console.log(hosts);
-      browser.stop();
+      //await Promise.all(promises);
+      socket.emit("scan-complete");
+      socket.emit("robot-discovered", hosts);
+      console.log("Robots discovered", hosts);
+      //browser.stop();
     }, 10000);
   });
 
@@ -150,3 +246,6 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+module.exports = app;
+module.exports.getClientIp = getClientIp;
