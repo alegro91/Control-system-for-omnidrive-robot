@@ -5,7 +5,11 @@ import NetInfo from "@react-native-community/netinfo";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { updateRobots, disconnectRobot } from "../redux/robotSlice";
+import {
+  updateRobots,
+  disconnectRobot,
+  updateLocations,
+} from "../redux/robotSlice";
 
 const useRobots = () => {
   const robotsState = useSelector((state) => state.robot.robots);
@@ -123,6 +127,24 @@ const useRobots = () => {
         });
       });
 
+      newSocket.on("robot-updated", (updatedRobot) => {
+        setRobots((prevRobots) => {
+          const updatedRobots = prevRobots.map((robot) => {
+            if (robot.agv_id === updatedRobot.agv_id) {
+              return { ...robot, ...updatedRobot };
+            }
+            return robot;
+          });
+          dispatch(updateRobots(updatedRobots));
+          return updatedRobots;
+        });
+      });
+
+      newSocket.on("locations-discovered", (locations) => {
+        setLocations(locations);
+        dispatch(updateLocations(locations));
+      });
+
       newSocket.on("scan-complete", () => {
         setScanStatus("idle");
       });
@@ -167,6 +189,19 @@ const useRobots = () => {
               // If this is the last robot in the array, set the flag to indicate that the loop has finished
               setRobotDiscoveryFinished(true);
             }
+          });
+        });
+
+        newSocket.on("robot-updated", (updatedRobot) => {
+          setRobots((prevRobots) => {
+            const updatedRobots = prevRobots.map((robot) => {
+              if (robot.agv_id === updatedRobot.agv_id) {
+                return { ...robot, ...updatedRobot };
+              }
+              return robot;
+            });
+            dispatch(updateRobots(updatedRobots));
+            return updatedRobots;
           });
         });
 

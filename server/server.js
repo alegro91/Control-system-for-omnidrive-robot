@@ -14,6 +14,8 @@ const server = http.createServer(app);
 
 const emitter = new EventEmitter();
 
+let discoveredRobots = [];
+
 /* CONSTS */
 const ROBOT_PORT = "7012";
 const ROBOT_COMMAND = "rpc/get_agv_data";
@@ -174,64 +176,16 @@ io.on("connection", (socket) => {
       }, 500);
     });
 
-    /*
-    // Use the 'ping' module to check if devices are online
-    const subnet = clientIp.split(".").slice(0, 3).join(".");
-    const promises = [];
-
-    for (let i = 1; i < 255; i++) {
-      const ip = subnet + "." + i;
-      promises.push(
-        new Promise(async (resolve) => {
-          ping.sys.probe(ip, async (isAlive) => {
-            if (isAlive) {
-              console.log("Device online:", ip);
-              const host = await resolveHostnameAndFilter(ip);
-              if (host) {
-                hosts.push(host);
-              }
-            }
-            resolve();
-          });
-        })
-      );
-    }
-    */
-
-    // Use the 'dns' module to resolve hostnames
-    /*
-    dns.reverse(clientIp, (err, hostnames) => {
-      if (err) {
-        console.error("Error resolving hostname:", err);
-        return;
-      }
-      console.log("Hostname:", hostnames[0]);
-      hosts.push({ name: hostnames[0] });
-    });
-    */
-
-    // Use the 'mdns' module to discover devices via mDNS
-    /*
-    const browser = mdns.createBrowser(mdns.tcp("http"));
-
-    browser.on("ready", () => {
-      browser.discover();
-    });
-
-    browser.on("update", (data) => {
-      if (data.host === undefined) return;
-      if (hosts.some((host) => host.ip === data.addresses[0])) return;
-      //hosts.push({ ip: data.addresses[0], name: data.host });
-      //console.log("Found device via mDNS:", data.host, data.addresses[0]);
-    });
-    */
-
     // Stop scan after 10 seconds
     scanTimeout = setTimeout(async () => {
       console.log("Stopping LAN scan...");
 
       socket.emit("scan-complete");
+
+      discoveredRobots = hosts;
+      // Emit the 'robot-discovered' event with the discovered robots
       socket.emit("robot-discovered", hosts);
+
       console.log("Robots discovered", hosts);
 
       if (locations.length > 0) {
@@ -241,6 +195,26 @@ io.on("connection", (socket) => {
       }
     }, 10000);
   });
+
+  // Check for updates in the discovered robots
+  setInterval(async () => {
+    const updatedRobots = await Promise.all(
+      discoveredRobots.map(async (robot) => {
+        return fetchRobotData(robot.ip);
+      })
+    );
+    for (let i = 0; i < updatedRobots.length; i++) {
+      if (
+        JSON.stringify(updatedRobots[i]) !== JSON.stringify(discoveredRobots[i])
+      ) {
+        // If different, emit a 'robot-updated' event with the new data
+        io.emit("robot-updated", updatedRobots[i]);
+        console.log("Robot updated", updatedRobots[i]);
+        // Update the robot in the discoveredRobots array
+        discoveredRobots[i] = updatedRobots[i];
+      }
+    }
+  }, 5000); // Check for updates every 5 seconds
 
   socket.on("stop-scan", () => {
     console.log("Stopping scan...");
