@@ -95,13 +95,22 @@ const FilteredLocationsModal = ({
                 <Text
                   style={{
                     textAlign: "center",
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    color: message.type === "success" ? "#1E90FF" : "#F05555",
+                    fontSize: message.type === "success" ? 16 : 14,
+                    fontWeight: message.type === "error" ? "bold" : "normal",
+                    color:
+                      message.type === "success"
+                        ? "#1E90FF"
+                        : message.type === "info"
+                        ? "#808080" // Grey color for "info" type
+                        : message.type === "error"
+                        ? "#F05555" // Red grey for "error" type
+                        : "#808080", // Grey color for undefined or null type
                     width: 250,
                   }}
                 >
-                  {message && !cooldown ? message.text : ""}
+                  {message && !cooldown
+                    ? message.text
+                    : "Choose a location to move to"}
                 </Text>
               </>
             )}
@@ -112,6 +121,9 @@ const FilteredLocationsModal = ({
             scrollEventThrottle={16}
             contentContainerStyle={styles.listContainer}
           >
+            {filteredLocations.length === 0 && (
+              <Text style={{ textAlign: "center" }}>No locations found</Text>
+            )}
             {filteredLocations.map((item) => (
               <View key={item.name}>{renderLocationItem({ item })}</View>
             ))}

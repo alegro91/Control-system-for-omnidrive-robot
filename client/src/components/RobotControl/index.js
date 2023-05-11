@@ -62,6 +62,10 @@ const RobotControl = ({ route }) => {
     setIsGotoButtonPressed(true);
     console.log("Going to location:", item);
     // perform your POST request
+    setStatusMessage({
+      type: "info",
+      text: `waiting for robot response...`,
+    });
     try {
       const response = await axios.post(
         `http://${robotIP}:7012/rpc/go_to_location`,
