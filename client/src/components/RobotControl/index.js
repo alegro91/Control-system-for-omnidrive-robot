@@ -21,6 +21,7 @@ import { Button, Icon } from "react-native-elements";
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+import FilteredLocationsModal from "../FilteredLocationsModal";
 import Notification from "../Notification";
 import Joystick from "../Joystick";
 import { FontAwesome } from "@expo/vector-icons/FontAwesome";
@@ -32,6 +33,9 @@ import { persistStore } from "redux-persist";
 import { disconnectRobot } from "../../redux/robotSlice";
 import JoystickNative from "../JoystickNative";
 import useBluetoothDistance from "../../hooks/useBluetoothDistance";
+import useRobots from "../../socket/useRobots";
+
+import axios from "axios";
 
 /* Command strings to make the robot perform the specified commands. */
 const moveForwardCMDString = "";
@@ -47,21 +51,55 @@ const RobotControl = ({ route }) => {
   const [driveMode, setDriveMode] = useState("manual");
   const [slowMode, setSlowMode] = useState(false);
 
+  const { locations } = useRobots();
+
   const [showModal, setShowModal] = useState(false);
-  const [locations, setLocations] = useSelector((state) =>
-    state.locations !== undefined && state.locations !== null
-      ? state.locations
-      : [
-          {
-            id: "1",
-            name: "A1",
+
+  const [isGotoButtonPressed, setIsGotoButtonPressed] = useState(false);
+  const [statusMessage, setStatusMessage] = useState("");
+
+  const handleGotoButtonPress = async (item) => {
+    setIsGotoButtonPressed(true);
+    console.log("Going to location:", item);
+    // perform your POST request
+    try {
+      const response = await axios.post(
+        `http://${robotIP}:7012/rpc/go_to_location`,
+        [[item], {}], // JSON body containing the data
+        {
+          headers: {
+            "Content-Type": "application/json",
           },
-          {
-            id: "2",
-            name: "A2",
-          },
-        ]
-  );
+        }
+      );
+      console.log(response.data);
+      setStatusMessage({
+        type: "success",
+        text: `Going to ${item.name}`,
+      });
+    } catch (error) {
+      setStatusMessage({
+        type: "error",
+        text: `Error going to ${item.name}\n${error.message.substring(
+          0,
+          100
+        )}}`,
+      });
+    }
+  };
+
+  useEffect(() => {
+    let cooldownTimeout;
+    if (isGotoButtonPressed) {
+      cooldownTimeout = setTimeout(() => {
+        setIsGotoButtonPressed(false);
+      }, 5000); // 5 second cooldown
+    }
+
+    return () => {
+      clearTimeout(cooldownTimeout);
+    };
+  }, [isGotoButtonPressed]);
 
   const handlePress = () => {
     setShowModal(true);
@@ -269,36 +307,18 @@ const RobotControl = ({ route }) => {
               />
             </View>
           </View>
-          <Modal visible={showModal} animationType="slide">
-            <View>
-              <Button
-                title="Close"
-                onPress={() => {
-                  setShowModal(false);
-                  console.log(locations);
-                }}
-              />
-              <FlatList
-                data={locations}
-                renderItem={({ item }) => (
-                  <TouchableOpacity
-                    style={{
-                      backgroundColor: "grey",
-                      padding: 10,
-                      borderRadius: 5,
-                      margin: 5,
-                    }}
-                    onPress={() => {
-                      handleLocationPress(item);
-                    }}
-                  >
-                    <Text>{item.name}</Text>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(item) => item.id}
-              />
-            </View>
-          </Modal>
+          <FilteredLocationsModal
+            showModal={showModal}
+            setShowModal={setShowModal}
+            cooldown={isGotoButtonPressed}
+            locations={locations}
+            message={statusMessage}
+            handleLocationPress={(item) => {
+              console.log("Selected location:", item);
+              handleGotoButtonPress(item);
+            }}
+          />
+
           <Modal
             animationType="slide"
             transparent={true}
