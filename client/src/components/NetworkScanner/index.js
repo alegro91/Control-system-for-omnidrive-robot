@@ -630,7 +630,7 @@ const NetworkScanner = () => {
               <FlatList
                 data={robots}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={(item) => item.agv_id}
                 persistentScrollbar={true}
                 style={{
                   padding: 30,

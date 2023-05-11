@@ -14,10 +14,33 @@ import {
 const useRobots = () => {
   const robotsState = useSelector((state) => state.robot.robots);
   const [robots, setRobots] = useState(
-    useSelector((state) => state.robot.robots) || []
+    /*useSelector((state) => state.robot.robots) || */ [
+      {
+        agv_id: "Basement Dweller",
+        state: "Idle",
+        battery_capacity: 100,
+        location: "C 1346",
+        last_location: "C 1484",
+        loaded: true,
+        ip: "192.168.254.123",
+        x: -64,
+        y: 32,
+      },
+      {
+        agv_id: "Lightning McQueen",
+        state: "Moving",
+        battery_capacity: 50,
+        location: "C 1484",
+        last_location: "C 1346",
+        loaded: false,
+        ip: "192.168.254.124",
+        x: -62,
+        y: 25,
+      },
+    ]
   );
   const [locations, setLocations] = useState(
-    useSelector((state) => state.robot.locations) || [
+    /* useSelector((state) => state.robot.locations) || */ [
       { name: "C 1418", x: 0, y: 0 },
       { name: "C 1419", x: 0, y: 0 },
       { name: "C 1420", x: 0, y: 0 },
@@ -226,6 +249,8 @@ const useRobots = () => {
     if (socket) {
       setRobots([]);
       dispatch(updateRobots([]));
+      setLocations([]);
+      dispatch(updateLocations([]));
       setScanStatus("scanning");
       setSearching(true);
       socket.emit("start-scan");
