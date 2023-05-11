@@ -5,11 +5,14 @@ const dns = require("dns");
 const ping = require("ping");
 const http = require("http");
 const fetch = require("node-fetch");
+const EventEmitter = require("events");
 
 require("dotenv").config();
 
 const app = express();
 const server = http.createServer(app);
+
+const emitter = new EventEmitter();
 
 /* CONSTS */
 const ROBOT_PORT = "7012";
@@ -42,21 +45,23 @@ const fetchRobotData = async (ip) => {
   });
 };
 
-const fetchListLocations = async (ip) => {
-  const P_COMMAND = "rpc/list_locations";
-  const MAX_ITEMS = 10; // maximum number of items to retrieve
-  const requestOptions = {
-    method: "POST",
-  };
-  try {
-    const response = await fetch(
-      `http://${ip}:${ROBOT_PORT}/${P_COMMAND}`,
-      requestOptions
-    );
-    const responseJson = await response.json();
-  } catch (error) {
-    console.error(error);
-  }
+const fetchLocations = async (ip) => {
+  const P_COMMAND = "rpc/list_location_names";
+  return new Promise((resolve, reject) => {
+    const requestOptions = {
+      method: "POST",
+    };
+
+    fetch(`http://${ip}:${ROBOT_PORT}/${P_COMMAND}`, requestOptions)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        resolve(responseJson.Result);
+      })
+      .catch((error) => {
+        console.log(`No locations data found for: ${ip}`);
+        resolve(null);
+      });
+  });
 };
 
 const resolveHostnameAndFilter = async (ip) => {
@@ -139,20 +144,19 @@ io.on("connection", (socket) => {
         const mac = parts[3].toUpperCase();
         console.log("Found device:", ip, mac);
         if (mac.startsWith(MAC_PREFIX)) {
-          /* Test purposes only */
-          //const id = robotCount++;
-          //hosts.push({ /*id,*/ ip, mac });
-          //console.log("Found device:", mac);
-
-          // Fetch robot data
           const robotData = await fetchRobotData(ip);
-          //const locationsData = await fetchListLocations(ip);
           if (robotData) {
             robotData.ip = ip;
             robotData.mac = mac;
             hosts.push(robotData);
-            locations.push(locations);
-            console.log("Found device:", ip, mac);
+            if (locations.length === 0) {
+              // Fetch locations for the first robot only
+              const locationsData = await fetchLocations(ip);
+              if (locationsData) {
+                locations.push(locationsData);
+                console.log("Locations discovered:", locationsData);
+              }
+            }
           }
         }
       });
@@ -226,11 +230,15 @@ io.on("connection", (socket) => {
     scanTimeout = setTimeout(async () => {
       console.log("Stopping LAN scan...");
 
-      //await Promise.all(promises);
       socket.emit("scan-complete");
       socket.emit("robot-discovered", hosts);
       console.log("Robots discovered", hosts);
-      //browser.stop();
+
+      if (locations.length > 0) {
+        // Emit the 'locations-discovered' event with the locations of the first robot
+        socket.emit("locations-discovered", locations[0]);
+        console.log("Locations emitted", locations[0]);
+      }
     }, 10000);
   });
 

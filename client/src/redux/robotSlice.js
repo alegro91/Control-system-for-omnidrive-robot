@@ -5,6 +5,7 @@ export const robotSlice = createSlice({
   initialState: {
     robotIP: "",
     robots: [],
+    locations: [],
   },
   reducers: {
     updateRobotIP: (state, action) => {
@@ -19,9 +20,17 @@ export const robotSlice = createSlice({
     clearRobots: (state) => {
       state.robots = [];
     },
+    updateLocations: (state, action) => {
+      state.locations = action.payload;
+    },
   },
 });
 
-export const { updateRobotIP, disconnectRobot, updateRobots, clearRobots } =
-  robotSlice.actions;
+export const {
+  updateRobotIP,
+  disconnectRobot,
+  updateRobots,
+  clearRobots,
+  updateLocations,
+} = robotSlice.actions;
 export default robotSlice.reducer;

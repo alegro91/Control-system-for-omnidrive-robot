@@ -13,7 +13,24 @@ const useRobots = () => {
     useSelector((state) => state.robot.robots) || []
   );
   const [locations, setLocations] = useState(
-    useSelector((state) => state.robot.locations) || []
+    useSelector((state) => state.robot.locations) || [
+      { name: "C 1418", x: 0, y: 0 },
+      { name: "C 1419", x: 0, y: 0 },
+      { name: "C 1420", x: 0, y: 0 },
+      { name: "C 1421", x: 0, y: 0 },
+      { name: "A 1134", x: 0, y: 0 },
+      { name: "A 1135", x: 0, y: 0 },
+      { name: "A 1136", x: 0, y: 0 },
+      { name: "A 1137", x: 0, y: 0 },
+      { name: "G 0019", x: 0, y: 0 },
+      { name: "G 0020", x: 0, y: 0 },
+      { name: "G 0021", x: 0, y: 0 },
+      { name: "G 0022", x: 0, y: 0 },
+      { name: "G 0023", x: 0, y: 0 },
+      { name: "G 0024", x: 0, y: 0 },
+      { name: "G 0025", x: 0, y: 0 },
+      { name: "G 0026", x: 0, y: 0 },
+    ]
   );
   const [socket, setSocket] = useState(null);
   const [scanStatus, setScanStatus] = useState("idle");
@@ -73,7 +90,7 @@ const useRobots = () => {
 
   useEffect(() => {
     if (Platform.OS === "web") {
-      const newSocket = io("http://localhost:3002");
+      const newSocket = io("http://localhost:3000");
       setSocket(newSocket);
 
       newSocket.on("connect", () => {
@@ -153,6 +170,11 @@ const useRobots = () => {
           });
         });
 
+        newSocket.on("locations-discovered", (locations) => {
+          setLocations(locations);
+          dispatch(updateLocations(locations));
+        });
+
         newSocket.on("scan-complete", () => {
           setScanStatus("idle");
         });
@@ -172,6 +194,7 @@ const useRobots = () => {
       setScanStatus("scanning");
       setSearching(true);
       socket.emit("start-scan");
+      socket.emit("get-locations");
     }
   };
 
@@ -193,6 +216,7 @@ const useRobots = () => {
 
   return {
     robots,
+    locations,
     startMdnsScan,
     stopMdnsScan,
     searching,
