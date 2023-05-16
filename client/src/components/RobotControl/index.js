@@ -315,10 +315,9 @@ const RobotControl = ({ route }) => {
             showModal={showModal}
             setShowModal={setShowModal}
             cooldown={isGotoButtonPressed}
-            locations={locations}
+            locations={locations[0]}
             message={statusMessage}
             handleLocationPress={(item) => {
-              console.log("Selected location:", item);
               handleGotoButtonPress(item);
             }}
           />

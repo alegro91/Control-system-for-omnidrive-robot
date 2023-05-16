@@ -14,7 +14,7 @@ import {
 const useRobots = () => {
   const robotsState = useSelector((state) => state.robot.robots);
   const [robots, setRobots] = useState(
-    /*useSelector((state) => state.robot.robots) || */ [
+    useSelector((state) => state.robot.robots) || [
       {
         agv_id: "Basement Dweller",
         state: "Idle",
@@ -40,7 +40,7 @@ const useRobots = () => {
     ]
   );
   const [locations, setLocations] = useState(
-    /* useSelector((state) => state.robot.locations) || */ [
+    useSelector((state) => state.robot.locations) || [
       { name: "C 1418", x: 0, y: 0 },
       { name: "C 1419", x: 0, y: 0 },
       { name: "C 1420", x: 0, y: 0 },
@@ -117,7 +117,7 @@ const useRobots = () => {
 
   useEffect(() => {
     if (Platform.OS === "web") {
-      const newSocket = io("http://localhost:3000");
+      const newSocket = io("http://localhost:3002");
       setSocket(newSocket);
 
       newSocket.on("connect", () => {

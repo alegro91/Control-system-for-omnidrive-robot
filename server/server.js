@@ -48,7 +48,7 @@ const fetchRobotData = async (ip) => {
 };
 
 const fetchLocations = async (ip) => {
-  const P_COMMAND = "rpc/list_location_names";
+  const P_COMMAND = "rpc/list_locations";
   return new Promise((resolve, reject) => {
     const requestOptions = {
       method: "POST",
@@ -57,7 +57,11 @@ const fetchLocations = async (ip) => {
     fetch(`http://${ip}:${ROBOT_PORT}/${P_COMMAND}`, requestOptions)
       .then((response) => response.json())
       .then((responseJson) => {
-        resolve(responseJson.Result);
+        // Extract the names from the response
+        const result = responseJson.Result;
+        const names = Object.keys(result);
+
+        resolve(names);
       })
       .catch((error) => {
         console.log(`No locations data found for: ${ip}`);
@@ -190,16 +194,18 @@ io.on("connection", (socket) => {
 
       if (locations.length > 0) {
         // Emit the 'locations-discovered' event with the locations of the first robot
-        socket.emit("locations-discovered", locations[0]);
+        socket.emit("locations-discovered", locations);
         console.log("Locations emitted", locations[0]);
       }
     }, 10000);
   });
 
   // Check for updates in the discovered robots
+  /*
   setInterval(async () => {
     const updatedRobots = await Promise.all(
       discoveredRobots.map(async (robot) => {
+        console.log("Checking for updates in", robot);
         return fetchRobotData(robot.ip);
       })
     );
@@ -215,6 +221,7 @@ io.on("connection", (socket) => {
       }
     }
   }, 5000); // Check for updates every 5 seconds
+  */
 
   socket.on("stop-scan", () => {
     console.log("Stopping scan...");

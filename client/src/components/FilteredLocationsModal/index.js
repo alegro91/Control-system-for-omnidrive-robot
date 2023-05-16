@@ -26,7 +26,7 @@ const FilteredLocationsModal = ({
 
   useEffect(() => {
     const filtered = locations.filter((item) =>
-      item.name.toLowerCase().includes(filterText.toLowerCase())
+      item.toLowerCase().includes(filterText.toLowerCase())
     );
     setFilteredLocations(filtered);
   }, [filterText, locations]);
@@ -45,7 +45,7 @@ const FilteredLocationsModal = ({
       disabled={cooldown}
       onPress={() => handleLocationPress(item)}
     >
-      <Text style={styles.locationItemText}>{item.name}</Text>
+      <Text style={styles.locationItemText}>{item}</Text>
     </TouchableOpacity>
   );
 
@@ -125,7 +125,7 @@ const FilteredLocationsModal = ({
               <Text style={{ textAlign: "center" }}>No locations found</Text>
             )}
             {filteredLocations.map((item) => (
-              <View key={item.name}>{renderLocationItem({ item })}</View>
+              <View key={item}>{renderLocationItem({ item })}</View>
             ))}
           </Animated.ScrollView>
         </Animated.View>
