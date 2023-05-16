@@ -228,6 +228,38 @@ io.on("connection", (socket) => {
     clearTimeout(scanTimeout);
   });
 
+  socket.on("go-to-location", (data) => {
+    console.log(data);
+    const ip = data.robotIp;
+    const location = data.location;
+    console.log("Received go-to-location event");
+    console.log("Going to location : " + location + " : " + ip);
+
+    const requestOptions = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify([[location], {}]),
+    };
+
+    fetch(`http://${ip}:7012/rpc/go_to_location`, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+        socket.emit("go-to-location-complete", {
+          type: "success",
+          text: "Go to location complete",
+          status: result.status,
+        });
+      })
+      .catch((error) => {
+        socket.emit("go-to-location-complete", {
+          type: "error",
+          text: error.message,
+        });
+        console.log(error);
+      });
+  });
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
   });

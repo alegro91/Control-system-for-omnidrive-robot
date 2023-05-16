@@ -108,7 +108,7 @@ const FilteredLocationsModal = ({
                     width: 250,
                   }}
                 >
-                  {message && !cooldown
+                  {message.text && !cooldown
                     ? message.text
                     : "Choose a location to move to"}
                 </Text>

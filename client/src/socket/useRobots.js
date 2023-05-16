@@ -66,6 +66,12 @@ const useRobots = () => {
   const [error, setError] = useState(false);
   const [robotDiscoveryFinished, setRobotDiscoveryFinished] = useState(false);
 
+  const [goToLocationStatus, setGoToLocationStatus] = useState({
+    type: "idle",
+    text: "",
+    status: "Idle",
+  });
+
   const robots_ = [
     {
       agv_id: "Robot 1",
@@ -172,6 +178,14 @@ const useRobots = () => {
         setScanStatus("idle");
       });
 
+      newSocket.on("go-to-location-complete", (data) => {
+        console.log("go-to-location-complete", data);
+        setGoToLocationStatus({
+          type: data.type ? data.type : "",
+          text: data.text ? data.text : "",
+        });
+      });
+
       return () => {
         newSocket.close();
         clearTimeout(connectionTimeout); // Clear the timeout
@@ -233,6 +247,15 @@ const useRobots = () => {
           dispatch(updateLocations(locations));
         });
 
+        newSocket.on("go-to-location-complete", (data) => {
+          console.log("go-to-location-complete", data);
+          setGoToLocationStatus({
+            type: data.type ? data.type : "",
+            text: data.text ? data.text : "",
+            status: data.status ? data.status : "",
+          });
+        });
+
         newSocket.on("scan-complete", () => {
           setScanStatus("idle");
         });
@@ -266,6 +289,12 @@ const useRobots = () => {
     }
   };
 
+  const goToLocation = (robotIp, location) => {
+    if (socket) {
+      socket.emit("go-to-location", { robotIp, location });
+    }
+  };
+
   useEffect(() => {
     if (socket) {
       socket.on("scan-complete", () => {
@@ -277,6 +306,8 @@ const useRobots = () => {
   return {
     robots,
     locations,
+    goToLocation,
+    goToLocationStatus,
     startMdnsScan,
     stopMdnsScan,
     searching,

@@ -51,7 +51,7 @@ const RobotControl = ({ route }) => {
   const [driveMode, setDriveMode] = useState("manual");
   const [slowMode, setSlowMode] = useState(false);
 
-  const { locations } = useRobots();
+  const { locations, goToLocation, goToLocationStatus } = useRobots();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -59,37 +59,15 @@ const RobotControl = ({ route }) => {
   const [statusMessage, setStatusMessage] = useState("");
 
   const handleGotoButtonPress = async (item) => {
+    goToLocation(robotIP, item);
+    console.log("Going to location:", item + " " + robotIP);
     setIsGotoButtonPressed(true);
     console.log("Going to location:", item);
     // perform your POST request
     setStatusMessage({
-      type: "info",
-      text: `waiting for robot response...`,
+      type: goToLocationStatus.type,
+      text: goToLocationStatus.text,
     });
-    try {
-      const response = await axios.post(
-        `http://${robotIP}:7012/rpc/go_to_location`,
-        [[item], {}], // JSON body containing the data
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response.data);
-      setStatusMessage({
-        type: "success",
-        text: `Going to ${item.name}`,
-      });
-    } catch (error) {
-      setStatusMessage({
-        type: "error",
-        text: `Error going to ${item.name}\n${error.message.substring(
-          0,
-          100
-        )}}`,
-      });
-    }
   };
 
   useEffect(() => {
@@ -316,7 +294,7 @@ const RobotControl = ({ route }) => {
             setShowModal={setShowModal}
             cooldown={isGotoButtonPressed}
             locations={locations[0]}
-            message={statusMessage}
+            message={goToLocationStatus}
             handleLocationPress={(item) => {
               handleGotoButtonPress(item);
             }}
