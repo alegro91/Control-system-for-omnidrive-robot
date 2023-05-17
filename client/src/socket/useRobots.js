@@ -14,50 +14,46 @@ import {
 const useRobots = () => {
   const robotsState = useSelector((state) => state.robot.robots);
   const [robots, setRobots] = useState(
-    useSelector((state) => state.robot.robots) || [
-      {
-        agv_id: "Basement Dweller",
-        state: "Idle",
-        battery_capacity: 100,
-        location: "C 1346",
-        last_location: "C 1484",
-        loaded: true,
-        ip: "192.168.254.123",
-        x: -64,
-        y: 32,
-      },
-      {
-        agv_id: "Lightning McQueen",
-        state: "Moving",
-        battery_capacity: 50,
-        location: "C 1484",
-        last_location: "C 1346",
-        loaded: false,
-        ip: "192.168.254.124",
-        x: -62,
-        y: 25,
-      },
-    ]
+    useSelector((state) =>
+      state.robot.robots || robotsState.length === 0
+        ? [
+            {
+              agv_id: "Basement Dweller",
+              state: "Idle",
+              battery_capacity: 100,
+              location: "C 1346",
+              last_location: "C 1484",
+              loaded: true,
+              ip: "192.168.254.123",
+              x: -64,
+              y: 32,
+            },
+            {
+              agv_id: "Test robot",
+              state: "Moving",
+              battery_capacity: 50,
+              location: "C 1484",
+              last_location: "C 1346",
+              loaded: false,
+              ip: "192.168.254.124",
+              errors: [
+                { id: "1", errorMessage: "Sensor X1 is not operational" },
+                { id: "2", errorMessage: "Robot grab arm not operational" },
+              ],
+              x: -62,
+              y: 25,
+            },
+          ]
+        : []
+    )
   );
+  const locationsState = useSelector((state) => state.robot.locations);
   const [locations, setLocations] = useState(
-    useSelector((state) => state.robot.locations) || [
-      { name: "C 1418", x: 0, y: 0 },
-      { name: "C 1419", x: 0, y: 0 },
-      { name: "C 1420", x: 0, y: 0 },
-      { name: "C 1421", x: 0, y: 0 },
-      { name: "A 1134", x: 0, y: 0 },
-      { name: "A 1135", x: 0, y: 0 },
-      { name: "A 1136", x: 0, y: 0 },
-      { name: "A 1137", x: 0, y: 0 },
-      { name: "G 0019", x: 0, y: 0 },
-      { name: "G 0020", x: 0, y: 0 },
-      { name: "G 0021", x: 0, y: 0 },
-      { name: "G 0022", x: 0, y: 0 },
-      { name: "G 0023", x: 0, y: 0 },
-      { name: "G 0024", x: 0, y: 0 },
-      { name: "G 0025", x: 0, y: 0 },
-      { name: "G 0026", x: 0, y: 0 },
-    ]
+    useSelector((state) => state.robot.locations) || locationsState.length === 0
+      ? {
+          0: ["C 3142", "A 3142", "Q 3142", "F 8795", "G 3981", "C 5098"],
+        } // Add dummy data here
+      : []
   );
   const [socket, setSocket] = useState(null);
   const [scanStatus, setScanStatus] = useState("idle");

@@ -27,7 +27,7 @@ const ErrorModal = ({ selectedError, modalVisible, setModalVisible }) => (
           <ScrollView style={modalStyle.scrollView}>
             {selectedError.map((error) => (
               <View key={error.id} style={modalStyle.errorItem}>
-                <Text style={modalStyle.errorId}>ID: {error.id}</Text>
+                {/*<Text style={modalStyle.errorId}>ID: {error.id}</Text>*/}
                 <Text style={modalStyle.errorMessage}>
                   {error.errorMessage}
                 </Text>

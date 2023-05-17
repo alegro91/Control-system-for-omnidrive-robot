@@ -410,7 +410,8 @@ const NetworkScanner = () => {
               </TouchableOpacity>
             )}
           </View>
-          <View
+          {/*
+<View
             style={{
               flexDirection: "row",
               alignItems: "center",
@@ -429,6 +430,7 @@ const NetworkScanner = () => {
               {item.location}
             </Text>
           </View>
+            */}
         </TouchableOpacity>
 
         {/* Additions */}
