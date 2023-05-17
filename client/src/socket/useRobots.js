@@ -272,8 +272,10 @@ const useRobots = () => {
     if (socket) {
       setRobots([]);
       dispatch(updateRobots([]));
+
       setLocations([]);
       dispatch(updateLocations([]));
+
       setScanStatus("scanning");
       setSearching(true);
       socket.emit("start-scan");

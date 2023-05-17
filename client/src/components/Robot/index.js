@@ -36,11 +36,13 @@ const Robot = ({ item }) => {
           shadowRadius: 3.84,
           elevation: 5,
         }}
+        testID="robot-component"
       >
         <FontAwesome5
           name="robot"
           size={20}
           color={hasErrors ? "#F05555" : "#000"}
+          testID="battery-icon"
         />
         <View style={styles.robotContainer}>
           <Text
@@ -66,6 +68,7 @@ const Robot = ({ item }) => {
                 name="warning"
                 size={24}
                 color={hasErrors ? "#F05555" : "#000"}
+                testID="error-icon"
               />
             </>
           ) : (
@@ -73,6 +76,7 @@ const Robot = ({ item }) => {
               name={batteryLevel(item.battery_capacity)}
               size={20}
               color={"#000"}
+              testID="battery-icon"
             />
           )}
         </View>
@@ -92,6 +96,7 @@ const Robot = ({ item }) => {
                 setSelectedError(item.errors);
                 setModalVisible(true);
               }}
+              testID="view-error-button"
             >
               <Text style={styles.connectButtonText}>View Error</Text>
             </TouchableOpacity>
