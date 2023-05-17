@@ -32,7 +32,7 @@ jobs:
       # Add additional steps for running server tests
 
       - name: Start server
-        run: npm start
+        run: npm start &
         working-directory: ./server
 
       # Add additional steps for running client tests
