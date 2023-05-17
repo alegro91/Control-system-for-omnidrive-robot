@@ -21,13 +21,18 @@ jobs:
         with:
           node-version: 14
 
-      - name: Install dependencies
+      - name: Install server dependencies
         run: npm ci
+        working-directory: ./server
 
-      - name: Run frontend tests
-        working-directory: client
-        run: npm test
+      - name: Install client dependencies
+        run: npm ci
+        working-directory: ./client
+
+      # Add additional steps for running server tests
 
       - name: Start server
-        working-directory: server
         run: npm start
+        working-directory: ./server
+
+      # Add additional steps for running client tests
