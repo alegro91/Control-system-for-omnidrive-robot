@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Text,
   Animated,
+  Easing,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SolwrImage from "../../../assets/SOLWR_black.svg";
