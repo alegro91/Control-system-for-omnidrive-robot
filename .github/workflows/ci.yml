@@ -36,3 +36,6 @@ jobs:
         working-directory: ./server
 
       # Add additional steps for running client tests
+      - name: Run client tests
+        run: npm test
+        working-directory: ./client
