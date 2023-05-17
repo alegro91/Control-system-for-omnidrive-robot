@@ -6,6 +6,8 @@ export const robotSlice = createSlice({
     robotIP: "",
     robots: [],
     locations: [],
+    authenticated: false,
+    user: null,
   },
   reducers: {
     updateRobotIP: (state, action) => {
@@ -23,6 +25,12 @@ export const robotSlice = createSlice({
     updateLocations: (state, action) => {
       state.locations = action.payload;
     },
+    setAuthenticated: (state, action) => {
+      state.authenticated = action.payload;
+    },
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
   },
 });
 
@@ -32,5 +40,8 @@ export const {
   updateRobots,
   clearRobots,
   updateLocations,
+  setAuthenticated,
+  setUser,
 } = robotSlice.actions;
+
 export default robotSlice.reducer;
