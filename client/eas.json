@@ -6,7 +6,8 @@
     "development": {
       "distribution": "internal",
       "android": {
-        "gradleCommand": ":app:assembleDebug"
+        "gradleCommand": ":app:assembleDebug",
+        "resourceClass": "l-large"
       },
       "ios": {
         "buildConfiguration": "Debug",
@@ -20,8 +21,11 @@
       }
     },
     "production": {
+      "android": {
+        "resourceClass": "l-large"
+      },
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "l-large"
       }
     }
   },
