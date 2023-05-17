@@ -3,17 +3,17 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - main  # Adjust this branch name if necessary
+      - main
   pull_request:
     branches:
-      - main  # Adjust this branch name if necessary
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v2
 
       - name: Set up Node.js
@@ -24,14 +24,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Start backend
-        run: npm run start-backend &
-
-      - name: Wait for backend to start
-        run: |
-          until curl -sSf http://localhost:your_backend_port/ >/dev/null; do
-            sleep 2
-          done
-
-      - name: Run tests
+      - name: Run frontend tests
+        working-directory: client
         run: npm test
+
+      - name: Start server
+        working-directory: server
+        run: npm start
