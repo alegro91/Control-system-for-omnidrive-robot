@@ -25,6 +25,7 @@ const FilteredLocationsModal = ({
   const scrollY = new Animated.Value(0);
 
   useEffect(() => {
+    if (locations === undefined) return;
     const filtered = locations.filter((item) =>
       item.toLowerCase().includes(filterText.toLowerCase())
     );

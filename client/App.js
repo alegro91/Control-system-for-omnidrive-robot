@@ -14,9 +14,13 @@ import { Provider } from "react-redux";
 import { store, persistor } from "./src/redux/store";
 import { PersistGate } from "redux-persist/integration/react";
 
+import Login from "./src/components/Login";
+
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [authenticated, setAuthenticated] = useState(false);
+
   return (
     /*
     <NavigationContainer>
@@ -33,7 +37,11 @@ export default function App() {
     */
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <MainContainer></MainContainer>
+        {authenticated ? (
+          <MainContainer></MainContainer>
+        ) : (
+          <Login setAuthenticated={setAuthenticated} />
+        )}
       </PersistGate>
     </Provider>
   );

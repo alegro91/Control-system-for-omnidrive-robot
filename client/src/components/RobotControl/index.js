@@ -51,7 +51,7 @@ const RobotControl = ({ route }) => {
   const [driveMode, setDriveMode] = useState("manual");
   const [slowMode, setSlowMode] = useState(false);
 
-  const { locations, goToLocation, goToLocationStatus } = useRobots();
+  const { robots, locations, goToLocation, goToLocationStatus } = useRobots();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -126,15 +126,15 @@ const RobotControl = ({ route }) => {
       <Notification
         header={"Connected to robot!"}
         message={`You are now connected to ${robotIP}`}
-        visible={robotIP ? true : false}
+        visible={robotIP && robots.length > 0 ? true : false}
       />
       <Notification
         header={"Not connected to robot"}
         message={"Please connect to a robot to control it."}
-        visible={robotIP ? false : true}
+        visible={robotIP && robots.length > 1 ? false : true}
         color={"#F05555"}
       />
-      {robotIP ? (
+      {robotIP && robots.length > 0 ? (
         <>
           <View style={styles.robotControlContainer}>
             {/*<Text style={styles.ipText}>Connected to: {robotIP}</Text>*/}
