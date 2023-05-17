@@ -7,25 +7,25 @@
       "distribution": "internal",
       "android": {
         "gradleCommand": ":app:assembleDebug",
-        "resourceClass": "l-large"
+        "resourceClass": "large"
       },
       "ios": {
         "buildConfiguration": "Debug",
-        "resourceClass": "m-medium"
+        "resourceClass": "large"
       }
     },
     "preview": {
       "distribution": "internal",
       "ios": {
-        "resourceClass": "m-medium"
+        "resourceClass": "large"
       }
     },
     "production": {
       "android": {
-        "resourceClass": "l-large"
+        "resourceClass": "large"
       },
       "ios": {
-        "resourceClass": "l-large"
+        "resourceClass": "large"
       }
     }
   },
