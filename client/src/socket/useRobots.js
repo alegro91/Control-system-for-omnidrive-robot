@@ -123,7 +123,7 @@ const useRobots = () => {
 
   useEffect(() => {
     if (Platform.OS === "web") {
-      const newSocket = io("http://localhost:3002");
+      const newSocket = io("http://localhost:3000");
       setSocket(newSocket);
 
       newSocket.on("connect", () => {
