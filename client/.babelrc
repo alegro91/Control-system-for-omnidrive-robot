@@ -1,9 +1,4 @@
 {
-  "presets": ["@babel/preset-env"]
-  /*
-  "plugins": [
-    // other plugins
-    ["@babel/plugin-proposal-private-property-in-object", { "loose": true }]
-  ]
-  */
+  "presets": ["module:metro-react-native-babel-preset"],
+  "sourceMaps": true
 }

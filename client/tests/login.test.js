@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor } from "@testing-library/react-native";
 import Login from "../src/components/Login";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
-jest.mock("@expo/vector-icons", () => require("./__mocks__/expo-vector-icons"));
+//jest.mock("@expo/vector-icons", () => require("./__mocks__/expo-vector-icons"));
 
 describe("Login component", () => {
   it("displays success message after successful login", async () => {

@@ -2,7 +2,7 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import Robot from "../src/components/Robot";
 
-jest.mock("@expo/vector-icons", () => require("./__mocks__/expo-vector-icons"));
+//jest.mock("@expo/vector-icons", () => require("./__mocks__/expo-vector-icons"));
 
 describe("Robot component", () => {
   const item = {
