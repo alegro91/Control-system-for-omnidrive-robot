@@ -14,6 +14,7 @@ import SolwrImage from "../../../assets/SOLWR_black.svg";
 import { Snackbar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SvgUri } from "react-native-svg";
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
