@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { TouchableOpacity, Text, View, StyleSheet, Image } from "react-native";
+import {
+  TouchableOpacity,
+  Text,
+  View,
+  StyleSheet,
+  Image,
+  Platform,
+} from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import { setAuthenticated, setUser } from "../../redux/robotSlice";
@@ -29,7 +36,15 @@ const ProfilePage = () => {
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <Image source={SolwrImage} style={styles.image} />
+        {Platform.OS === "web" ? (
+          <Image source={SolwrImage} style={styles.image} />
+        ) : (
+          <SvgUri
+            uri="https://raw.githubusercontent.com/alegro91/Control-system-for-omnidrive-robot/main/client/assets/SOLWR_black.svg"
+            width={200}
+            height={200}
+          />
+        )}
         <Text style={styles.text}>
           Logged in as, <Text style={{ fontWeight: "bold" }}>{user}</Text>
         </Text>

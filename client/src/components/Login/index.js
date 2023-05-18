@@ -10,6 +10,7 @@ import {
   Text,
   Animated,
   Easing,
+  Platform,
 } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import SolwrImage from "../../../assets/SOLWR_black.svg";
@@ -18,6 +19,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { setAuthenticated, setUser } from "../../redux/robotSlice";
 import { LinearGradient } from "expo-linear-gradient";
+import { SvgUri } from "react-native-svg";
 
 const Login = () => {
   const [password, setPassword] = useState("");
@@ -79,7 +81,15 @@ const Login = () => {
   return (
     <SafeAreaProvider>
       <View style={styles.container}>
-        <Image source={SolwrImage} style={styles.image} />
+        {Platform.OS === "web" ? (
+          <Image source={SolwrImage} style={styles.image} />
+        ) : (
+          <SvgUri
+            uri="https://raw.githubusercontent.com/alegro91/Control-system-for-omnidrive-robot/main/client/assets/SOLWR_black.svg"
+            width={200}
+            height={200}
+          />
+        )}
         <TextInput
           testID="password-input"
           style={styles.input}
