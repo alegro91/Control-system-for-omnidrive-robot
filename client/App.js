@@ -2,7 +2,7 @@ import "react-native-gesture-handler";
 import React, { useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import StartScreen from "./src/screens/StartScreen";
+import StartScreen from "./src/navigation/screens/StartScreen";
 import Button from "./src/components/Button";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import QRScanner from "./src/components/QRScanner";

@@ -18,7 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateRobotIP } from "../../redux/robotSlice";
 import { Animated } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import GeoLocation from "../../components/GeoLocation"
+import GeoLocation from "../../components/GeoLocation";
 import MapImage from "../../../assets/map_giortz_no_dimensions.png";
 
 const mapToPixelCoordinates = (value, range) => {
@@ -212,7 +212,7 @@ const MapScreen = () => {
           }}
         />
       ))}
-      {/*<GeoLocation /> */}
+      {<GeoLocation />}
     </View>
   );
 };
