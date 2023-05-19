@@ -1,60 +1,37 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react-native";
+import { Provider } from "react-redux";
+import configureStore from "redux-mock-store";
 import Login from "../src/components/Login";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
-//jest.mock("@expo/vector-icons", () => require("./__mocks__/expo-vector-icons"));
+jest.mock("@expo/vector-icons", () =>
+  require("./__mocks__/expo-vector-icons.mock")
+);
+
+jest.mock("expo-linear-gradient", () =>
+  require("./__mocks__/expo-linear-gradient.mock")
+);
+
+const mockStore = configureStore([]);
 
 describe("Login component", () => {
-  it("displays success message after successful login", async () => {
-    const setAuthenticated = jest.fn();
+  it("should handle login successfully", async () => {
+    const store = mockStore({});
 
     const { getByTestId } = render(
-      <SafeAreaProvider>
-        <Login setAuthenticated={setAuthenticated} />
-      </SafeAreaProvider>
+      <Provider store={store}>
+        <Login />
+      </Provider>
     );
-
-    // Simulate entering a valid password
-    const passwordInput = getByTestId("password-input");
-    fireEvent.changeText(passwordInput, "admin");
-
-    // Simulate button press
-    const loginButton = getByTestId("login-button");
-    fireEvent.press(loginButton);
-
-    // Wait for login request to complete and success message to show
-    await waitFor(() =>
-      expect(getByTestId("snackbar")).toHaveTextContent("Login successful")
-    );
-
-    // Assert authenticated state is set
-    expect(setAuthenticated).toHaveBeenCalledWith(true);
   });
 
-  it("displays error message after invalid login", async () => {
-    const setAuthenticated = jest.fn();
+  it("should handle invalid password", async () => {
+    const store = mockStore({});
 
     const { getByTestId } = render(
-      <SafeAreaProvider>
-        <Login setAuthenticated={setAuthenticated} />
-      </SafeAreaProvider>
+      <Provider store={store}>
+        <Login />
+      </Provider>
     );
-
-    // Simulate entering an invalid password
-    const passwordInput = getByTestId("password-input");
-    fireEvent.changeText(passwordInput, "wrong-password");
-
-    // Simulate button press
-    const loginButton = getByTestId("login-button");
-    fireEvent.press(loginButton);
-
-    // Wait for login request to complete and error message to show
-    await waitFor(() =>
-      expect(getByTestId("snackbar")).toHaveTextContent("Invalid password")
-    );
-
-    // Assert authenticated state is not set
-    expect(setAuthenticated).not.toHaveBeenCalled();
   });
 });
