@@ -34,42 +34,48 @@ npm install
 
 ```
 npm start #scan code & open app in Expo Go (on mobile device)
-
-for node 16+ use:
 ```
 
-NODE_OPTIONS=--openssl-legacy-provider expo start --web
+for node 16+ use:
 
+For Unix:
+
+```
+NODE_OPTIONS=--openssl-legacy-provider expo start --web
+```
+
+For Windows:
+
+```
+set NODE_OPTIONS=--openssl-legacy-provider
 ```
 
 node 16:
-```
 
+```
 npm run start
-
 ```
+
 If errors occur, some useful commands:
 
 Start expo and clear the babel cache for full rebuild
+
 ```
-
 npx expo start --dev-client -c
-
 ```
 
 Errors with node_modules:
 
 1.
-```
 
+```
 rm -rf node_modules
-
 ```
+
 2.
+
 ```
-
 npm i
-
 ```
 
 ## Read these for notification permission
@@ -79,4 +85,3 @@ https://docs.expo.dev/development/create-development-builds/#on-a-device
 
 5. For the server to properly connect to the frontend, create a .env file in the server
    folder. Add a PORT variable.
-```
