@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 import * as Location from "expo-location";
 
-const useGeolocationDistance = (currentLat, currentLong) => {
+const useGeolocationDistance = () => {
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [distance, setDistance] = useState(null);
 
   //Target latitude and longitude. Distance should be measured from this point.
   //Lat: 62.42971, Long: 6.32803 corresponds to ther H.I. Gjørtz wareshouse.
@@ -49,7 +50,7 @@ const useGeolocationDistance = (currentLat, currentLong) => {
   }
 
   useEffect(() => {
-    (async () => {
+    const getLocation = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
@@ -57,17 +58,21 @@ const useGeolocationDistance = (currentLat, currentLong) => {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
-      const distance = distanceHaversine(
+      let distance = distanceHaversine(
         location.coords.latitude,
         location.coords.longitude,
         targetLatitude,
         targetLongitude
       );
-    })();
+      setDistance(Math.round(distance));
+      setLocation(location);
+    };
+
+    getLocation();
   }, []);
 
   return {
+    location,
     distance,
   };
 };

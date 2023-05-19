@@ -6,10 +6,9 @@ import useGeolocationDistance from "../../hooks/useGeolocationDistance";
 //Component for getting geolocation of host device.
 //Using decimal degrees, 5 decimals for accuracy of 1.11m.
 const GeoLocation = () => {
-  const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  const { distance } = useGeolocationDistance;
+  const { distance, location } = useGeolocationDistance();
 
   return (
     <View>
