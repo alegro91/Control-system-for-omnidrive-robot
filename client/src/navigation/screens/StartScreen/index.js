@@ -2,9 +2,9 @@ import React from "react";
 import { View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import NetworkScanner from "../../components/NetworkScanner/index.js";
-import QRScanner from "../../components/QRScanner";
-import styles from "./styles";
+import NetworkScanner from "../../../components/NetworkScanner/index.js";
+import QRScanner from "../../../components/QRScanner/index.js";
+import styles from "./styles.js";
 import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
