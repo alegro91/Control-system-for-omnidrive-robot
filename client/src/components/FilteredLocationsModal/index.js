@@ -8,7 +8,6 @@ import {
   TextInput,
   Text,
   StyleSheet,
-  Animated,
   ActivityIndicator,
 } from "react-native";
 
@@ -22,7 +21,6 @@ const FilteredLocationsModal = ({
 }) => {
   const [filteredLocations, setFilteredLocations] = useState([]);
   const [filterText, setFilterText] = useState("");
-  const scrollY = new Animated.Value(0);
 
   useEffect(() => {
     if (locations === undefined || locations.length === 0) return;
@@ -31,11 +29,6 @@ const FilteredLocationsModal = ({
     );
     setFilteredLocations(filtered);
   }, [filterText, locations]);
-
-  const handleScroll = Animated.event(
-    [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-    { useNativeDriver: true }
-  );
 
   const renderLocationItem = ({ item }) => (
     <TouchableOpacity
@@ -53,18 +46,7 @@ const FilteredLocationsModal = ({
   return (
     <Modal visible={showModal} animationType="slide" transparent>
       <View style={styles.modalContainer}>
-        <Animated.View
-          style={[
-            styles.modalContent,
-            {
-              height: scrollY.interpolate({
-                inputRange: [0, 200],
-                outputRange: ["40%", "60%"],
-                extrapolate: "clamp",
-              }),
-            },
-          ]}
-        >
+        <View style={styles.modalContent}>
           <View style={styles.header}>
             <TextInput
               style={styles.filterInput}
@@ -117,19 +99,20 @@ const FilteredLocationsModal = ({
             )}
           </View>
 
-          <Animated.ScrollView
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            contentContainerStyle={styles.listContainer}
-          >
-            {filteredLocations.length === 0 && (
-              <Text style={{ textAlign: "center" }}>No locations found</Text>
-            )}
-            {filteredLocations.map((item) => (
-              <View key={item}>{renderLocationItem({ item })}</View>
-            ))}
-          </Animated.ScrollView>
-        </Animated.View>
+          <View style={styles.scrollViewContainer}>
+            <ScrollView
+              contentContainerStyle={styles.listContainer}
+              showsVerticalScrollIndicator={true}
+            >
+              {filteredLocations.length === 0 && (
+                <Text style={{ textAlign: "center" }}>No locations found</Text>
+              )}
+              {filteredLocations.map((item) => (
+                <View key={item}>{renderLocationItem({ item })}</View>
+              ))}
+            </ScrollView>
+          </View>
+        </View>
       </View>
     </Modal>
   );
@@ -148,7 +131,6 @@ const styles = StyleSheet.create({
     padding: 20,
     width: "80%",
     alignSelf: "center",
-    width: "150",
   },
   header: {
     flexDirection: "row",
@@ -166,10 +148,13 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#333",
   },
+  scrollViewContainer: {
+    height: 200, // Set the desired fixed height
+  },
   listContainer: {
-    flexGrow: 1,
     paddingTop: 10,
     paddingBottom: 20,
+    flexGrow: 1,
   },
   locationItemContainer: {
     backgroundColor: "#F05555",
