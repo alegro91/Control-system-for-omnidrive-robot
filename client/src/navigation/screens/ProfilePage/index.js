@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
-import { setAuthenticated, setUser } from "../../redux/robotSlice";
-import SolwrImage from "../../../assets/SOLWR_black.svg";
+import { setAuthenticated, setUser } from "../../../redux/robotSlice";
+import SolwrImage from "../../../../assets/SOLWR_black.svg";
 import { Snackbar } from "react-native-paper";
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";

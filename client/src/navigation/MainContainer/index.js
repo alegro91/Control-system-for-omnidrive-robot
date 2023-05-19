@@ -15,7 +15,7 @@ import RobotControlScreen from "../screens/RobotControlScreen";
 import RobotControl from "../../components/RobotControl";
 
 import useRobots from "../../socket/useRobots";
-import ProfilePage from "../../screens/ProfilePage";
+import ProfilePage from "../screens/ProfilePage";
 import Login from "../../components/Login";
 
 import { useDispatch, useSelector } from "react-redux";
