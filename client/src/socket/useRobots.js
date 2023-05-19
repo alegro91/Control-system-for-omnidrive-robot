@@ -20,7 +20,7 @@ const useRobots = () => {
             {
               agv_id: "Basement Dweller",
               state: "Idle",
-              battery_capacity: 100,
+              battery_capacity: 90,
               location: "C 1346",
               last_location: "C 1484",
               loaded: true,
@@ -72,7 +72,7 @@ const useRobots = () => {
     {
       agv_id: "Robot 1",
       state: "Idle",
-      battery_capacity: 100,
+      battery_capacity: 90,
       location: "A1",
       last_location: "",
       loaded: false,

@@ -2,7 +2,9 @@ import React from "react";
 import { render } from "@testing-library/react-native";
 import Robot from "../src/components/Robot";
 
-//jest.mock("@expo/vector-icons", () => require("./__mocks__/expo-vector-icons"));
+jest.mock("@expo/vector-icons", () =>
+  require("./__mocks__/expo-vector-icons.mock")
+);
 
 describe("Robot component", () => {
   const item = {
@@ -14,7 +16,7 @@ describe("Robot component", () => {
   };
 
   it("renders the Robot component correctly", () => {
-    const { getByText, getByTestId } = render(<Robot item={item} />);
+    const { getByTestId, getByText } = render(<Robot item={item} />);
   });
 
   it("renders the Robot component with errors correctly", () => {
@@ -23,6 +25,11 @@ describe("Robot component", () => {
       errors: ["Error 1", "Error 2"],
     };
 
-    const { getByText, getByTestId } = render(<Robot item={itemWithError} />);
+    const { getByTestId, getByText } = render(<Robot item={itemWithError} />);
+  });
+
+  it("handles button press correctly", () => {
+    const mockHandleRobotConnect = jest.fn();
+    const { getByTestId } = render(<Robot item={item} />);
   });
 });

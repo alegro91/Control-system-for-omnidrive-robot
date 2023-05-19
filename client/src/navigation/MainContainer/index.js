@@ -11,7 +11,7 @@ import NetworkScanner from "../../components/NetworkScanner";
 import AlertsScreen from "../screens/AlertsScreen.js";
 import MapScreen from "../screens/MapScreen.js";
 import QRScanner from "../../components/QRScanner/index.js";
-import RobotControlScreen from "../../screens/RobotControlScreen";
+import RobotControlScreen from "../screens/RobotControlScreen";
 import RobotControl from "../../components/RobotControl";
 
 import useRobots from "../../socket/useRobots";

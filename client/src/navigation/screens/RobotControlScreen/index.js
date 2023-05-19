@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, Button } from "react-native";
-import RobotControl from "../../components/RobotControl";
+import RobotControl from "../../../components/RobotControl";
 import { useNavigation } from "@react-navigation/native";
 import {
   storeData,
@@ -8,7 +8,7 @@ import {
   removeData,
   clearData,
   getAllKeys,
-} from "../../utils/CacheStorage";
+} from "../../../utils/CacheStorage";
 
 /**
  * Screen that displays the robot control interface.
