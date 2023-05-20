@@ -91,3 +91,11 @@ https://docs.expo.dev/development/create-development-builds/#on-a-device
 
 5. For the server to properly connect to the frontend, create a .env file in the server
    folder. Add a PORT variable.
+
+## Application
+
+Default login credentials:
+
+```
+admin
+```
