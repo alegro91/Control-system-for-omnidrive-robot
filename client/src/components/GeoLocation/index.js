@@ -6,12 +6,15 @@ import useGeolocationDistance from "../../hooks/useGeolocationDistance";
 //Component for getting geolocation of host device.
 //Using decimal degrees, 5 decimals for accuracy of 1.11m.
 const GeoLocation = () => {
-  const [errorMsg, setErrorMsg] = useState(null);
-
-  const { distance, location } = useGeolocationDistance();
+  const { distance, location, errorMsg } = useGeolocationDistance();
 
   return (
-    <View>
+    <View
+      style={{
+        position: "absolute",
+        top: 120,
+      }}
+    >
       {console.log("HERE - " + distance)}
       {/* If error occurs */}
       {errorMsg ? (
@@ -19,11 +22,20 @@ const GeoLocation = () => {
       ) : location ? (
         /* Show distance between current and target position, rounded to nearest integer. */
         <Text>
-          Distance: approx. {distance} meters to origo. {"\n"}Max distance:
-          200m.
+          Distance: approx. {distance} meters to origo. {"\n"}Max distance to
+          control: 200m.
         </Text>
       ) : (
-        <Text>Loading location...</Text>
+        <Text
+          style={{
+            color: "red",
+            fontSize: 20,
+            fontWeight: "bold",
+            textAlign: "center",
+          }}
+        >
+          Please allow geo location
+        </Text>
       )}
     </View>
   );

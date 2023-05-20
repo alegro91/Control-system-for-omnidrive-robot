@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Text,
   View,
@@ -9,6 +9,8 @@ import {
   Platform,
   Switch,
   FlatList,
+  Animated,
+  Easing,
 } from "react-native";
 import {
   storeData,
@@ -34,6 +36,8 @@ import { disconnectRobot } from "../../redux/robotSlice";
 import JoystickNative from "../JoystickNative";
 import useBluetoothDistance from "../../hooks/useBluetoothDistance";
 import useRobots from "../../socket/useRobots";
+import useGeolocationDistance from "../../hooks/useGeolocationDistance";
+import DistanceBar from "../DistanceBar";
 
 import axios from "axios";
 
@@ -42,6 +46,8 @@ const moveForwardCMDString = "";
 const moveBackwardCMDString = "";
 const turnRightCMDString = "";
 const turnLeftCMDString = "";
+
+const ROBOT_TRESHOLD = 200;
 
 const RobotControl = ({ route }) => {
   const onDisconnect = route?.params?.onDisconnect || (() => {});
@@ -52,6 +58,7 @@ const RobotControl = ({ route }) => {
   const [slowMode, setSlowMode] = useState(false);
 
   const { robots, locations, goToLocation, goToLocationStatus } = useRobots();
+  const { distance, location, errorMsg } = useGeolocationDistance();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -87,7 +94,7 @@ const RobotControl = ({ route }) => {
     setShowModal(true);
   };
 
-  const { distance, status, connect, disconnect } = useBluetoothDistance();
+  const { status, connect, disconnect } = useBluetoothDistance();
   const isWeb = Platform.OS === "web";
 
   const navigation = useNavigation();
@@ -140,58 +147,73 @@ const RobotControl = ({ route }) => {
             {/*<Text style={styles.ipText}>Connected to: {robotIP}</Text>*/}
             {isWeb ? (
               <View>
-                {distance !== null && status === "connected" ? (
-                  <Text
-                    style={{
-                      textAlign: "center",
-                    }}
-                  >
-                    Approximate distance to device {distance.toFixed(2)} meters
-                  </Text>
+                {distance !== null && location ? (
+                  <DistanceBar distance={distance} threshold={ROBOT_TRESHOLD} />
                 ) : (
                   <Button title="Distance" onPress={connect} />
                 )}
                 <Text
                   style={{
                     textAlign: "center",
+                    color: "red",
                   }}
                 >
-                  {status}
+                  {errorMsg}
                 </Text>
-                <Joystick
-                  robotIp={robotIP}
-                  steeringType={steeringType}
-                  driveMode={driveMode}
-                  slowMode={slowMode}
-                />
+                <View
+                  style={{
+                    height: 200,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {distance < ROBOT_TRESHOLD ? (
+                    <Joystick
+                      robotIp={robotIP}
+                      steeringType={steeringType}
+                      driveMode={driveMode}
+                      slowMode={slowMode}
+                    />
+                  ) : (
+                    <Text>
+                      You are too far away from the robot to control it.
+                    </Text>
+                  )}
+                </View>
                 <View
                   style={{
                     position: "relative",
-                    top: 0,
+                    top: 20,
                   }}
                 >
-                  <Text
-                    style={{
-                      textAlign: "center",
-                    }}
-                  >
-                    Slow mode
-                  </Text>
-                  <Switch
-                    style={{
-                      alignSelf: "center",
-                    }}
-                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                    thumbColor={
-                      driveMode === "slowMode" ? "#f5dd4b" : "#f4f3f4"
-                    }
-                    ios_backgroundColor="#3e3e3e"
-                    onValueChange={() => {
-                      console.log("Slow mode set to:", !slowMode);
-                      setSlowMode(!slowMode);
-                    }}
-                    value={slowMode}
-                  />
+                  {distance < ROBOT_TRESHOLD ? (
+                    <>
+                      <Text
+                        style={{
+                          textAlign: "center",
+                        }}
+                      >
+                        Slow mode
+                      </Text>
+                      <Switch
+                        style={{
+                          alignSelf: "center",
+                        }}
+                        trackColor={{ false: "#767577", true: "#81b0ff" }}
+                        thumbColor={
+                          driveMode === "slowMode" ? "#f5dd4b" : "#f4f3f4"
+                        }
+                        ios_backgroundColor="#3e3e3e"
+                        onValueChange={() => {
+                          console.log("Slow mode set to:", !slowMode);
+                          setSlowMode(!slowMode);
+                        }}
+                        value={slowMode}
+                      />
+                    </>
+                  ) : (
+                    <></>
+                  )}
                 </View>
               </View>
             ) : (
@@ -202,92 +224,137 @@ const RobotControl = ({ route }) => {
                     paddingBottom: 40,
                   }}
                 >
-                  {distance !== null && status === "connected" ? (
-                    <Text
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      Approximate distance to device {distance.toFixed(2)}{" "}
-                      meters
-                    </Text>
+                  {distance !== null && location ? (
+                    <DistanceBar
+                      distance={distance}
+                      threshold={ROBOT_TRESHOLD}
+                    />
                   ) : (
                     <Button title="Distance" onPress={connect} />
                   )}
                   <Text
                     style={{
                       textAlign: "center",
+                      color: "red",
                     }}
                   >
-                    {status}
+                    {errorMsg}
                   </Text>
 
-                  <JoystickNative
-                    robotIp={robotIP}
-                    steeringType={steeringType}
-                    driveMode={driveMode}
-                    slowMode={slowMode}
-                  />
+                  <View
+                    style={{
+                      height: 200,
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {distance < ROBOT_TRESHOLD ? (
+                      <JoystickNative
+                        robotIp={robotIP}
+                        steeringType={steeringType}
+                        driveMode={driveMode}
+                        slowMode={slowMode}
+                      />
+                    ) : (
+                      <Text>
+                        You are too far away from the robot to control it.
+                      </Text>
+                    )}
+                  </View>
                   <View
                     style={{
                       position: "relative",
-                      top: 0,
+                      top: 20,
                     }}
                   >
-                    <Text
-                      style={{
-                        textAlign: "center",
-                      }}
-                    >
-                      Slow mode
-                    </Text>
-                    <Switch
-                      style={{
-                        alignSelf: "center",
-                      }}
-                      trackColor={{ false: "#767577", true: "#81b0ff" }}
-                      thumbColor={
-                        driveMode === "slowMode" ? "#f5dd4b" : "#f4f3f4"
-                      }
-                      ios_backgroundColor="#3e3e3e"
-                      onValueChange={() => setSlowMode(!slowMode)}
-                      value={slowMode}
-                    />
+                    {distance < ROBOT_TRESHOLD ? (
+                      <>
+                        <Text
+                          style={{
+                            textAlign: "center",
+                          }}
+                        >
+                          Slow mode
+                        </Text>
+                        <Switch
+                          style={{
+                            alignSelf: "center",
+                          }}
+                          trackColor={{ false: "#767577", true: "#81b0ff" }}
+                          thumbColor={
+                            driveMode === "slowMode" ? "#f5dd4b" : "#f4f3f4"
+                          }
+                          ios_backgroundColor="#3e3e3e"
+                          onValueChange={() => setSlowMode(!slowMode)}
+                          value={slowMode}
+                        />
+                      </>
+                    ) : (
+                      <></>
+                    )}
                   </View>
                 </View>
               </>
             )}
-            <View style={styles.steeringTypeContainer}>
-              {["Front", "Mid", "Rear", "Pivoting", "Parallel"].map((type) => (
-                <TouchableOpacity
-                  key={type}
-                  style={{
-                    backgroundColor:
-                      steeringType === type.toLowerCase() ? "blue" : "grey",
-                    padding: 10,
-                    borderRadius: 5,
-                    margin: 5,
-                  }}
-                  onPress={() => handleSteeringTypePress(type.toLowerCase())}
-                >
-                  <Text style={styles.steeringTypeText}>{type}</Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-            <View style={styles.buttonContainer}>
-              <Button
-                title="Drive to"
-                onPress={() => {
-                  handlePress();
-                }}
-              />
-              <Button
-                title="Disconnect"
-                onPress={() => {
-                  showDisconnectModal();
-                }}
-              />
-            </View>
+            <>
+              {distance < ROBOT_TRESHOLD ? (
+                <>
+                  <View style={styles.steeringTypeContainer}>
+                    {["Front", "Mid", "Rear", "Pivoting", "Parallel"].map(
+                      (type) => (
+                        <TouchableOpacity
+                          key={type}
+                          style={{
+                            backgroundColor:
+                              steeringType === type.toLowerCase()
+                                ? "blue"
+                                : "grey",
+                            padding: 10,
+                            borderRadius: 5,
+                            margin: 5,
+                          }}
+                          onPress={() =>
+                            handleSteeringTypePress(type.toLowerCase())
+                          }
+                        >
+                          <Text style={styles.steeringTypeText}>{type}</Text>
+                        </TouchableOpacity>
+                      )
+                    )}
+                  </View>
+                  <View style={styles.buttonContainer}>
+                    <Button
+                      title="Drive to"
+                      onPress={() => {
+                        handlePress();
+                      }}
+                    />
+                    <Button
+                      title="Disconnect"
+                      onPress={() => {
+                        showDisconnectModal();
+                      }}
+                    />
+                  </View>
+                </>
+              ) : (
+                <View style={styles.buttonContainer}>
+                  <Button
+                    title="Drive to"
+                    onPress={() => {
+                      handlePress();
+                    }}
+                    disabled
+                  />
+                  <Button
+                    title="Disconnect"
+                    onPress={() => {
+                      showDisconnectModal();
+                    }}
+                  />
+                </View>
+              )}
+            </>
           </View>
           <FilteredLocationsModal
             showModal={showModal}
