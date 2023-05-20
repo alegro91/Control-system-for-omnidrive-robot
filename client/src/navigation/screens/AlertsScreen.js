@@ -234,7 +234,7 @@ const AlertsScreen = () => {
       />
     */}
       <Banner
-        text="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+        text="If you are having issues with the connection, please rescan the network."
         illustration={(props) => (
           <Avatar
             color="primary"

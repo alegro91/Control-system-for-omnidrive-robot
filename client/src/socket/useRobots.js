@@ -47,6 +47,39 @@ const useRobots = () => {
         : []
     )
   );
+  /*
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRobots((prevRobots) => {
+        // Clone the previous robots array to avoid mutating the state directly
+        const updatedRobots = [...prevRobots];
+
+        // Select a random robot index
+        const robotIndex = Math.floor(Math.random() * updatedRobots.length);
+
+        // Toggle errors for the selected robot
+        const robot = updatedRobots[robotIndex];
+        if (robot.errors && robot.errors.length > 0) {
+          // Remove errors
+          robot.errors = [];
+        } else {
+          // Add test errors
+          robot.errors = [
+            { id: "1", errorMessage: "Test error 1" },
+            { id: "2", errorMessage: "Test error 2" },
+          ];
+        }
+
+        // Update the robots state
+        return updatedRobots;
+      });
+    }, 5000); // Interval duration in milliseconds (e.g., 5000ms = 5 seconds)
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(interval);
+  }, []); // Empty dependency array to run the effect only once on mount
+  */
+
   const locationsState = useSelector((state) => state.robot.locations);
   const [locations, setLocations] = useState(
     useSelector((state) => state.robot.locations) || locationsState.length === 0

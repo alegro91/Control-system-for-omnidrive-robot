@@ -41,7 +41,7 @@ const sendPushNotification = async () => {
   //console.log(`Status & Response ID-> ${JSON.stringify(data)}`);
 };
 
-const ErrorNotification = ({ robotData, color, opacity }) => {
+const ErrorNotification = ({ robotData, color, opacity, showHeader }) => {
   const [hasGlobalErrors, setHasGlobalErrors] = useState(false);
   const notificationAnim = useRef(new Animated.Value(-100)).current;
 
@@ -125,7 +125,7 @@ const ErrorNotification = ({ robotData, color, opacity }) => {
   }, [hasGlobalErrors]);
 
   useEffect(() => {
-    const hasErrors = robotData.some((robot) => robot.errors.length > 0);
+    const hasErrors = robotData.some((robot) => robot.errors?.length > 0);
     setHasGlobalErrors(hasErrors);
     if (hasErrors) {
       Animated.timing(notificationAnim, {
@@ -157,6 +157,7 @@ const ErrorNotification = ({ robotData, color, opacity }) => {
         },
       ]}
     >
+      {/*
       <View
         style={{
           width: "100%",
@@ -178,6 +179,7 @@ const ErrorNotification = ({ robotData, color, opacity }) => {
           Some robots have have an error
         </Text>
       </View>
+      */}
     </Animated.View>
   );
 

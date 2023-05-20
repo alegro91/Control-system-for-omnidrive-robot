@@ -14,6 +14,7 @@ import {
   Dimensions,
   ScrollView,
   LayoutAnimation,
+  RefreshControl,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { FontAwesome5 } from "@expo/vector-icons";
@@ -56,6 +57,48 @@ const NetworkScanner = () => {
   const [isLoading, setIsLoading] = useState(false); // Set loading to true on component mount
 
   const [isExpanded, setIsExpanded] = useState([]);
+
+  const flatListRef = useRef(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const threshold = 50; // Threshold for refreshing
+  const scrollOffset = useRef(0);
+
+  const handleScrollEndDrag = (event) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    const layoutHeight = event.nativeEvent.layoutMeasurement.height;
+    const contentHeight = event.nativeEvent.contentSize.height;
+    const scrollPosition = offsetY + layoutHeight;
+
+    if (scrollPosition >= contentHeight + threshold + scrollOffset.current) {
+      // User has scrolled further beyond the threshold and let go at the bottom
+      // You can trigger your refresh action here
+      // For example, fetch new data from an API
+      // or perform any other action you want
+
+      // start mDNS scan
+      startMdnsScan();
+
+      // Set refreshing state to true to show a loading indicator
+      setRefreshing(true);
+
+      // Simulating a refresh action with a timeout
+      setTimeout(() => {
+        // Reset refreshing state to false
+        setRefreshing(false);
+
+        // Scroll back to the top of the list
+        flatListRef.current.scrollToOffset({ offset: 0, animated: true });
+
+        // Perform any other actions after refreshing
+        // For example, update the data source or display a success message
+      }, 2000);
+    }
+  };
+
+  const handleScroll = (event) => {
+    const offsetY = event.nativeEvent.contentOffset.y;
+    scrollOffset.current = offsetY;
+  };
 
   const toggleBox = (item) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.spring);
@@ -541,7 +584,7 @@ const NetworkScanner = () => {
     <>
       {socketConnected || timeout ? (
         <>
-          <ErrorNotification robotData={robotData} />
+          <ErrorNotification robotData={robots} showHeader={false} />
           <Notification
             header={"Notification"}
             message={"Searching for robots..."}
@@ -580,6 +623,7 @@ const NetworkScanner = () => {
             modalVisible={modalVisible}
             setModalVisible={setModalVisible}
           />
+
           {!searching && robots.length > 0 && (
             <Banner
               text="If you can't find your robot, try pressing the rescan button"
@@ -625,19 +669,32 @@ const NetworkScanner = () => {
               }
             />
           )}
+
           <View style={styles.container}>
             {searching ? (
               <ActivityIndicator size="large" color="#0000ff" />
             ) : robots.length > 0 ? (
               <FlatList
+                ref={flatListRef}
                 data={robots}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.agv_id}
                 persistentScrollbar={true}
                 style={{
                   padding: 30,
-                  paddingTop: 0,
                 }}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={() => {
+                      // Handle the manual refresh action here
+                      // For example, fetch new data from an API
+                      // or perform any other action you want
+                    }}
+                  />
+                }
+                onScrollEndDrag={handleScrollEndDrag}
+                onScroll={handleScroll}
               />
             ) : (
               <View>
