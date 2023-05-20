@@ -136,7 +136,7 @@ const SvgButton = ({ robot, handlePress, isSelected, onPressManage }) => {
     <View
       style={{
         position: "absolute",
-        top: mapToPixelCoordinates(180 - robot.y * 1.7, 150),
+        top: mapToPixelCoordinates(156 - robot.y * 1.7, 150),
         left: mapToPixelCoordinates(robot.x * 1.7 + 130, 150),
       }}
     >

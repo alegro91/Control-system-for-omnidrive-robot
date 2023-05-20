@@ -56,6 +56,12 @@ node 16:
 npm run start
 ```
 
+if errors:
+
+```
+npx expo start --dev-client
+```
+
 If errors occur, some useful commands:
 
 Start expo and clear the babel cache for full rebuild

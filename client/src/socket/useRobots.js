@@ -191,7 +191,7 @@ const useRobots = () => {
         const ipAddress = state.details.ipAddress;
         console.log("Device IP address:", ipAddress);
 
-        const serverAddress = `http://192.168.128.58:3000`; // replace ip address with ${ipAddress} to use the servers IP address
+        const serverAddress = `http://192.168.128.250:3000`; // replace ip address with ${ipAddress} to use the servers IP address
         const newSocket = io(serverAddress);
         setSocket(newSocket);
 
