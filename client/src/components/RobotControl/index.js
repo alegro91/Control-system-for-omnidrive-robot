@@ -148,7 +148,22 @@ const RobotControl = ({ route }) => {
             {isWeb ? (
               <View>
                 {distance !== null && location ? (
-                  <DistanceBar distance={distance} threshold={ROBOT_TRESHOLD} />
+                  <>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "bold",
+                        marginBottom: 10,
+                        textAlign: "center",
+                      }}
+                    >
+                      Distance from robot:
+                    </Text>
+                    <DistanceBar
+                      distance={distance}
+                      threshold={ROBOT_TRESHOLD}
+                    />
+                  </>
                 ) : (
                   <Button title="Distance" onPress={connect} />
                 )}
@@ -225,10 +240,22 @@ const RobotControl = ({ route }) => {
                   }}
                 >
                   {distance !== null && location ? (
-                    <DistanceBar
-                      distance={distance}
-                      threshold={ROBOT_TRESHOLD}
-                    />
+                    <>
+                      <Text
+                        style={{
+                          fontSize: 20,
+                          fontWeight: "bold",
+                          marginBottom: 10,
+                          textAlign: "center",
+                        }}
+                      >
+                        Distance from robot:
+                      </Text>
+                      <DistanceBar
+                        distance={distance}
+                        threshold={ROBOT_TRESHOLD}
+                      />
+                    </>
                   ) : (
                     <Button title="Distance" onPress={connect} />
                   )}

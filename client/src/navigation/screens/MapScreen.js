@@ -20,10 +20,14 @@ import { Animated } from "react-native";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import GeoLocation from "../../components/GeoLocation";
 import MapImage from "../../../assets/map_giortz_no_dimensions.png";
+import DistanceBar from "../../components/DistanceBar";
+import useGeolocationDistance from "../../hooks/useGeolocationDistance";
 
 const mapToPixelCoordinates = (value, range) => {
   return (value / range) * width;
 };
+
+const ROBOT_TRESHOLD = 200;
 
 const RobotDetails = ({ robot, onPressManage }) => (
   <View style={styles.robotDetails}>
@@ -180,6 +184,7 @@ const MapScreen = () => {
   const dispatch = useDispatch();
   const { robots } = useRobots();
   const [selectedRobot, setSelectedRobot] = useState(null);
+  const { distance } = useGeolocationDistance();
 
   const handleRobotPress = (robot) => {
     setSelectedRobot(selectedRobot === robot ? null : robot);
@@ -191,28 +196,54 @@ const MapScreen = () => {
 
   return (
     <View
-      style={styles.container}
-      onStartShouldSetResponder={() => true} // Make the container able to receive touch events
-      onResponderRelease={() => setSelectedRobot(null)} // Deselect the robot when the container is pressed
+      style={{
+        backgroundColor: "#ddd",
+        flex: 1,
+      }}
     >
-      <Image
-        source={MapImage}
-        style={[styles.mapImage, styles.rotatedImage]}
-        resizeMode="contain"
-      />
-      {robots.map((robot) => (
-        <SvgButton
-          key={robot.agv_id}
-          robot={robot}
-          handlePress={handleRobotPress}
-          isSelected={selectedRobot === robot}
-          onPressManage={() => {
-            dispatch(updateRobotIP(robot.ip)); // Update the robot IP using dispatch
-            navigation.navigate("RobotControl");
-          }}
+      <View
+        style={{
+          top: 100,
+          padding: 20,
+        }}
+      >
+        <>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: "bold",
+              marginBottom: 10,
+              textAlign: "center",
+            }}
+          >
+            Distance from robot:
+          </Text>
+          <DistanceBar distance={distance} threshold={ROBOT_TRESHOLD} />
+        </>
+      </View>
+      <View
+        style={styles.container}
+        onStartShouldSetResponder={() => true} // Make the container able to receive touch events
+        onResponderRelease={() => setSelectedRobot(null)} // Deselect the robot when the container is pressed
+      >
+        <Image
+          source={MapImage}
+          style={[styles.mapImage, styles.rotatedImage]}
+          resizeMode="contain"
         />
-      ))}
-      {<GeoLocation />}
+        {robots.map((robot) => (
+          <SvgButton
+            key={robot.agv_id}
+            robot={robot}
+            handlePress={handleRobotPress}
+            isSelected={selectedRobot === robot}
+            onPressManage={() => {
+              dispatch(updateRobotIP(robot.ip)); // Update the robot IP using dispatch
+              navigation.navigate("RobotControl");
+            }}
+          />
+        ))}
+      </View>
     </View>
   );
 };

@@ -6,7 +6,7 @@ const DistanceBar = ({ distance, threshold }) => {
   const barWidth =
     distance > threshold ? "100%" : `${(distance / threshold) * 100}%`;
 
-  const barColor = distance <= threshold ? "green" : "red";
+  const barColor = distance <= threshold ? "#77DD77" : "#F05555";
 
   return (
     <View style={styles.container}>
